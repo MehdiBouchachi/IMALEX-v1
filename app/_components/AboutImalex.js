@@ -1,4 +1,3 @@
-"use client";
 import Image from "next/image";
 import { FaFlask, FaCheckCircle, FaLeaf, FaShieldAlt } from "react-icons/fa";
 
@@ -140,32 +139,17 @@ function AboutImalex({ imageSrc = "/lab-shot.jpg" }) {
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <a
                 href="#services"
-                className="inline-flex justify-center rounded-lg px-5 py-3 font-semibold transition"
-                style={{ background: "var(--cta-700)", color: "#fff" }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "var(--cta-800)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "var(--cta-700)")
-                }
+                className="inline-flex justify-center rounded-lg px-5 py-3 font-semibold
+              transition bg-[var(--cta-700)] hover:bg-[var(--cta-800)] text-white"
               >
                 Explore Services
               </a>
               <a
                 href="#contact"
-                className="inline-flex justify-center rounded-lg px-5 py-3 font-semibold transition backdrop-blur-sm border"
-                style={{
-                  background: "var(--btn-ghost-bg)",
-                  color: "var(--btn-ghost-text)",
-                  borderColor: "var(--btn-ghost-border)",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background =
-                    "var(--btn-ghost-hover-bg)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "var(--btn-ghost-bg)")
-                }
+                className="inline-flex justify-center rounded-lg px-5 py-3 font-semibold transition
+              backdrop-blur-sm border
+              bg-[var(--btn-ghost-bg)] hover:bg-[var(--btn-ghost-hover-bg)]
+              text-[var(--btn-ghost-text)] border-[var(--btn-ghost-border)]"
               >
                 Start a Project
               </a>
