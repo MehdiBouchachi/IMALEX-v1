@@ -186,7 +186,10 @@ function ServiceTile({ title, line, icon: Icon, image, bullets = [], cta }) {
         {image ? (
           <Image
             src={image}
-            alt=""
+            alt={title}
+            placeholder="blur" // built-in LQIP
+            quality={50} // jpeg/webp quality (0–100)
+            loading="lazy"
             fill
             className="object-cover opacity-90 group-hover:opacity-100 transition"
             sizes="(max-width:1024px) 100vw, 33vw"

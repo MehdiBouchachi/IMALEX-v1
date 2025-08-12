@@ -111,7 +111,11 @@ export default function Process() {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative pb-32 md:pb-40">
+    <section
+      ref={containerRef}
+      id="process"
+      className="relative pb-32 md:pb-40"
+    >
       {/* ambient overlay */}
       <div
         aria-hidden
