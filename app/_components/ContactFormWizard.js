@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 
-/* ===== Contact Form Wizard — tokenized, pixel-match old ===== */
+/* ===== Contact Form Wizard , pixel-match old ===== */
 export default function ContactFormWizard() {
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);

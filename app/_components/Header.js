@@ -174,7 +174,7 @@ export default function Header() {
   );
 }
 
-/* -------- Theme toggle (keeps html.classList('dark') to flip vars) -------- */
+/* -------- Theme toggle  -------- */
 function ThemeToggle() {
   const [mode, setMode] = useState("system");
   const mediaRef = useRef(null);
