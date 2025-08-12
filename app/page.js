@@ -1,4 +1,4 @@
-// app/page.js  (Server Component now — SSR/streaming by default)
+"use client";
 import labShot from "@/public/lab-shot.jpg";
 import Process from "./_components/Process";
 import ServicesGrid from "./_components/ServicesGrid";

@@ -8,7 +8,7 @@ export default function Error({ error, reset }) {
 
       <button
         onClick={reset}
-        className="inline-block bg-accent-500 text-primary-800 px-6 py-3 text-lg"
+        className="inline-block bg-cta-500 text-primary-800 px-6 py-3 text-lg"
       >
         Try again
       </button>
