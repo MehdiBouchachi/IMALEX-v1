@@ -187,7 +187,6 @@ function ServiceTile({ title, line, icon: Icon, image, bullets = [], cta }) {
           <Image
             src={image}
             alt={title}
-            placeholder="blur" // built-in LQIP
             quality={50} // jpeg/webp quality (0–100)
             loading="lazy"
             fill

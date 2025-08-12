@@ -170,7 +170,6 @@ function AboutImalex({ imageSrc = "/lab-shot.jpg" }) {
                 src={imageSrc}
                 alt="IMALEX lab — natural formulation"
                 fill
-                placeholder="blur" // built-in LQIP
                 quality={60} // jpeg/webp quality (0–100)
                 loading="lazy"
                 className="object-cover"

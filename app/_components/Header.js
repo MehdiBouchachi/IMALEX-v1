@@ -134,12 +134,14 @@ export default function Header() {
                   >
                     {label}
                     <span
+                      aria-hidden
                       className={[
-                        "absolute -bottom-1 left-0 h-[2px] w-full rounded transition-opacity",
-                        "bg-[var(--brand-600)]",
-                        isActive ? "opacity-100" : "opacity-0",
+                        "absolute -bottom-1 left-0 h-[2px] w-full rounded bg-[var(--brand-600)]",
+                        "origin-left transition-[opacity,transform] duration-300",
+                        isActive
+                          ? "opacity-100 scale-x-100"
+                          : "opacity-0 scale-x-0",
                       ].join(" ")}
-                      aria-hidden="true"
                     />
                   </a>
                 </li>
