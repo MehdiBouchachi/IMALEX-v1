@@ -1,95 +1,156 @@
-// app/_components/Hero.js
-import Link from "next/link";
+"use client";
 import { useMemo } from "react";
 
-export default function Hero() {
+function Hero() {
   return (
-    <section
-      id="hero"
-      className="relative min-h-[100svh] flex items-center justify-center overflow-hidden text-center"
-    >
-      {/* Base gradient */}
+    <section id="hero" className="relative min-h-[100svh] overflow-hidden">
+      {/* Background layers from tokens */}
       <div
         aria-hidden="true"
         className="absolute inset-0"
         style={{
-          background:
-            "radial-gradient(1200px 600px at 85% -10%, rgba(20,184,166,0.18) 0%, rgba(20,184,166,0) 60%), linear-gradient(180deg, #F7FFFB 0%, #E9FFF6 30%, #DDF8EB 55%, #D1FAE5 100%)",
+          background: `
+            linear-gradient(
+              to bottom,
+              var(--hero-top) 0%,
+              var(--hero-mid) 40%,
+              var(--hero-bot) 100%
+            )
+          `,
         }}
       />
-      {/* Soft vignette + ultra-light texture */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(1100px_300px_at_center_108%,rgba(15,118,110,0.07),transparent)]" />
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.05] mix-blend-multiply"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(900px 400px at 20% 20%, var(--glow-a), transparent)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(800px 400px at 80% 60%, var(--glow-b), transparent)",
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-overlay"
         style={{
           backgroundImage:
-            "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22 viewBox=%220 0 160 160%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%22160%22 height=%22160%22 filter=%22url(%23n)%22 opacity=%220.7%22/></svg>')",
+            "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22 viewBox=%220 0 160 160%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.75%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%22160%22 height=%22160%22 filter=%22url(%23n)%22 opacity=%220.5%22/></svg>')",
         }}
       />
 
-      {/* Static, seamless waves (kept below dots) */}
-      <StaticWave
-        tone="teal"
-        className="top-[10%] h-[115px] opacity-35 z-[5]"
-      />
-      <StaticWave
-        tone="emerald"
-        className="top-[26%] h-[135px] opacity-30 z-[5]"
-      />
-      <StaticWave
-        tone="mint"
-        className="top-[42%] h-[125px] opacity-25 z-[5]"
-      />
-
-      {/* Floating dots overlay – above everything visual */}
-      <DotsOverlay count={50} />
+      {/* Waves & dots */}
+      <Wave tone="moss" className="top-[12%] h-[110px] opacity-35 z-[5]" />
+      <Wave tone="mint" className="top-[28%] h-[130px] opacity-30 z-[5]" />
+      <Wave tone="sage" className="top-[44%] h-[120px] opacity-25 z-[5]" />
+      <DotsOverlay count={42} />
 
       {/* Content */}
-      <div className="relative z-[60] mx-auto w-full max-w-5xl px-6">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900">
-          Science & Nature in Perfect Balance
-        </h1>
+      <div className="relative z-[60] mx-auto max-w-5xl px-6">
+        <div className="min-h-[100svh] grid place-items-center text-center pt-16">
+          <div className="max-w-2xl mx-auto">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[var(--text-primary)] drop-shadow-sm">
+              Science & Nature in Perfect Balance
+            </h1>
+            <p className="mt-6 text-base sm:text-lg leading-relaxed text-[var(--text-secondary)]">
+              Bespoke scientific formulation services — from research &
+              prototypes to regulatory dossiers and scale-up for cosmetics,
+              nutraceuticals, biofertilizers, animal nutrition, and agri-food.
+            </p>
 
-        <p className="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-slate-700">
-          Bespoke scientific formulation services — from research & prototypes
-          to regulatory dossiers and scale-up for cosmetics, nutraceuticals,
-          biofertilizers, animal nutrition, and agri-food.
-        </p>
+            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="#contact"
+                className="rounded-lg px-7 py-4 font-semibold text-white transition shadow-md"
+                style={{
+                  background: "var(--cta-700)",
+                  boxShadow:
+                    "0 10px 24px rgba(0,0,0,0.12), 0 8px 18px var(--ring-pulse)",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "var(--cta-800)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "var(--cta-700)")
+                }
+              >
+                Request a Quote
+              </a>
+              <a
+                href="#services"
+                className="rounded-lg px-7 py-4 font-semibold backdrop-blur-sm transition"
+                style={{
+                  background: "var(--btn-ghost-bg)",
+                  color: "var(--btn-ghost-text)",
+                  border: "1px solid var(--btn-ghost-border)",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background =
+                    "var(--btn-ghost-hover-bg)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "var(--btn-ghost-bg)")
+                }
+              >
+                Discover Our Services
+              </a>
+            </div>
 
-        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/#contact"
-            className="rounded-lg bg-teal-500 px-7 py-4 text-white font-semibold shadow-sm hover:bg-teal-600 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-teal-300/50 transition"
-          >
-            Request a Quote
-          </Link>
-          <Link
-            href="/#services"
-            className="rounded-lg border border-emerald-700/20 bg-white/70 px-7 py-4 text-emerald-800 font-semibold hover:bg-white/90 backdrop-blur-sm transition"
-          >
-            Discover Our Services
-          </Link>
-        </div>
-
-        <div className="mt-12 text-xs uppercase tracking-wider text-slate-500">
-          Trusted by innovators in clean beauty, nutrition & sustainable
-          agriculture
+            <div
+              className="mt-12 text-xs uppercase tracking-wider"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              Trusted by innovators in clean beauty, nutrition & sustainable
+              agriculture
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Bottom fade kept UNDER dots */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-white/85 z-[10]" />
+      {/* Bottom fade */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 z-[10]"
+        style={{
+          background:
+            "linear-gradient(to bottom, transparent, var(--hero-bot))",
+        }}
+      />
     </section>
   );
 }
 
-/* ======== Static Seamless Waves ======== */
-function StaticWave({ className = "", tone = "teal" }) {
-  const grad = {
-    teal: { from: "#4fd1c5", to: "#16a394" },
-    emerald: { from: "#6ee7b7", to: "#059669" },
-    mint: { from: "#a7f3d0", to: "#34d399" },
-  }[tone] || { from: "#6ee7b7", to: "#059669" };
+/* ===================== WAVES & DOTS ===================== */
+
+// Map wave tones to brand tokens
+function Wave({ className = "", tone = "moss" }) {
+  // Read CSS vars once so waves follow brand automatically
+  const stops = useMemo(() => {
+    const css =
+      typeof window !== "undefined"
+        ? getComputedStyle(document.documentElement)
+        : null;
+    const pick = (v, fallback) =>
+      css ? css.getPropertyValue(v).trim() || fallback : fallback;
+
+    const fromTo = {
+      moss: {
+        from: pick("--brand-300", "#9ED7BD"),
+        to: pick("--brand-700", "#3C8B63"),
+      },
+      mint: {
+        from: pick("--brand-200", "#CDEFE0"),
+        to: pick("--brand-500", "#57A87A"),
+      },
+      sage: {
+        from: pick("--brand-400", "#7FCFA7"),
+        to: pick("--brand-600", "#4FA37D"),
+      },
+    };
+
+    return fromTo[tone] || fromTo.moss;
+  }, [tone]);
 
   return (
     <div className={`pointer-events-none absolute inset-x-0 ${className}`}>
@@ -107,19 +168,19 @@ function StaticWave({ className = "", tone = "teal" }) {
             x2="2880"
             y2="0"
           >
-            <stop offset="0" stopColor={grad.from} />
-            <stop offset="1" stopColor={grad.to} />
+            <stop offset="0" stopColor={stops.from} />
+            <stop offset="1" stopColor={stops.to} />
           </linearGradient>
         </defs>
-
         <g
           stroke={`url(#strokeGrad-${tone})`}
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="opacity-90"
         >
           {waveSet(0)}
-          {waveSet(1439.5)} {/* slight overlap kills any seam */}
+          {waveSet(1439.5)}
         </g>
       </svg>
     </div>
@@ -145,27 +206,59 @@ function StaticWave({ className = "", tone = "teal" }) {
   }
 }
 
-/* ======== Floating Dots Overlay (fixed clipping & layering) ======== */
-function DotsOverlay({ count = 50 }) {
-  // Precompute dots so SSR==CSR
+function DotsOverlay({ count = 42 }) {
   const dots = useMemo(() => {
-    const palette = [
-      "rgba(20,184,166,0.90)", // teal-500
-      "rgba(16,185,129,0.90)", // emerald-500
-      "rgba(52,211,153,0.90)", // emerald-400
-      "rgba(79,209,197,0.90)", // teal-300
+    const css =
+      typeof window !== "undefined"
+        ? getComputedStyle(document.documentElement)
+        : null;
+
+    // helper to turn hex -> rgba with alpha
+    const hexToRgba = (hex, a = 1) => {
+      const h = hex.replace("#", "");
+      const b =
+        h.length === 3
+          ? h
+              .split("")
+              .map((x) => x + x)
+              .join("")
+          : h;
+      const r = parseInt(b.slice(0, 2), 16);
+      const g = parseInt(b.slice(2, 4), 16);
+      const bl = parseInt(b.slice(4, 6), 16);
+      return `rgba(${r},${g},${bl},${a})`;
+    };
+
+    const b700 = css?.getPropertyValue("--brand-700").trim() || "#3C8B63";
+    const b500 = css?.getPropertyValue("--brand-500").trim() || "#57A87A";
+    const b300 = css?.getPropertyValue("--brand-300").trim() || "#9ED7BD";
+    const b200 = css?.getPropertyValue("--brand-200").trim() || "#CDEFE0";
+
+    const light = [
+      hexToRgba(b700, 0.85),
+      hexToRgba(b500, 0.85),
+      hexToRgba(b300, 0.85),
+      hexToRgba(b200, 0.85),
     ];
-    const arr = [];
-    for (let i = 0; i < count; i++) {
-      const size = Math.round(Math.random() * 12) + 6; // 6–18px
-      const left = Math.random() * 100; // %
-      const startYOffset = 10 + Math.random() * 30; // 10–40vh (enters sooner, not half-cut)
-      const rise = 12 + Math.random() * 12; // 12–24s
-      const delay = Math.random() * 10; // 0–10s
-      const swayDur = 5 + Math.random() * 6; // 5–11s
-      const swayAmplitude = 10 + Math.random() * 16; // 10–26px
+
+    const neon = [hexToRgba(b300, 0.95), hexToRgba(b500, 0.95)];
+
+    const isDark =
+      typeof window !== "undefined" &&
+      document.documentElement.classList.contains("dark");
+    const palette = isDark ? neon : light;
+
+    return Array.from({ length: count }).map((_, i) => {
+      const size = Math.round(Math.random() * 12) + 6;
+      const left = Math.random() * 100;
+      const startYOffset = 10 + Math.random() * 30;
+      const rise = 12 + Math.random() * 12;
+      const delay = Math.random() * 10;
+      const swayDur = 5 + Math.random() * 6;
+      const swayAmplitude = 10 + Math.random() * 16;
       const color = palette[Math.floor(Math.random() * palette.length)];
-      arr.push({
+      const blur = Math.random() < 0.35 ? 4 : 0;
+      return {
         id: i,
         size,
         left,
@@ -175,10 +268,9 @@ function DotsOverlay({ count = 50 }) {
         swayDur,
         swayAmplitude,
         color,
-        blur: Math.random() < 0.35 ? 4 : 0, // some out-of-focus
-      });
-    }
-    return arr;
+        blur,
+      };
+    });
   }, [count]);
 
   return (
@@ -186,7 +278,7 @@ function DotsOverlay({ count = 50 }) {
       {dots.map((d) => (
         <span
           key={d.id}
-          className="absolute rounded-full dot-float"
+          className="absolute rounded-full"
           style={{
             width: d.size,
             height: d.size,
@@ -194,10 +286,7 @@ function DotsOverlay({ count = 50 }) {
             bottom: `-${d.startYOffset}vh`,
             backgroundColor: d.color,
             filter: d.blur ? `blur(${d.blur}px)` : "none",
-            boxShadow: `0 0 ${Math.max(
-              10,
-              d.size * 2.2
-            )}px rgba(20,184,166,0.30)`,
+            boxShadow: `0 0 ${Math.max(10, d.size * 2.2)}px var(--effect-dot)`,
             animation: `
               floatRise ${d.rise}s linear ${d.delay}s infinite,
               sway ${d.swayDur}s ease-in-out ${Math.random() * 6}s infinite
@@ -210,3 +299,5 @@ function DotsOverlay({ count = 50 }) {
     </div>
   );
 }
+
+export default Hero;

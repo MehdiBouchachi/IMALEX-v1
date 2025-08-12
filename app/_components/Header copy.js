@@ -1,3 +1,4 @@
+// app/_components/Header.js
 "use client";
 
 import Link from "next/link";
@@ -10,12 +11,16 @@ export default function Header() {
   const lastY = useRef(0);
   const headerH = 64; // h-16
 
+  // decide when header should be solid vs transparent
   const computeSolid = () => {
     const y = typeof window !== "undefined" ? window.scrollY || 0 : 0;
     if (y <= 1) return false;
+
     const hero = document.getElementById("hero");
     if (!hero) return y > headerH;
+
     const rect = hero.getBoundingClientRect();
+    // solid only when hero's bottom is at/above the header height
     return rect.bottom <= headerH;
   };
 
@@ -41,6 +46,7 @@ export default function Header() {
     };
   }, []);
 
+  // keep header in sync if theme toggles while at top
   useEffect(() => {
     const obs = new MutationObserver(() => setSolid(computeSolid()));
     obs.observe(document.documentElement, {
@@ -50,6 +56,7 @@ export default function Header() {
     return () => obs.disconnect();
   }, []);
 
+  // active link highlight
   const sections = useMemo(
     () => [
       ["About", "#about"],
@@ -84,32 +91,31 @@ export default function Header() {
   return (
     <header
       className={[
+        // FIXED so hero sits behind it (true transparency on top)
         "fixed inset-x-0 top-0 z-[100] will-change-transform",
         "transition-[transform,background-color,backdrop-filter,border-color] duration-300",
         hidden ? "-translate-y-full" : "translate-y-0",
         solid
-          ? // solid: blur + tinted surface + subtle border (all from vars)
-            "supports-[backdrop-filter]:backdrop-blur-md bg-[var(--surface-1)] border-b border-[var(--border-subtle)]"
-          : "bg-transparent border-transparent",
+          ? // solid state: blur + tint + subtle border
+            "supports-[backdrop-filter]:backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-black/5 dark:border-white/10"
+          : // transparent over hero (no blur, no border, truly see the hero)
+            "bg-transparent border-transparent",
       ].join(" ")}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="#"
-          className="flex items-center gap-3 focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)] rounded-lg"
+          className="flex items-center gap-3 focus:outline-none focus-visible:ring-4 focus-visible:ring-green-300/35 rounded-lg"
         >
-          <div
-            className="h-9 w-9 rounded-full grid place-items-center font-bold text-white"
-            style={{ background: "var(--cta-700)" }}
-          >
+          <div className="h-9 w-9 rounded-full bg-green-700 text-white grid place-items-center font-bold">
             I
           </div>
           <div className="leading-tight">
-            <div className="font-semibold tracking-tight text-[var(--text-primary)]">
+            <div className="font-semibold tracking-tight text-slate-900 dark:text-slate-100">
               IMALEX
             </div>
-            <div className="text-xs text-[var(--text-secondary)]">
+            <div className="text-xs text-slate-500 dark:text-slate-400">
               Natural Formulation Lab
             </div>
           </div>
@@ -120,23 +126,23 @@ export default function Header() {
           <ul className="flex gap-8 text-sm">
             {sections.map(([label, href]) => {
               const isActive = active === href;
-
               return (
                 <li key={href}>
                   <a
                     href={href}
                     className={[
                       "relative rounded px-1 transition-colors",
-                      "text-[var(--text-secondary)] hover:text-[var(--brand-700)]",
-                      isActive ? "text-[var(--brand-700)]" : "",
-                      "focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)]",
+                      "text-slate-700 dark:text-slate-200",
+                      "hover:text-green-700 dark:hover:text-green-300",
+                      isActive ? "text-green-700 dark:text-green-300" : "",
+                      "focus:outline-none focus-visible:ring-4 focus-visible:ring-green-300/35",
                     ].join(" ")}
                   >
                     {label}
                     <span
                       className={[
                         "absolute -bottom-1 left-0 h-[2px] w-full rounded transition-opacity",
-                        "bg-[var(--brand-600)]",
+                        "bg-green-600/70 dark:bg-green-300/70",
                         isActive ? "opacity-100" : "opacity-0",
                       ].join(" ")}
                       aria-hidden="true"
@@ -152,16 +158,7 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <a
             href="#contact"
-            className="hidden sm:inline-flex items-center rounded-lg px-4 py-2 text-white text-sm font-semibold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)]"
-            style={{
-              background: "var(--cta-700)",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.background = "var(--cta-800)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.background = "var(--cta-700)")
-            }
+            className="hidden sm:inline-flex items-center rounded-lg bg-green-700 px-4 py-2 text-white text-sm font-semibold hover:bg-green-800 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-green-300/35"
           >
             Request a Quote
           </a>
@@ -173,32 +170,19 @@ export default function Header() {
   );
 }
 
-/* -------- Theme toggle (keeps html.classList('dark') to flip vars) -------- */
+/* -------- Theme toggle -------- */
 function ThemeToggle() {
   const [mode, setMode] = useState("system");
   const mediaRef = useRef(null);
 
   const apply = (m) => {
     const root = document.documentElement;
-    // trigger smooth transition
-    root.classList.add("theme-animating");
     const systemDark =
       window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches;
     const isDark = m === "dark" || (m === "system" && systemDark);
     root.classList.toggle("dark", isDark);
     root.dataset.theme = m;
-    root.classList.add("theme-animating");
-    requestAnimationFrame(() => {
-      // ensure transitions kick in
-      const systemDark =
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const isDark = m === "dark" || (m === "system" && systemDark);
-      root.classList.toggle("dark", isDark);
-      root.dataset.theme = m;
-      setTimeout(() => root.classList.remove("theme-animating"), 320);
-    });
   };
 
   useEffect(() => {
@@ -245,10 +229,9 @@ function ThemeToggle() {
       onClick={cycle}
       aria-label={`Toggle theme (${label})`}
       title={label}
-      className="ml-1 rounded-full p-2 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)] border bg-[var(--surface-1)]"
-      style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
+      className="ml-1 rounded-full border border-slate-300/70 dark:border-slate-700/70 p-2 bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-green-300/35"
     >
-      <Icon className="h-5 w-5" />
+      <Icon className="h-5 w-5 text-slate-700 dark:text-slate-200" />
     </button>
   );
 }
@@ -257,7 +240,6 @@ function ThemeToggle() {
 function MobileMenu({ sections }) {
   const [open, setOpen] = useState(false);
 
-  // lock page scroll when open
   useEffect(() => {
     if (!open) return;
     const prev = document.documentElement.style.overflow;
@@ -267,14 +249,12 @@ function MobileMenu({ sections }) {
     };
   }, [open]);
 
-  // close on nav hash change
   useEffect(() => {
     const close = () => setOpen(false);
     window.addEventListener("hashchange", close);
     return () => window.removeEventListener("hashchange", close);
   }, []);
 
-  // esc to close
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
@@ -285,16 +265,18 @@ function MobileMenu({ sections }) {
     <>
       <button
         onClick={() => setOpen((s) => !s)}
-        className="md:hidden inline-flex items-center justify-center rounded-lg p-2 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)] border bg-[var(--surface-1)]"
-        style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
+        className="md:hidden inline-flex items-center justify-center rounded-lg border border-slate-300/70 dark:border-slate-700/70 p-2 bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-green-300/35"
         aria-expanded={open}
         aria-controls="mobile-overlay"
         aria-label={open ? "Close menu" : "Open menu"}
       >
-        {open ? <FiX className="h-5 w-5" /> : <FiMenu className="h-5 w-5" />}
+        {open ? (
+          <FiX className="h-5 w-5 text-slate-700 dark:text-slate-200" />
+        ) : (
+          <FiMenu className="h-5 w-5 text-slate-700 dark:text-slate-200" />
+        )}
       </button>
 
-      {/* Fullscreen overlay */}
       <div
         id="mobile-overlay"
         className={[
@@ -304,52 +286,34 @@ function MobileMenu({ sections }) {
             : "opacity-0 pointer-events-none",
         ].join(" ")}
       >
-        {/* Scrim: solid token with fallback, blocks clicks to page */}
         <div
-          className="absolute inset-0"
-          style={{
-            background: "var(--overlay-70, rgba(0,0,0,0.48))",
-            backdropFilter: "blur(6px)",
-            WebkitBackdropFilter: "blur(6px)",
-          }}
+          className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md"
           onClick={() => setOpen(false)}
           aria-hidden="true"
         />
 
-        {/* Top sheet: SOLID surface so content underneath never shows through */}
         <div
           className={[
             "absolute inset-x-0 top-0 rounded-b-2xl shadow-lg",
+            "bg-white/95 dark:bg-slate-900/95 border-b border-black/5 dark:border-white/10",
             "transition-transform duration-300",
             open ? "translate-y-0" : "-translate-y-full",
           ].join(" ")}
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
-          style={{
-            background: "var(--surface-0)", // solid
-            borderBottom: "1px solid var(--border)",
-            color: "var(--text-primary)",
-          }}
         >
           <div className="px-6 pt-4 pb-2 flex items-center justify-between">
-            <div
-              className="text-sm font-semibold"
-              style={{ color: "var(--text-secondary)" }}
-            >
+            <div className="text-sm font-semibold text-slate-700 dark:text-slate-200">
               Menu
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="inline-flex items-center justify-center rounded-lg p-2 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)] border bg-[var(--surface-1)]"
-              style={{
-                borderColor: "var(--border)",
-                color: "var(--text-secondary)",
-              }}
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300/70 dark:border-slate-700/70 p-2 bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-green-300/35"
               aria-label="Close menu"
               title="Close"
             >
-              <FiX className="h-5 w-5" />
+              <FiX className="h-5 w-5 text-slate-700 dark:text-slate-200" />
             </button>
           </div>
 
@@ -360,14 +324,7 @@ function MobileMenu({ sections }) {
                   <a
                     href={href}
                     onClick={() => setOpen(false)}
-                    className="block rounded px-3 py-2 transition"
-                    style={{ color: "var(--text-primary)" }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = "var(--brand-100)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.background = "transparent")
-                    }
+                    className="block rounded px-3 py-2 text-slate-800 dark:text-slate-100 hover:bg-green-50 dark:hover:bg-white/10 transition"
                   >
                     {label}
                   </a>
@@ -379,23 +336,13 @@ function MobileMenu({ sections }) {
               <a
                 href="#contact"
                 onClick={() => setOpen(false)}
-                className="block text-center rounded-lg px-4 py-2 font-semibold transition"
-                style={{ background: "var(--cta-700)", color: "#fff" }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "var(--cta-800)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "var(--cta-700)")
-                }
+                className="block text-center rounded-lg bg-green-700 px-4 py-2 text-white font-semibold hover:bg-green-800 transition"
               >
                 Request a Quote
               </a>
             </div>
 
-            <div
-              className="mt-3 text-center text-xs"
-              style={{ color: "var(--text-secondary)" }}
-            >
+            <div className="mt-3 text-center text-xs text-slate-500 dark:text-slate-400">
               IMALEX — Natural Formulation Lab
             </div>
           </div>

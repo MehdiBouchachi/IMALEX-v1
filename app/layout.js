@@ -1,7 +1,6 @@
 import "@/app/_styles/globals.css";
 import Header from "@/app/_components/Header";
 import { Josefin_Sans } from "next/font/google";
-import { ReservationProvider } from "./_components/ReservationContext";
 
 const josefin = Josefin_Sans({
   subsets: ["latin"],
@@ -19,16 +18,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+ 
+    <html lang="en" className="scroll-smooth">
       <body
-        className={`${josefin.className} antialiased min-h-screen flex flex-col text-slate-900 scroll-smooth bg-white  dark:bg-slate-900 dark:text-white selection:bg-teal-300/40`}
+        className={[
+          josefin.className,
+          "antialiased min-h-screen flex flex-col",
+          // token-based colors; flip via :root / html.dark in globals.css
+          "bg-[var(--surface-0)] text-[var(--text-primary)]",
+          // selection uses brand token (works in both modes)
+          "selection:bg-[rgba(127,207,167,0.35)] ",
+        ].join(" ")}
       >
         <Header />
-
-        {/* Full-bleed main — pages control their own containers */}
-        <main className="flex-1">
-          <ReservationProvider>{children}</ReservationProvider>
-        </main>
+        <main className="flex-1">{children}</main>
       </body>
     </html>
   );

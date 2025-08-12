@@ -15,6 +15,8 @@ export default function WhyUsFlask() {
       typeof window !== "undefined" &&
       window.matchMedia("(min-width: 1024px)").matches; // md+
     const mem = typeof navigator !== "undefined" ? navigator.deviceMemory : 8; // guess 8 if unknown
+
+    // Full FX only on md+ screens, no reduced motion, and decent memory
     const enableFull = mqWidth && !mqMotion && (mem || 0) >= 4;
     setIsLite(!enableFull);
   }, []);
@@ -59,11 +61,11 @@ export default function WhyUsFlask() {
     <section
       id="why"
       className="relative isolate overflow-hidden py-20 sm:py-28
-                 bg-[radial-gradient(1200px_520px_at_50%_-10%,var(--effect-glow-a),transparent),linear-gradient(to_bottom,var(--hero-top),var(--hero-mid),var(--hero-bot))] 
-                 dark:bg-[radial-gradient(1200px_520px_at_50%_-10%,var(--effect-glow-b),transparent),linear-gradient(to_bottom,var(--hero-top),var(--hero-mid),var(--hero-bot))]"
+                 bg-[radial-gradient(1200px_520px_at_50%_-10%,rgba(60,139,99,0.10),transparent),linear-gradient(to_bottom,#f7fdfa,#ecf8f4)]
+                 dark:bg-[radial-gradient(1200px_520px_at_50%_-10%,rgba(60,139,99,0.22),transparent),linear-gradient(to_bottom,#0b1a1c,#071012)]"
       data-lite={isLite ? "1" : "0"}
     >
-      {/* scoped keyframes */}
+      {/* scoped keyframes, with reduced-motion safety */}
       <style jsx>{`
         @media (prefers-reduced-motion: reduce) {
           [data-lite="0"] .anim-float,
@@ -99,7 +101,7 @@ export default function WhyUsFlask() {
         }
       `}</style>
 
-      {/* ambient rays */}
+      {/* ambient rays (pure CSS, zero SVG filter cost) */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 [contain:paint]"
@@ -107,25 +109,25 @@ export default function WhyUsFlask() {
         <div className="absolute inset-0 opacity-60 dark:opacity-40 [mask-image:radial-gradient(60%_50%_at_50%_10%,black,transparent)]">
           <div
             className={`absolute -top-16 left-1/2 -translate-x-1/2 h-[520px] w-[900px] rotate-[8deg] 
-                        bg-[conic-gradient(from_210deg,var(--effect-glow-a),transparent_35%)]
+                        bg-[conic-gradient(from_210deg,rgba(60,139,99,0.12),transparent_35%)]
                         ${isLite ? "" : "anim-tilt"}`}
             style={{
               animation: isLite ? "none" : "tilt8s 8s ease-in-out infinite",
             }}
           />
         </div>
-        <div className="absolute inset-0 [background:radial-gradient(700px_300px_at_18%_18%,var(--effect-glow-a),transparent),radial-gradient(680px_320px_at_82%_62%,var(--effect-glow-b),transparent)]" />
+        <div className="absolute inset-0 [background:radial-gradient(700px_300px_at_18%_18%,rgba(60,139,99,.10),transparent),radial-gradient(680px_320px_at_82%_62%,rgba(127,207,167,.10),transparent)] dark:[background:radial-gradient(880px_360px_at_18%_18%,rgba(60,139,99,.18),transparent),radial-gradient(820px_360px_at_82%_62%,rgba(127,207,167,.18),transparent)]" />
       </div>
 
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center max-w-3xl mx-auto">
-          <div className="text-xs font-semibold uppercase tracking-wider text-[var(--brand-700)] dark:text-[var(--brand-800)]">
+          <div className="text-xs font-semibold uppercase tracking-wider text-[rgb(60,139,99)] dark:text-[rgb(127,207,167)]">
             Why IMALEX
           </div>
-          <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-primary)]">
+          <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             Science, Nature &amp; Accountability
           </h2>
-          <p className="mt-4 text-[var(--text-secondary)]">
+          <p className="mt-4 text-slate-700 dark:text-slate-300/90">
             We fuse green chemistry with rigorous validation to create products
             that are effective, compliant and scalable — without compromising
             sustainability.
@@ -133,27 +135,24 @@ export default function WhyUsFlask() {
         </div>
 
         <div className="mt-12 relative">
-          {/* Mobile grid */}
+          {/* Mobile grid — static, featherlight */}
           <ul className="grid gap-5 sm:grid-cols-2 md:hidden">
             {items.map(({ title, desc, icon: Icon }) => (
               <li
                 key={title}
-                className="relative rounded-2xl border border-[var(--tile-border)] bg-[var(--surface-1)] backdrop-blur-sm p-5 
-                           shadow-[0_10px_28px_-10px_var(--effect-glow-a)] dark:shadow-[0_12px_32px_-10px_var(--effect-glow-b)]"
+                className="relative rounded-2xl border border-slate-200 bg-white/95 backdrop-blur-sm p-5 shadow-[0_10px_28px_-10px_rgba(60,139,99,0.20)]
+                           dark:border-white/10 dark:bg-white/5 dark:shadow-[0_12px_32px_-10px_rgba(60,139,99,.22)]"
               >
                 <Halo />
                 <div className="relative flex items-start gap-3">
-                  <span
-                    className="grid h-10 w-10 place-items-center rounded-xl border border-[var(--tile-icon-border)] 
-                                   bg-[var(--tile-icon-bg)] text-[var(--brand-700)] dark:bg-[var(--tile-icon-bg-dark)] dark:text-[var(--brand-800)]"
-                  >
+                  <span className="grid h-10 w-10 place-items-center rounded-xl border border-[rgba(60,139,99,0.30)] bg-[rgba(127,207,167,0.12)] text-[rgb(79,163,125)] dark:text-[rgb(127,207,167)]">
                     <Icon />
                   </span>
                   <div>
-                    <h3 className="font-semibold leading-snug text-[var(--text-primary)]">
+                    <h3 className="font-semibold text-slate-900 dark:text-white leading-snug">
                       {title}
                     </h3>
-                    <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                       {desc}
                     </p>
                   </div>
@@ -164,6 +163,7 @@ export default function WhyUsFlask() {
 
           {/* Desktop scene */}
           <div className="hidden md:block relative mx-auto max-w-5xl">
+            {/* Flask cluster */}
             <div
               className={`relative mx-auto w-[560px] max-w-full will-change-transform [contain:paint] ${
                 isLite ? "" : "anim-float"
@@ -173,14 +173,21 @@ export default function WhyUsFlask() {
               }}
             >
               <FlaskSVG />
+
+              {/* Effects: expensive ones disabled in lite */}
               {isLite ? (
-                <MeniscusShineLite />
+                <>
+                  <MeniscusShineLite />
+                </>
               ) : (
                 <>
+                  {/* NEW liquid stack */}
                   <ConvectionFlow />
                   <LiquidSurface />
                   <FoamRim />
                   <DriftParticles />
+
+                  {/* existing optional shimmer */}
                   <LiquidWaves />
                   <MicroBubbles />
                   <Sparkles />
@@ -190,14 +197,17 @@ export default function WhyUsFlask() {
               )}
             </div>
 
+            {/* Connectors — lightweight gradient strokes; animate only when not lite */}
             <ConnectorsSVG animate={!isLite} />
 
+            {/* Static junction pulses (tiny) */}
             <Junction x="400" y="90" />
             <Junction x="330" y="110" />
             <Junction x="470" y="110" />
             <Junction x="320" y="370" />
             <Junction x="480" y="370" />
 
+            {/* orbiting badges */}
             {items.map((it) => (
               <Badge key={it.title} {...it} />
             ))}
@@ -222,24 +232,21 @@ function Badge({ title, desc, icon: Icon, spot }) {
   return (
     <div className={`absolute z-10 ${pos} w-[260px] max-w-[42vw]`}>
       <div
-        className="relative group rounded-2xl border border-[var(--tile-border)] bg-[var(--surface-1)]/95 backdrop-blur-md p-4
-                   shadow-[0_10px_28px_-10px_var(--effect-glow-a)]
-                   dark:shadow-[0_14px_34px_-12px_var(--effect-glow-b)]
+        className="relative group rounded-2xl border border-slate-200 bg-white/95 backdrop-blur-md p-4
+                   shadow-[0_10px_28px_-10px_rgba(60,139,99,0.20)]
+                   dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_14px_34px_-12px_rgba(60,139,99,.24)]
                    transition will-change-transform hover:-translate-y-0.5 [contain:paint]"
       >
         <Halo />
         <div className="relative flex items-start gap-3">
-          <span
-            className="grid h-10 w-10 flex-none place-items-center rounded-xl border border-[var(--tile-icon-border)] 
-                           bg-[var(--tile-icon-bg)] text-[var(--brand-700)] dark:bg-[var(--tile-icon-bg-dark)] dark:text-[var(--brand-800)]"
-          >
+          <span className="grid h-10 w-10 flex-none place-items-center rounded-xl border border-[rgba(60,139,99,0.25)] bg-[rgba(127,207,167,0.12)] text-[rgb(79,163,125)] dark:text-[rgb(127,207,167)]">
             <Icon />
           </span>
           <div>
-            <div className="font-semibold leading-tight text-[var(--text-primary)]">
+            <div className="font-semibold text-slate-900 dark:text-white leading-tight">
               {title}
             </div>
-            <div className="mt-1 text-sm text-[var(--text-secondary)]">
+            <div className="mt-1 text-sm text-slate-600 dark:text-slate-300">
               {desc}
             </div>
           </div>
@@ -248,12 +255,11 @@ function Badge({ title, desc, icon: Icon, spot }) {
     </div>
   );
 }
-
 function Halo() {
   return (
     <div
       aria-hidden
-      className="absolute -inset-0.5 rounded-[18px] bg-[radial-gradient(120px_60px_at_20%_20%,var(--effect-glow-a),transparent),radial-gradient(120px_60px_at_80%_80%,var(--effect-glow-b),transparent)] blur-[6px]"
+      className="absolute -inset-0.5 rounded-[18px] bg-[radial-gradient(120px_60px_at_20%_20%,rgba(60,139,99,.10),transparent),radial-gradient(120px_60px_at_80%_80%,rgba(127,207,167,.10),transparent)] blur-[6px]"
     />
   );
 }
@@ -266,14 +272,14 @@ function Junction({ x, y }) {
       viewBox="0 0 800 520"
       aria-hidden="true"
     >
-      <circle cx={x} cy={y} r="4.5" fill="var(--effect-dot)" />
+      <circle cx={x} cy={y} r="4.5" fill="rgba(60,139,99,0.95)" />
       <circle
         cx={x}
         cy={y}
         r="4.5"
         className="motion-safe:animate-ping"
         style={{ animationDuration: "2.4s" }}
-        fill="var(--effect-wire-end)"
+        fill="rgba(127,207,167,0.35)"
       />
     </svg>
   );
@@ -300,8 +306,8 @@ function ConnectorsSVG({ animate = true }) {
     >
       <defs>
         <linearGradient id="wire" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="var(--effect-wire-start)" />
-          <stop offset="1" stopColor="var(--effect-wire-end)" />
+          <stop stopColor="rgba(60,139,99,0.85)" offset="0" />
+          <stop stopColor="rgba(127,207,167,0.35)" offset="1" />
         </linearGradient>
         <filter id="glow">
           <feGaussianBlur stdDeviation="2" result="b" />
@@ -355,32 +361,32 @@ function FlaskSVG() {
 
       <defs>
         <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="white" stopOpacity="0.94" />
-          <stop offset="1" stopColor="white" stopOpacity="0.52" />
+          <stop offset="0" stopColor="rgba(255,255,255,0.94)" />
+          <stop offset="1" stopColor="rgba(255,255,255,0.52)" />
         </linearGradient>
         <linearGradient id="rimGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="white" stopOpacity="0.95" />
-          <stop offset="1" stopColor="white" stopOpacity="0.2" />
+          <stop offset="0" stopColor="rgba(255,255,255,0.95)" />
+          <stop offset="1" stopColor="rgba(255,255,255,0.2)" />
         </linearGradient>
         <linearGradient id="liquidGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="var(--brand-800)" />
-          <stop offset="1" stopColor="var(--brand-700)" />
+          <stop offset="0" stopColor="rgba(127,207,167,1)" />
+          <stop offset="1" stopColor="rgba(60,139,99,1)" />
         </linearGradient>
         <linearGradient id="liquidDepth" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="var(--brand-900)" stopOpacity="0.65" />
-          <stop offset="1" stopColor="var(--brand-800)" stopOpacity="0.85" />
+          <stop offset="0" stopColor="rgba(158,215,189,0.65)" />
+          <stop offset="1" stopColor="rgba(127,207,167,0.85)" />
         </linearGradient>
 
         <clipPath id="flaskClip">
           <path d={glassD} />
         </clipPath>
         <radialGradient id="baseShadow" cx="50%" cy="50%" r="50%">
-          <stop offset="0" stopColor="black" stopOpacity="0.6" />
-          <stop offset="1" stopColor="black" stopOpacity="0" />
+          <stop offset="0" stopColor="rgba(0,0,0,0.6)" />
+          <stop offset="1" stopColor="rgba(0,0,0,0)" />
         </radialGradient>
       </defs>
 
-      {/* base shadow */}
+      {/* base shadow (no blur filter — super cheap) */}
       <ellipse
         cx="280"
         cy="430"
@@ -388,32 +394,32 @@ function FlaskSVG() {
         ry="30"
         fill="url(#baseShadow)"
         opacity="0.26"
+        className="dark:opacity-38"
       />
 
       {/* glass body */}
       <path d={glassD} fill="url(#glassGrad)" opacity="0.20" />
-      {/* dual chroma edges */}
+      {/* dual chroma edges (no filters) */}
       <path
         d={glassD}
         fill="none"
-        stroke="var(--brand-700)"
+        stroke="rgba(60,139,99,0.38)"
         strokeWidth="5.5"
-        strokeOpacity="0.72"
+        opacity="0.72"
       />
       <path
         d={glassD}
         fill="none"
-        stroke="var(--brand-400)"
+        stroke="rgba(127,207,167,0.20)"
         strokeWidth="7"
-        strokeOpacity="0.45"
+        opacity="0.45"
       />
       {/* fine rim line */}
       <path
         d={glassD}
         fill="none"
-        stroke="white"
+        stroke="rgba(255,255,255,0.42)"
         strokeWidth="1.1"
-        strokeOpacity="0.42"
       />
 
       {/* liquid */}
@@ -429,20 +435,17 @@ function FlaskSVG() {
           />
           <path
             d="M280 315c-18-38-55-52-90-38 25 29 55 38 90 38z"
-            fill="var(--brand-900)"
-            fillOpacity="0.9"
+            fill="rgba(158,215,189,0.9)"
           />
           <path
             d="M280 315c18-38 55-52 90-38-25 29-55 38-90 38z"
-            fill="var(--brand-800)"
-            fillOpacity="0.98"
+            fill="rgba(127,207,167,0.98)"
           />
         </g>
-        {/* meniscus */}
+        {/* meniscus (kept as path — zero filters) */}
         <path
           d="M170 308 C 220 300, 340 300, 390 308 Q 280 314, 170 308 Z"
-          fill="white"
-          opacity="0.16"
+          fill="rgba(255,255,255,0.16)"
         />
       </g>
 
@@ -460,6 +463,221 @@ function FlaskSVG() {
   );
 }
 
+/* Lightweight meniscus sheen overlay (no filters) */
+function MeniscusShineLite() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 [contain:paint]"
+      style={{
+        background:
+          "linear-gradient(105deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.0) 35%, rgba(255,255,255,0.07) 60%, rgba(255,255,255,0.0) 85%)",
+        mask: "radial-gradient(60% 70% at 50% 60%, black 55%, transparent 70%)",
+        WebkitMask:
+          "radial-gradient(60% 70% at 50% 60%, black 55%, transparent 70%)",
+      }}
+    />
+  );
+}
+
+/* Animated liquid shimmer — only when not lite (uses 1 filter, small area) */
+function LiquidWaves() {
+  return (
+    <svg
+      viewBox="0 0 560 520"
+      className="pointer-events-none absolute inset-0 w-full h-full [contain:paint]"
+      aria-hidden="true"
+    >
+      <defs>
+        <filter id="ripples" x="-10%" y="-10%" width="120%" height="120%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.006 0.02"
+            numOctaves="2"
+            seed="5"
+          >
+            <animate
+              attributeName="baseFrequency"
+              dur="7s"
+              values="0.006 0.02;0.008 0.015;0.006 0.02"
+              repeatCount="indefinite"
+            />
+          </feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="turb" scale="8" />
+        </filter>
+        <clipPath id="liq-clip">
+          <path d="M210 60h140c6 0 10 5 10 11v12c0 6-4 11-10 11h-1l42 234c10 53-30 98-84 98h-54c-54 0-94-45-84-98l42-234h-1c-6 0-10-5-10-11V71c0-6 4-11 10-11z" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#liq-clip)" filter="url(#ripples)" opacity="0.26">
+        <rect x="150" y="185" width="260" height="165" fill="white" />
+      </g>
+    </svg>
+  );
+}
+
+/* Micro-bubbles — tiny, cheap; only when not lite */
+function MicroBubbles() {
+  const bubbles = [
+    { cx: 240, r: 2.2, d: 2.8, delay: 0 },
+    { cx: 260, r: 1.8, d: 3.2, delay: 0.4 },
+    { cx: 300, r: 2.2, d: 3.2, delay: 0.8 },
+    { cx: 320, r: 1.6, d: 3.0, delay: 1.2 },
+    { cx: 280, r: 2.0, d: 3.4, delay: 1.6 },
+  ];
+  return (
+    <svg
+      viewBox="0 0 560 520"
+      className="pointer-events-none absolute inset-0 w-full h-full [contain:paint]"
+      aria-hidden="true"
+    >
+      <clipPath id="inner-clip">
+        <path d="M210 60h140c6 0 10 5 10 11v12c0 6-4 11-10 11h-1l42 234c10 53-30 98-84 98h-54c-54 0-94-45-84-98l42-234h-1c-6 0-10-5-10-11V71c0-6 4-11 10-11z" />
+      </clipPath>
+      <g clipPath="url(#inner-clip)" opacity="0.9">
+        {bubbles.map((b, i) => (
+          <circle
+            key={i}
+            cx={b.cx}
+            cy="360"
+            r={b.r}
+            fill="rgba(255,255,255,0.85)"
+          >
+            <animate
+              attributeName="cy"
+              values="360; 210"
+              dur={`${b.d + i * 0.4}s`}
+              begin={`${b.delay}s`}
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="opacity"
+              values="0.9;0.25;0.9"
+              dur={`${b.d + i * 0.4}s`}
+              begin={`${b.delay}s`}
+              repeatCount="indefinite"
+            />
+          </circle>
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+/* Caustics under flask — gated; single filter, clipped ellipse */
+function Caustics() {
+  return (
+    <svg
+      viewBox="0 0 560 520"
+      className="pointer-events-none absolute inset-0 w-full h-full [contain:paint]"
+      aria-hidden="true"
+    >
+      <defs>
+        <filter id="caustic">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.012 0.02"
+            numOctaves="2"
+            seed="7"
+          >
+            <animate
+              attributeName="baseFrequency"
+              dur="9s"
+              values="0.012 0.02;0.016 0.015;0.012 0.02"
+              repeatCount="indefinite"
+            />
+          </feTurbulence>
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0   0 0 0 0 0.9   0 0 0 0 0.7   0 0 0 0 1"
+          />
+          <feGaussianBlur stdDeviation="5.5" />
+        </filter>
+        <clipPath id="ellipse-clip">
+          <ellipse cx="280" cy="430" rx="158" ry="24" />
+        </clipPath>
+      </defs>
+      <g
+        clipPath="url(#ellipse-clip)"
+        opacity="0.26"
+        className="dark:opacity-0"
+      >
+        <rect width="560" height="520" filter="url(#caustic)" />
+      </g>
+      <g
+        clipPath="url(#ellipse-clip)"
+        opacity="0.34"
+        className="hidden dark:block"
+      >
+        <rect width="560" height="520" filter="url(#caustic)" />
+      </g>
+    </svg>
+  );
+}
+
+/* ===== Liquid: animated surface (morphing meniscus) ===== */
+function LiquidSurface() {
+  const flaskPath =
+    "M210 60h140c6 0 10 5 10 11v12c0 6-4 11-10 11h-1l42 234c10 53-30 98-84 98h-54c-54 0-94-45-84-98l42-234h-1c-6 0-10-5-10-11V71c0-6 4-11 10-11z";
+
+  const k1 = "M160 306 C 220 300, 340 300, 400 306 Q 280 312, 160 306 Z";
+  const k2 = "M160 308 C 220 302, 340 304, 400 308 Q 280 314, 160 308 Z";
+  const k3 = "M160 310 C 220 304, 340 304, 400 310 Q 280 316, 160 310 Z";
+
+  return (
+    <svg
+      viewBox="0 0 560 520"
+      className="pointer-events-none absolute inset-0 w-full h-full"
+      aria-hidden="true"
+    >
+      <defs>
+        <clipPath id="ls-clip">
+          <path d={flaskPath} />
+        </clipPath>
+        <linearGradient id="ls-sheen" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="rgba(255,255,255,0.35)" />
+          <stop offset="1" stopColor="rgba(255,255,255,0.0)" />
+        </linearGradient>
+      </defs>
+
+      <g clipPath="url(#ls-clip)">
+        <path d={k1} fill="rgba(0,0,0,0.06)">
+          <animate
+            attributeName="d"
+            dur="5.8s"
+            repeatCount="indefinite"
+            values={`${k1};${k2};${k3};${k1}`}
+          />
+        </path>
+
+        <path
+          d={k1}
+          fill="none"
+          stroke="rgba(255,255,255,0.45)"
+          strokeWidth="1.2"
+        >
+          <animate
+            attributeName="d"
+            dur="5.8s"
+            repeatCount="indefinite"
+            values={`${k1};${k2};${k3};${k1}`}
+          />
+        </path>
+
+        <path d={k1} fill="url(#ls-sheen)">
+          <animate
+            attributeName="d"
+            dur="5.8s"
+            repeatCount="indefinite"
+            values={`${k1};${k2};${k3};${k1}`}
+          />
+        </path>
+      </g>
+    </svg>
+  );
+}
+
+/* ===== Liquid: convection flow ===== */
 function ConvectionFlow() {
   const flaskPath =
     "M210 60h140c6 0 10 5 10 11v12c0 6-4 11-10 11h-1l42 234c10 53-30 98-84 98h-54c-54 0-94-45-84-98l42-234h-1c-6 0-10-5-10-11V71c0-6 4-11 10-11z";
@@ -511,223 +729,7 @@ function ConvectionFlow() {
   );
 }
 
-/* Lightweight meniscus sheen overlay */
-function MeniscusShineLite() {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 [contain:paint]"
-      style={{
-        background:
-          "linear-gradient(105deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.0) 35%, rgba(255,255,255,0.07) 60%, rgba(255,255,255,0.0) 85%)",
-        mask: "radial-gradient(60% 70% at 50% 60%, black 55%, transparent 70%)",
-        WebkitMask:
-          "radial-gradient(60% 70% at 50% 60%, black 55%, transparent 70%)",
-      }}
-    />
-  );
-}
-
-/* Animated liquid shimmer — only when not lite */
-function LiquidWaves() {
-  return (
-    <svg
-      viewBox="0 0 560 520"
-      className="pointer-events-none absolute inset-0 w-full h-full [contain:paint]"
-      aria-hidden="true"
-    >
-      <defs>
-        <filter id="ripples" x="-10%" y="-10%" width="120%" height="120%">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.006 0.02"
-            numOctaves="2"
-            seed="5"
-          >
-            <animate
-              attributeName="baseFrequency"
-              dur="7s"
-              values="0.006 0.02;0.008 0.015;0.006 0.02"
-              repeatCount="indefinite"
-            />
-          </feTurbulence>
-          <feDisplacementMap in="SourceGraphic" in2="turb" scale="8" />
-        </filter>
-        <clipPath id="liq-clip">
-          <path d="M210 60h140c6 0 10 5 10 11v12c0 6-4 11-10 11h-1l42 234c10 53-30 98-84 98h-54c-54 0-94-45-84-98l42-234h-1c-6 0-10-5-10-11V71c0-6 4-11 10-11z" />
-        </clipPath>
-      </defs>
-      <g clipPath="url(#liq-clip)" filter="url(#ripples)" opacity="0.26">
-        <rect x="150" y="185" width="260" height="165" fill="white" />
-      </g>
-    </svg>
-  );
-}
-
-/* Micro-bubbles — tokens only for greens already removed (white OK) */
-function MicroBubbles() {
-  const bubbles = [
-    { cx: 240, r: 2.2, d: 2.8, delay: 0 },
-    { cx: 260, r: 1.8, d: 3.2, delay: 0.4 },
-    { cx: 300, r: 2.2, d: 3.2, delay: 0.8 },
-    { cx: 320, r: 1.6, d: 3.0, delay: 1.2 },
-    { cx: 280, r: 2.0, d: 3.4, delay: 1.6 },
-  ];
-  return (
-    <svg
-      viewBox="0 0 560 520"
-      className="pointer-events-none absolute inset-0 w-full h-full [contain:paint]"
-      aria-hidden="true"
-    >
-      <clipPath id="inner-clip">
-        <path d="M210 60h140c6 0 10 5 10 11v12c0 6-4 11-10 11h-1l42 234c10 53-30 98-84 98h-54c-54 0-94-45-84-98l42-234h-1c-6 0-10-5-10-11V71c0-6 4-11 10-11z" />
-      </clipPath>
-      <g clipPath="url(#inner-clip)" opacity="0.9">
-        {bubbles.map((b, i) => (
-          <circle
-            key={i}
-            cx={b.cx}
-            cy="360"
-            r={b.r}
-            fill="white"
-            fillOpacity="0.85"
-          >
-            <animate
-              attributeName="cy"
-              values="360; 210"
-              dur={`${b.d + i * 0.4}s`}
-              begin={`${b.delay}s`}
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="opacity"
-              values="0.9;0.25;0.9"
-              dur={`${b.d + i * 0.4}s`}
-              begin={`${b.delay}s`}
-              repeatCount="indefinite"
-            />
-          </circle>
-        ))}
-      </g>
-    </svg>
-  );
-}
-
-/* Caustics under flask */
-function Caustics() {
-  return (
-    <svg
-      viewBox="0 0 560 520"
-      className="pointer-events-none absolute inset-0 w-full h-full [contain:paint]"
-      aria-hidden="true"
-    >
-      <defs>
-        <filter id="caustic">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.012 0.02"
-            numOctaves="2"
-            seed="7"
-          >
-            <animate
-              attributeName="baseFrequency"
-              dur="9s"
-              values="0.012 0.02;0.016 0.015;0.012 0.02"
-              repeatCount="indefinite"
-            />
-          </feTurbulence>
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0   0 0 0 0 0.9   0 0 0 0 0.7   0 0 0 0 1"
-          />
-          <feGaussianBlur stdDeviation="5.5" />
-        </filter>
-        <clipPath id="ellipse-clip">
-          <ellipse cx="280" cy="430" rx="158" ry="24" />
-        </clipPath>
-      </defs>
-      <g
-        clipPath="url(#ellipse-clip)"
-        opacity="0.26"
-        className="dark:opacity-0"
-      >
-        <rect width="560" height="520" filter="url(#caustic)" />
-      </g>
-      <g
-        clipPath="url(#ellipse-clip)"
-        opacity="0.34"
-        className="hidden dark:block"
-      >
-        <rect width="560" height="520" filter="url(#caustic)" />
-      </g>
-    </svg>
-  );
-}
-
-/* Animated surface (morphing meniscus) */
-function LiquidSurface() {
-  const flaskPath =
-    "M210 60h140c6 0 10 5 10 11v12c0 6-4 11-10 11h-1l42 234c10 53-30 98-84 98h-54c-54 0-94-45-84-98l42-234h-1c-6 0-10-5-10-11V71c0-6 4-11 10-11z";
-
-  const k1 = "M160 306 C 220 300, 340 300, 400 306 Q 280 312, 160 306 Z";
-  const k2 = "M160 308 C 220 302, 340 304, 400 308 Q 280 314, 160 308 Z";
-  const k3 = "M160 310 C 220 304, 340 304, 400 310 Q 280 316, 160 310 Z";
-
-  return (
-    <svg
-      viewBox="0 0 560 520"
-      className="pointer-events-none absolute inset-0 w-full h-full"
-      aria-hidden="true"
-    >
-      <defs>
-        <clipPath id="ls-clip">
-          <path d={flaskPath} />
-        </clipPath>
-        <linearGradient id="ls-sheen" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="white" stopOpacity="0.35" />
-          <stop offset="1" stopColor="white" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-
-      <g clipPath="url(#ls-clip)">
-        <path d={k1} fill="black" opacity="0.06">
-          <animate
-            attributeName="d"
-            dur="5.8s"
-            repeatCount="indefinite"
-            values={`${k1};${k2};${k3};${k1}`}
-          />
-        </path>
-
-        <path
-          d={k1}
-          fill="none"
-          stroke="white"
-          strokeWidth="1.2"
-          strokeOpacity="0.45"
-        >
-          <animate
-            attributeName="d"
-            dur="5.8s"
-            repeatCount="indefinite"
-            values={`${k1};${k2};${k3};${k1}`}
-          />
-        </path>
-
-        <path d={k1} fill="url(#ls-sheen)">
-          <animate
-            attributeName="d"
-            dur="5.8s"
-            repeatCount="indefinite"
-            values={`${k1};${k2};${k3};${k1}`}
-          />
-        </path>
-      </g>
-    </svg>
-  );
-}
-
-/* Foam rim */
+/* ===== Liquid: foam rim ===== */
 function FoamRim() {
   const beads = [
     { x: 200, y: 308, s: 1.6, d: 2.6 },
@@ -744,14 +746,7 @@ function FoamRim() {
       aria-hidden="true"
     >
       {beads.map((b, i) => (
-        <circle
-          key={i}
-          cx={b.x}
-          cy={b.y}
-          r={b.s}
-          fill="white"
-          fillOpacity="0.85"
-        >
+        <circle key={i} cx={b.x} cy={b.y} r={b.s} fill="rgba(255,255,255,0.85)">
           <animate
             attributeName="cy"
             values={`${b.y}; ${b.y - 1}; ${b.y}`}
@@ -770,7 +765,7 @@ function FoamRim() {
   );
 }
 
-/* Drift particles */
+/* ===== Liquid: slow drift particles ===== */
 function DriftParticles() {
   const parts = [
     { x: 220, y: 360, r: 1.2, dy: 18, d: 7.5, delay: 0 },
@@ -785,14 +780,7 @@ function DriftParticles() {
       aria-hidden="true"
     >
       {parts.map((p, i) => (
-        <circle
-          key={i}
-          cx={p.x}
-          cy={p.y}
-          r={p.r}
-          fill="white"
-          fillOpacity="0.75"
-        >
+        <circle key={i} cx={p.x} cy={p.y} r={p.r} fill="rgba(255,255,255,0.75)">
           <animate
             attributeName="cy"
             values={`${p.y}; ${p.y - p.dy}; ${p.y}`}
@@ -835,14 +823,12 @@ function Sparkles({ count = 40 }) {
       {sparkles.map((s) => (
         <span
           key={s.id}
-          className="absolute rounded-full"
+          className="absolute rounded-full bg-[rgba(60,139,99,0.45)] dark:bg-[rgba(127,207,167,0.80)]"
           style={{
             width: `${s.size}px`,
             height: `${s.size}px`,
             top: s.top,
             left: s.left,
-            background: "var(--effect-dot)",
-            opacity: 0.8,
             animation: `sparkle-fade 3s ease-in-out ${s.delay}s infinite`,
             filter: "blur(0.5px)",
           }}
@@ -865,7 +851,7 @@ function Sparkles({ count = 40 }) {
   );
 }
 
-/* ===== Icons (stroke inherits currentColor) ===== */
+/* ===== Icons (lightweight inline) ===== */
 function LeafIcon(props) {
   return (
     <svg

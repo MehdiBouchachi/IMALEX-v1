@@ -1,4 +1,3 @@
-"use client";
 import {
   FaFlask,
   FaSearch,
@@ -43,54 +42,28 @@ export default function Process() {
   const containerRef = useRef(null);
   const stepRefs = useRef([]);
   const [active, setActive] = useState(0);
-  const [journeyProgress, setJourneyProgress] = useState(0);
-
-  // Smooth display that follows the ACTIVE step
-  const displayRef = useRef(1);
+  const [journeyProgress, setJourneyProgress] = useState(0); // 0..1
+  const smoothNumRef = useRef(1);
   const [, force] = useState(0);
-  useEffect(() => {
-    let raf;
-    const tick = () => {
-      const target = active + 1;
-      const cur = displayRef.current;
-      displayRef.current = cur + (target - cur) * 0.28;
-      force((n) => n + 1);
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [active]);
 
-  const smoothDisplay = Math.max(
-    1,
-    Math.min(steps.length, Math.round(displayRef.current))
-  )
-    .toString()
-    .padStart(2, "0");
-
-  // Which chapter is centered (robust with snap + top offset)
+  // Which chapter is centered
   useEffect(() => {
-    const topOffset = 96; // must match sticky top below
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) {
+        entries.forEach((e) => {
           if (e.isIntersecting) {
             const idx = Number(e.target.getAttribute("data-step"));
             setActive(idx);
           }
-        }
+        });
       },
-      {
-        threshold: 0.6,
-        // compensate sticky top so the visible card counts as "active"
-        rootMargin: `-${topOffset}px 0px -${topOffset}px 0px`,
-      }
+      { threshold: 0.55 }
     );
     stepRefs.current.forEach((el) => el && io.observe(el));
     return () => io.disconnect();
   }, []);
 
-  // Section progress only for the bar
+  // Section progress
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -103,16 +76,34 @@ export default function Process() {
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Smooth chapter counter
+  useEffect(() => {
+    let raf;
+    const tick = () => {
+      const target = 1 + journeyProgress * Math.max(steps.length - 1, 0);
+      const cur = smoothNumRef.current;
+      const next = cur + (target - cur) * 0.18;
+      smoothNumRef.current = next;
+      force((x) => x + 1);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [journeyProgress, steps.length]);
+
+  const smoothDisplay = Math.max(
+    1,
+    Math.min(steps.length, Math.round(smoothNumRef.current))
+  )
+    .toString()
+    .padStart(2, "0");
+
   return (
-    <section ref={containerRef} className="relative pb-32 md:pb-40">
-      {/* ambient overlay */}
+    <section ref={containerRef} className="relative">
+      {/* Seamless ambient overlay that FADES at edges (so it never “breaks” neighbors) */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
@@ -127,7 +118,7 @@ export default function Process() {
         }}
       />
 
-      {/* Intro */}
+      {/* Intro/handoff from Why Us */}
       <div className="mx-auto max-w-6xl px-6 pt-20 pb-10">
         <div className="text-center">
           <div
@@ -153,10 +144,10 @@ export default function Process() {
 
       {/* Layout */}
       <div className="mx-auto max-w-6xl px-6 grid md:grid-cols-[360px,1fr] gap-10 md:gap-14">
-        {/* STICKY RAIL (always sticky; no absolute freeze) */}
+        {/* Sticky rail (works on all sizes) */}
         <aside
-          className="relative self-start mb-10 md:mb-0"
-          style={{ position: "sticky", top: 96, alignSelf: "start" }}
+          className="relative sticky self-start mb-10 md:mb-0"
+          style={{ top: "clamp(56px, 8vh, 112px)" }}
         >
           <Rail
             smoothDisplay={smoothDisplay}
@@ -166,13 +157,8 @@ export default function Process() {
           />
         </aside>
 
-        {/* Chapters with SNAP SCROLL */}
-        <ol
-          className="relative"
-          style={{
-            scrollSnapType: "y mandatory",
-          }}
-        >
+        {/* Chapters */}
+        <ol className="relative">
           {steps.map(({ title, desc, Icon }, i) => {
             const isActive = i === active;
             return (
@@ -180,14 +166,10 @@ export default function Process() {
                 key={title}
                 ref={(el) => (stepRefs.current[i] = el)}
                 data-step={i}
-                className="relative"
-                style={{
-                  minHeight: "92svh",
-                  scrollSnapAlign: "start",
-                  scrollMarginTop: 96, // match sticky top
-                }}
+                className="relative snap-start"
+                style={{ minHeight: "92svh" }}
               >
-                {/* watermark number */}
+                {/* Luxe watermark number with calm gradient sweep */}
                 <div
                   aria-hidden
                   className="absolute -z-10 right-0 top-1/2 -translate-y-1/2 select-none font-black leading-none tracking-tighter"
@@ -218,19 +200,13 @@ export default function Process() {
           })}
 
           {/* Finale / CTA */}
-          <li
-            className="relative"
-            style={{
-              minHeight: "84svh",
-              scrollSnapAlign: "start",
-              scrollMarginTop: 96,
-            }}
-          >
+          <li className="relative snap-start" style={{ minHeight: "84svh" }}>
             <Finale />
           </li>
         </ol>
       </div>
 
+      {/* local keyframes */}
       <style jsx>{`
         @keyframes gloss {
           0% {
@@ -264,13 +240,14 @@ export default function Process() {
   );
 }
 
-/* ——— Pieces ——— */
+/* ————— Pieces ————— */
 
 function Rail({ smoothDisplay, steps, active, progress }) {
   return (
     <div
       className="rounded-2xl p-6"
       style={{
+        // gradient border glass: classy!
         border: "1px solid transparent",
         background:
           "linear-gradient(var(--surface-1), var(--surface-1)) padding-box, var(--g-accent-bar) border-box",
@@ -288,7 +265,7 @@ function Rail({ smoothDisplay, steps, active, progress }) {
         {smoothDisplay}
       </div>
 
-      {/* progress bar (section progress) */}
+      {/* progress bar with subtle gloss */}
       <div className="mt-6 relative">
         <div
           className="h-2 w-full rounded-full"
@@ -354,6 +331,7 @@ function ArticleCard({ title, desc, Icon, active }) {
       <div
         className="rounded-2xl p-7 sm:p-8"
         style={{
+          // gradient border glass
           border: "1px solid transparent",
           background:
             "linear-gradient(var(--surface-1), var(--surface-1)) padding-box, var(--g-accent-bar) border-box",
@@ -361,7 +339,7 @@ function ArticleCard({ title, desc, Icon, active }) {
           backdropFilter: "blur(8px)",
         }}
       >
-        {/* top hairline */}
+        {/* top accent hairline */}
         <span
           aria-hidden
           className="absolute left-7 right-7 -top-px h-px"
@@ -374,6 +352,7 @@ function ArticleCard({ title, desc, Icon, active }) {
         />
 
         <div className="flex items-start gap-5">
+          {/* Icon medallion (breath when active) */}
           <span
             className="relative grid h-12 w-12 flex-none place-items-center rounded-full"
             style={{
@@ -395,7 +374,7 @@ function ArticleCard({ title, desc, Icon, active }) {
               className="text-[11px] font-semibold tracking-wider mb-1"
               style={{ color: "var(--text-muted)" }}
             >
-              STEP
+              STEP {/* visually small, classy */}
             </div>
             <h3
               className="text-xl sm:text-2xl font-semibold"

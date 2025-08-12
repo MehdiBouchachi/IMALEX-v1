@@ -4,55 +4,385 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap");
 
-html {
+:root {
   color-scheme: light;
+
+  /* ——— Brand scale (moss/mint/forest) ——— */
+  --brand-50: #f1fbf6;
+  --brand-100: #e6f7ef;
+  --brand-200: #caeedc; /* light chip bg */
+  --brand-300: #a5e0c2;
+  --brand-400: #7fcfa7; /* mint */
+  --brand-500: #57a87a; /* sage */
+  --brand-600: #4fa37d;
+  --brand-700: #3c8b63; /* moss (main) */
+  --brand-800: #2f5f4b; /* forest */
+  --brand-900: #23463a;
+  --brand-950: #183229;
+
+  /* ——— CTA (kept “green‑700/800” vibe) ——— */
+  --cta-50: #f0fdf4;
+  --cta-100: #dcfce7;
+  --cta-200: #bbf7d0;
+  --cta-300: #86efac;
+  --cta-400: #4ade80;
+  --cta-500: #22c55e;
+  --cta-600: #16a34a;
+  --cta-700: #15803d; /* primary button */
+  --cta-800: #166534; /* hover */
+  --cta-900: #14532d;
+
+  --cta-section-gradient: linear-gradient(
+    to right,
+    var(--cta-50),
+    var(--cta-100)
+  );
+
+  --hand-grad: radial-gradient(
+    1400px 600px at 50% 0%,
+    color-mix(in srgb, var(--brand-700) 14%, transparent),
+    transparent 60%
+  );
+
+  /* Services section tokens */
+  --tile-bg: var(--surface-1);
+  --tile-border: var(--border);
+  --tile-shadow: var(--shadow-card);
+  --tile-shadow-hover: var(--shadow-card-lg);
+
+  --tile-accent: var(--g-accent-bar); /* top bar gradient */
+  --tile-icon-bg: color-mix(in srgb, var(--brand-400) 15%, transparent);
+  --tile-icon-bg-dark: color-mix(in srgb, var(--brand-800) 12%, transparent);
+  --tile-icon-text: var(--brand-700);
+  --tile-icon-text-dark: var(--brand-800);
+  --tile-icon-border: color-mix(in srgb, var(--brand-400) 35%, transparent);
+  --tile-icon-border-dark: color-mix(
+    in srgb,
+    var(--brand-800) 25%,
+    transparent
+  );
+
+  --tile-copy: var(--text-secondary);
+  --tile-copy-muted: var(--text-muted);
+
+  --bullet: var(--effect-wire-start); /* small dot color */
+  --tile-softpanel-bg: color-mix(in srgb, var(--brand-400) 10%, transparent);
+  --tile-softpanel-border: color-mix(
+    in srgb,
+    var(--brand-700) 22%,
+    transparent
+  );
+
+  --cta-bg: var(--cta-700);
+  --cta-bg-hover: var(--cta-800);
+  --cta-text: var(--text-inverse);
+
+  /* ——— Neutrals / surfaces ——— */
+  --surface-0: #ffffff; /* app bg */
+  --surface-1: #ffffff; /* cards default */
+  --surface-2: rgba(255, 255, 255, 0.85);
+  --surface-3: rgba(255, 255, 255, 0.7);
+
+  --text-primary: #0f172b;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+
+  --btn-ghost-bg: color-mix(in srgb, var(--surface-0) 85%, transparent);
+  --btn-ghost-hover-bg: color-mix(in srgb, var(--surface-0) 95%, transparent);
+  --btn-ghost-text: var(--brand-800);
+  --btn-ghost-border: var(--border);
+
+  --border-subtle: rgba(15, 23, 42, 0.06);
+  --border: rgba(15, 23, 42, 0.12);
+  --border-strong: rgba(15, 23, 42, 0.2);
+
+  --eye-brow: color-mix(in srgb, var(--cta-600) 80%, transparent);
+
+  --ring: rgba(60, 139, 99, 0.35);
+  --ring-subtle: rgba(127, 207, 167, 0.35);
+  --ring-pulse: rgba(60, 139, 99, 0.1);
+
+  /* ——— Effects / glows / wires ——— */
+  --effect-glow-a: rgba(60, 139, 99, 0.1);
+  --effect-glow-b: rgba(127, 207, 167, 0.1);
+  --effect-halo-a: rgba(60, 139, 99, 0.1);
+  --effect-halo-b: rgba(127, 207, 167, 0.1);
+  --effect-wire-start: rgba(60, 139, 99, 0.85);
+  --effect-wire-end: rgba(127, 207, 167, 0.35);
+  --effect-dot: rgba(60, 139, 99, 0.85);
+
+  /* ——— Hero tokens (used by your Hero component) ——— */
+  --hero-top: #f5fbfa;
+  --hero-mid: #eefaf6;
+  --hero-bot: #ffffff;
+  --glow-a: rgba(60, 139, 99, 0.08);
+  --glow-b: rgba(127, 207, 167, 0.06);
+
+  /* ——— Accent gradients (reusable) ———
+     Use with: bg-[var(--g-accent-bar)] or bg-[image:var(--g-accent-bar)] */
+  --g-accent-bar: linear-gradient(to right, #7fcfa7, #57a87a, #2f5f4b);
+  --g-accent-chip: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.9),
+    rgba(127, 207, 167, 0.15)
+  );
+  --g-hero-overlay: radial-gradient(
+      900px 400px at 20% 20%,
+      var(--effect-glow-a),
+      transparent
+    ),
+    radial-gradient(800px 400px at 80% 60%, var(--effect-glow-b), transparent);
+
+  --xfade-bg: 160ms; /* surfaces */
+  --xfade-text: 0ms; /* text = instant to avoid mismatch */
+
+  --contact-panel-bg: rgba(255, 255, 255, 0.7); /* old: bg-white/70 */
+  --contact-panel-bg-hover: rgba(255, 255, 255, 0.9); /* old: hover white/90 */
+  --contact-panel-border: rgba(20, 83, 45, 0.1); /* old: green-900/10 */
+
+  --contact-input-bg: rgba(255, 255, 255, 0.7); /* inputs/selects */
+  --contact-input-border: rgba(203, 213, 225, 0.7); /* slate-300/70 */
+  --contact-input-text: #0f172a; /* slate-800-ish */
+  --contact-input-focus: rgba(134, 239, 172, 0.3); /* green-300/30 */
+
+  --contact-badge-active-bg: #15803d; /* green-700 */
+  --contact-badge-active-text: #ffffff;
+  --contact-badge-active-border: #15803d;
+
+  --contact-badge-inactive-bg: rgba(255, 255, 255, 0.7); /* white/70 */
+  --contact-badge-inactive-border: rgba(203, 213, 225, 0.7); /* slate-300/70 */
+  --contact-badge-inactive-text: #475569; /* slate-600 */
+
+  --contact-progress-track: rgba(226, 232, 240, 0.7); /* slate-200/70 */
+  --contact-progress-fill: #16a34a; /* green-600 */
+
+  --contact-chip-selected-border: #22c55e; /* green-500 */
+  --contact-chip-selected-bg: rgba(240, 253, 244, 0.6); /* green-50/60 */
+  --contact-chip-hover-bg: #f8fafc; /* slate-50 */
+
+  --contact-ghost-text: #334155; /* slate-700 */
+  --contact-ghost-text-muted: #cbd5e1; /* slate-300 */
+  --contact-danger: #e11d48; /* rose-600 vibe */
+  --footer-border: rgba(20, 83, 45, 0.1); /* old: green-900/10 */
+  --footer-link-hover: #15803d; /* old: green-700 */
+  --footer-icon-hover-border: #22c55e; /* old: green-500 */
 }
+
 html.dark {
   color-scheme: dark;
-}
 
-html.dark {
-  --hero-bg: radial-gradient(
-      1100px 520px at 85% -10%,
-      rgba(20, 184, 166, 0.1) 0%,
-      rgba(20, 184, 166, 0) 60%
-    ),
-    linear-gradient(180deg, #0f172a 0%, #0f172a 30%, #0d1b1e 55%, #0a1414 100%);
-  --text-primary: #fff;
+  /* ——— Brand stays the same hues but raised for contrast ——— */
+  --brand-50: #0b1713;
+  --brand-100: #0f211b;
+  --brand-200: #123226;
+  --brand-300: #184a37;
+  --brand-400: #22654c;
+  --brand-500: #2e7b60;
+  --brand-600: #3a8d6f;
+  --brand-700: #5fb391; /* “minty” text on dark */
+  --brand-800: #7fcfa7;
+  --brand-900: #a6e2c6;
+  --brand-950: #d2f1e4;
+
+  --cta-section-gradient: linear-gradient(to right, #0e2323, #0e1a1a);
+
+  /* Services section tokens */
+  --tile-bg: var(--surface-1);
+  --tile-border: var(--border);
+  --tile-shadow: var(--shadow-card);
+  --tile-shadow-hover: var(--shadow-card-lg);
+
+  --tile-accent: var(--g-accent-bar);
+  --tile-icon-bg: var(--tile-icon-bg-dark);
+  --tile-icon-text: var(--brand-800);
+  --tile-icon-border: var(--tile-icon-border-dark);
+
+  --tile-copy: var(--text-secondary);
+  --tile-copy-muted: var(--text-muted);
+
+  --bullet: var(--effect-dot);
+  --tile-softpanel-bg: rgba(255, 255, 255, 0.05);
+  --tile-softpanel-border: color-mix(
+    in srgb,
+    var(--brand-800) 30%,
+    transparent
+  );
+
+  --cta-bg: var(--cta-700);
+  --cta-bg-hover: var(--cta-800);
+  --cta-text: var(--text-inverse);
+
+  /* CTA is unchanged — still green 700/800 vibe */
+  --surface-0: #0b1320; /* app bg (near-slate-950) */
+  --surface-1: #101822; /* deep navy tone */
+  --surface-2: rgba(2, 6, 23, 0.55);
+  --surface-3: rgba(2, 6, 23, 0.45);
+
+  --text-primary: #ffffff;
   --text-secondary: #cbd5e1;
-  --border-color: rgba(94, 240, 214, 0.15);
+  --text-muted: #94a3b8;
+  --text-inverse: #0f172b;
+
+  --btn-ghost-bg: rgba(255, 255, 255, 0.06);
+  --btn-ghost-hover-bg: rgba(255, 255, 255, 0.1);
+  --btn-ghost-text: var(--brand-800);
+  --btn-ghost-border: rgba(255, 255, 255, 0.12);
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.22);
+
+  --eye-brow: color-mix(in srgb, var(--cta-300) 90%, transparent);
+
+  --ring: rgba(127, 207, 167, 0.45);
+  --ring-subtle: rgba(127, 207, 167, 0.35);
+  --ring-pulse: rgba(127, 207, 167, 0.18);
+
+  --effect-glow-a: rgba(60, 139, 99, 0.18);
+  --effect-glow-b: rgba(127, 207, 167, 0.14);
+  --effect-halo-a: rgba(60, 139, 99, 0.14);
+  --effect-halo-b: rgba(127, 207, 167, 0.14);
+  --effect-wire-start: rgba(60, 139, 99, 0.85);
+  --effect-wire-end: rgba(127, 207, 167, 0.45);
+  --effect-dot: rgba(127, 207, 167, 0.95);
+
+  --hero-top: #0b1f24;
+  --hero-mid: #0d2a23;
+  --hero-bot: #071a19;
+  --glow-a: rgba(60, 139, 99, 0.18);
+  --glow-b: rgba(127, 207, 167, 0.14);
+
+  --g-accent-bar: linear-gradient(to right, #9ed7bd, #57a87a, #2c4a3d);
+  --g-accent-chip: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.06),
+    rgba(127, 207, 167, 0.08)
+  );
+  --g-hero-overlay: radial-gradient(
+      900px 400px at 20% 20%,
+      var(--effect-glow-a),
+      transparent
+    ),
+    radial-gradient(800px 400px at 80% 60%, var(--effect-glow-b), transparent);
+
+  /* —— Contact form dark equivalents —— */
+  --contact-panel-bg: rgba(255, 255, 255, 0.05); /* old: white/5 */
+  --contact-panel-bg-hover: rgba(255, 255, 255, 0.1);
+  --contact-panel-border: rgba(134, 239, 172, 0.15); /* green-300/15 */
+
+  --contact-input-bg: rgba(30, 41, 59, 0.7); /* slate-800/70 */
+  --contact-input-border: #475569; /* slate-600 */
+  --contact-input-text: #f1f5f9; /* slate-100 */
+  --contact-input-focus: rgba(134, 239, 172, 0.3); /* green-300/30 */
+
+  --contact-badge-active-bg: #15803d; /* keep pop */
+  --contact-badge-active-text: #ffffff;
+  --contact-badge-active-border: #15803d;
+
+  --contact-badge-inactive-bg: rgba(30, 41, 59, 0.7); /* slate-800/70 */
+  --contact-badge-inactive-border: #475569; /* slate-600 */
+  --contact-badge-inactive-text: #cbd5e1; /* slate-300 */
+
+  --contact-progress-track: rgba(30, 41, 59, 0.7); /* slate-800/70 */
+  --contact-progress-fill: #16a34a; /* green-600 */
+
+  --contact-chip-selected-border: #22c55e; /* green-500 */
+  --contact-chip-selected-bg: rgba(134, 239, 172, 0.1); /* green-300/10 */
+  --contact-chip-hover-bg: rgba(255, 255, 255, 0.1); /* white/10 */
+
+  --contact-ghost-text: #cbd5e1; /* slate-300 */
+  --contact-ghost-text-muted: #94a3b8;
+  --contact-danger: #fb7185; /* rose-400/500 */
+
+  --footer-border: rgba(134, 239, 172, 0.15); /* old: green-300/15 */
+  --footer-link-hover: #86efac; /* old: green-300 */
+  --footer-icon-hover-border: #86efac; /* old: green-300 */
 }
 
+/* (Optional) legacy vars you had in dark hero */
+html.dark {
+  --border-color: var(--border);
+}
+
+/* Typography & scrollbars */
 body {
   font-family: "Inter", sans-serif;
 }
-
 * {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
 *::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
 }
 
+/* ---------- Shared utilities ---------- */
+@layer base {
+  /* Text + surfaces driven by tokens */
+  :root,
+  :root.dark {
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-card-lg: 0 16px 48px rgba(47, 95, 75, 0.22);
+  }
+
+  /* Make rings pick up our ring token by default */
+  *:focus-visible {
+    outline: none;
+  }
+}
+
+/* Example component helpers (optional) */
 @layer components {
+  .surface-0 {
+    background-color: var(--surface-0);
+  }
+  .surface-1 {
+    background-color: var(--surface-1);
+  }
+  .surface-2 {
+    background-color: var(--surface-2);
+  }
+  .surface-3 {
+    background-color: var(--surface-3);
+  }
+
+  .text-primary {
+    color: var(--text-primary);
+  }
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .border-subtle {
+    border-color: var(--border-subtle);
+  }
+  .border-strong {
+    border-color: var(--border-strong);
+  }
+
+  .ring-brand {
+    box-shadow: 0 0 0 4px var(--ring);
+  }
+
+  /* Spinner from your file, now using tokens */
   .spinner {
     margin: 3.2rem auto 1.6rem;
     width: 60px;
     aspect-ratio: 1;
     border-radius: 50%;
-    border: 8px solid theme("colors.primary.900");
-    border-right-color: theme("colors.primary.200");
+    border: 8px solid var(--brand-900);
+    border-right-color: var(--brand-200);
     animation: rotate 1s infinite linear;
   }
-
   .spinner-mini {
-    margin: 0;
     width: 20px;
     aspect-ratio: 1;
     border-radius: 50%;
-    border: 2px solid theme("colors.primary.200");
+    border: 2px solid var(--brand-200);
     border-right-color: transparent;
     animation: rotate 1s infinite linear;
   }
@@ -62,7 +392,14 @@ body {
       transform: rotate(1turn);
     }
   }
-  /* --- Floating dots animations (respect reduced motion) --- */
+  @keyframes sg-reveal {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Floating dots (kept) */
   @keyframes floatRise {
     0% {
       transform: translate3d(var(--swayStart, 0px), 8vh, 0);
@@ -79,7 +416,6 @@ body {
       opacity: 0;
     }
   }
-
   @keyframes sway {
     0% {
       transform: translateX(-10px);
@@ -91,8 +427,21 @@ body {
       transform: translateX(-10px);
     }
   }
-
-  /* Users who prefer reduced motion see no dots animation */
+  @keyframes cradle-reveal {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes hand-glow {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .dot-float,
     .dot-sway {
@@ -101,96 +450,40 @@ body {
     }
   }
 }
+@layer base {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Only transition COMMON SURFACES + borders, not every node */
+    html.theme-animating body,
+    html.theme-animating header,
+    html.theme-animating main,
+    html.theme-animating section,
+    html.theme-animating footer,
+    html.theme-animating .surface-0,
+    html.theme-animating .surface-1,
+    html.theme-animating .surface-2,
+    html.theme-animating .surface-3,
+    html.theme-animating .card {
+      transition: background-color var(--xfade-bg) linear,
+        border-color var(--xfade-bg) linear;
+      will-change: background-color, border-color;
+    }
 
-/* For data picker */
-.rdp {
-  --rdp-cell-size: 32px !important;
-  --rdp-accent-color: theme("colors.accent.500") !important;
-  --rdp-background-color: theme("colors.accent.600") !important;
-  margin: 0 !important;
-  font-size: 1rem;
-}
-
-@media (max-width: 768px) {
-  .rdp {
-    --rdp-cell-size: 24px !important; /* Better balance than 20px */
-    font-size: 0.75rem; /* Sm text (12px) */
+    /* Text color: snap (0ms) so it changes with bg, no “lag” look */
+    html.theme-animating h1,
+    html.theme-animating h2,
+    html.theme-animating h3,
+    html.theme-animating h4,
+    html.theme-animating h5,
+    html.theme-animating h6,
+    html.theme-animating p,
+    html.theme-animating span,
+    html.theme-animating a,
+    html.theme-animating li,
+    html.theme-animating small,
+    html.theme-animating label,
+    html.theme-animating strong,
+    html.theme-animating em {
+      transition: color var(--xfade-text) linear;
+    }
   }
-
-  .rdp-months {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .rdp-caption_label {
-    font-size: 0.625rem; /* Smaller month name */
-  }
-
-  .rdp-nav_button {
-    padding: 0.25rem;
-  }
-
-  .rdp-day {
-    padding: 0.25rem 0.35rem;
-  }
-
-  .rdp-table {
-    margin-inline: auto;
-  }
-
-  .rdp-head_cell {
-    font-size: 0.5rem;
-    padding: 0.25rem 0;
-  }
-}
-
-:root {
-  --primary-50: #e1e8ef;
-  --primary-100: #d4dee7;
-  --primary-200: #b7c7d7;
-  --primary-300: #99b0c7;
-  --primary-400: #7c99b6;
-  --primary-500: #5e82a6;
-  --primary-600: #4c6b8a;
-  --primary-700: #3c546c;
-  --primary-800: #2c3d4f;
-  --primary-900: #1b2631;
-  --primary-950: #141c24;
-
-  --accent-50: #e6fafa;
-  --accent-100: #c0f2f0;
-  --accent-200: #92e7e2;
-  --accent-300: #66ddd5;
-  --accent-400: #45d5cc;
-  --accent-500: #3fd0c9; /* main CTA */
-  --accent-600: #2cb2ac; /* hover */
-  --accent-700: #1f9590;
-  --accent-800: #167973;
-  --accent-900: #0e5d58;
-}
-
-.dark {
-  --primary-50: #141c24;
-  --primary-100: #1b2631;
-  --primary-200: #2c3d4f;
-  --primary-300: #3c546c;
-  --primary-400: #4c6b8a;
-  --primary-500: #5e82a6;
-  --primary-600: #7c99b6;
-  --primary-700: #99b0c7;
-  --primary-800: #b7c7d7;
-  --primary-900: #d4dee7;
-  --primary-950: #e1e8ef;
-
-  --accent-50: #382814;
-  --accent-100: #4b351b;
-  --accent-200: #6c4d28;
-  --accent-300: #926835;
-  --accent-400: #b78343;
-  --accent-500: #c69963;
-  --accent-600: #d2af84;
-  --accent-700: #ddc2a2;
-  --accent-800: #e8d6bf;
-  --accent-900: #f4ece1;
-  --accent-950: #faf5f0;
 }

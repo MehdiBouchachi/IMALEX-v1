@@ -133,6 +133,9 @@ export default function SectorsGrid() {
         aria-hidden
         className="absolute inset-0 -z-20"
         style={{
+          background: `radial-gradient(1100px 480px at 50% -10%, var(--glow-a), transparent 62%),
+             radial-gradient(900px 360px at 15% 80%, var(--glow-b), transparent 65%),
+             radial-gradient(900px 360px at 85% 85%, var(--glow-b), transparent 70%)`,
           animation: "aurora-sway 30s ease-in-out infinite",
         }}
       />

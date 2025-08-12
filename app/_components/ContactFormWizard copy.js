@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 
-/* ===== Contact Form Wizard — tokenized, pixel-match old ===== */
+/* ===== Contact Form Wizard (JS) — errors only after Next/Submit ===== */
 export default function ContactFormWizard() {
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+
+  // NEW: control when to show errors per step
   const [showErr, setShowErr] = useState({ 1: false, 2: false, 3: false });
 
   const [form, setForm] = useState({
@@ -35,6 +37,7 @@ export default function ContactFormWizard() {
       if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = "Enter a valid email";
       if (!form.phone.trim()) e.phone = "Required";
       if (!form.country) e.country = "Select a country";
+      // city left optional (you can require it if you want)
     }
     if (step === 2) {
       if (!form.sector) e.sector = "Select a sector";
@@ -52,21 +55,29 @@ export default function ContactFormWizard() {
   const goNext = () => {
     if (canNext) {
       setStep((s) => Math.min(3, s + 1));
-      setShowErr((s) => ({ ...s, [step]: false }));
+      setShowErr((s) => ({ ...s, [step]: false })); // clear for the step we just passed
     } else {
-      setShowErr((s) => ({ ...s, [step]: true }));
+      setShowErr((s) => ({ ...s, [step]: true })); // reveal errors for this step
     }
   };
-  const goBack = () => setStep((s) => Math.max(1, s - 1));
+
+  const goBack = () => {
+    setStep((s) => Math.max(1, s - 1));
+    // don't change showErr here; user can still edit quietly
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    // reveal step 3 errors if any
     if (!canNext || step !== 3) {
       setShowErr((s) => ({ ...s, 3: true }));
       return;
     }
+
     setSubmitting(true);
     try {
+      // TODO: send to your backend:
+      // await fetch("/api/contact", { method:"POST", headers:{'Content-Type':'application/json'}, body: JSON.stringify(form) })
       console.log("Submit payload:", form);
       alert("Thanks! We’ll get back to you shortly.");
       setStep(1);
@@ -90,10 +101,7 @@ export default function ContactFormWizard() {
   return (
     <form
       onSubmit={onSubmit}
-      className="
-        rounded-2xl p-6 backdrop-blur-sm
-        border bg-[var(--contact-panel-bg)] border-[var(--contact-panel-border)]
-      "
+      className="rounded-2xl border border-green-900/10 dark:border-green-300/15 bg-white/70 dark:bg-white/5 backdrop-blur-sm p-6"
     >
       <WizardProgress step={step} />
 
@@ -102,6 +110,7 @@ export default function ContactFormWizard() {
           <StepOne
             form={form}
             setField={setField}
+            // only show errors if user tried Next on step 1
             errors={showErr[1] ? errors : {}}
           />
         )}
@@ -123,35 +132,21 @@ export default function ContactFormWizard() {
       </div>
 
       <div className="mt-6 flex items-center justify-between gap-3">
-        {/* Back — ghost (same look) */}
         <button
           type="button"
           onClick={goBack}
           disabled={step === 1}
-          className="
-            rounded-lg px-5 py-3 font-semibold transition
-            border bg-[var(--contact-panel-bg)] hover:bg-[var(--contact-panel-bg-hover)]
-            border-[var(--contact-panel-border)] text-[var(--contact-ghost-text)]
-            disabled:opacity-50
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-            ring-offset-[var(--surface-0)] focus-visible:ring-[var(--contact-input-focus)]
-          "
+          className="rounded-lg border border-green-900/10 dark:border-green-300/15 bg-white/70 dark:bg-white/5 px-5 py-3 font-semibold hover:bg-white/90 dark:hover:bg-white/10 disabled:opacity-50 transition"
         >
           Back
         </button>
 
-        {/* Next/Submit — solid CTA green */}
         {step < 3 ? (
           <button
             type="button"
             onClick={goNext}
-            className="
-              rounded-lg px-6 py-3 font-semibold transition shadow-sm
-              bg-[var(--cta-700)] hover:bg-[var(--cta-800)]
-              text-[var(--cta-50)]
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-              ring-offset-[var(--surface-0)] focus-visible:ring-[var(--contact-input-focus)]
-            "
+            // keep the same visual, but DO NOT disable (so it can trigger errors)
+            className="rounded-lg bg-green-700 px-6 py-3 text-white font-semibold hover:bg-green-800 transition"
           >
             Next
           </button>
@@ -159,13 +154,7 @@ export default function ContactFormWizard() {
           <button
             type="submit"
             disabled={submitting}
-            className="
-              rounded-lg px-6 py-3 font-semibold transition shadow-sm
-              bg-[var(--cta-700)] hover:bg-[var(--cta-800)]
-              text-[var(--cta-50)] disabled:opacity-60
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-              ring-offset-[var(--surface-0)] focus-visible:ring-[var(--contact-input-focus)]
-            "
+            className="rounded-lg bg-green-700 px-6 py-3 text-white font-semibold hover:bg-green-800 disabled:opacity-60 transition"
           >
             {submitting ? "Sending…" : "Send inquiry"}
           </button>
@@ -175,7 +164,7 @@ export default function ContactFormWizard() {
   );
 }
 
-/* ===== Progress (exact colors) ===== */
+/* ===== Progress (unchanged UI) ===== */
 function WizardProgress({ step }) {
   const total = 3;
   const pct = (step / total) * 100;
@@ -183,36 +172,32 @@ function WizardProgress({ step }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between text-xs font-medium text-[var(--contact-ghost-text)]">
-        {labels.map((l, i) => {
-          const active = i + 1 <= step;
-          return (
-            <div key={l} className="flex items-center gap-2">
-              <span
-                className={[
-                  "h-6 w-6 grid place-items-center rounded-full border",
-                  active
-                    ? "bg-[var(--contact-badge-active-bg)] text-[var(--contact-badge-active-text)] border-[var(--contact-badge-active-border)]"
-                    : "bg-[var(--contact-badge-inactive-bg)] border-[var(--contact-badge-inactive-border)] text-[var(--contact-badge-inactive-text)]",
-                ].join(" ")}
-              >
-                {i + 1}
-              </span>
-              <span
-                className={
-                  active ? "text-[var(--contact-badge-active-bg)]" : ""
-                }
-              >
-                {l}
-              </span>
-            </div>
-          );
-        })}
+      <div className="flex items-center justify-between text-xs font-medium text-slate-600 dark:text-slate-300">
+        {labels.map((l, i) => (
+          <div key={l} className="flex items-center gap-2">
+            <span
+              className={[
+                "h-6 w-6 grid place-items-center rounded-full border",
+                i + 1 <= step
+                  ? "bg-green-700 text-white border-green00"
+                  : "bg-white/70 dark:bg-slate-800/70 border-slate-300/70 dark:border-slate-600 text-slate-600 dark:text-slate-300",
+              ].join(" ")}
+            >
+              {i + 1}
+            </span>
+            <span
+              className={
+                i + 1 <= step ? "text-green-700 dark:text-green-400" : ""
+              }
+            >
+              {l}
+            </span>
+          </div>
+        ))}
       </div>
-
-      <div className="mt-3 h-2 rounded-full overflow-hidden bg-[var(--contact-progress-track)]">
+      <div className="mt-3 h-2 rounded-full bg-slate-200/70 dark:bg-slate-800/70 overflow-hidden">
         <div
-          className="h-full transition-all bg-[var(--contact-progress-fill)]"
+          className="h-full bg-green-600 transition-all"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -317,17 +302,17 @@ function StepTwo({ form, setField, toggleNeed, errors }) {
                 className={[
                   "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition border",
                   checked
-                    ? "border-[var(--contact-chip-selected-border)] bg-[var(--contact-chip-selected-bg)]"
-                    : "border-[var(--contact-input-border)] hover:bg-[var(--contact-chip-hover-bg)]",
+                    ? "border-green-500 bg-green-50/60 dark:bg-green-300/10"
+                    : "border-slate-300/70 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-white/10",
                 ].join(" ")}
               >
                 <input
                   type="checkbox"
-                  className="h-4 w-4 accent-[var(--cta-700)]"
+                  className="accent-green-700 h-4 w-4"
                   checked={checked}
                   onChange={() => toggleNeed(val)}
                 />
-                <span className="text-[var(--contact-ghost-text)]">
+                <span className="text-slate-700 dark:text-slate-300">
                   {label}
                 </span>
               </label>
@@ -357,18 +342,20 @@ function StepThree({ form, setField, errors }) {
               className={[
                 "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition border",
                 form.stage === val
-                  ? "border-[var(--contact-chip-selected-border)] bg-[var(--contact-chip-selected-bg)]"
-                  : "border-[var(--contact-input-border)] hover:bg-[var(--contact-chip-hover-bg)]",
+                  ? "border-green-400 bg-green-50/60 dark:bg-green-300/10"
+                  : "border-slate-300/70 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-white/10",
               ].join(" ")}
             >
               <input
                 type="radio"
                 name="stage"
-                className="h-4 w-4 accent-[var(--cta-600)]"
+                className="accent-green-600 h-4 w-4"
                 checked={form.stage === val}
                 onChange={() => setField("stage", val)}
               />
-              <span className="text-[var(--contact-ghost-text)]">{label}</span>
+              <span className="text-slate-700 dark:text-slate-300">
+                {label}
+              </span>
             </label>
           ))}
         </div>
@@ -382,24 +369,13 @@ function StepThree({ form, setField, errors }) {
           value={form.brief}
           onChange={(e) => setField("brief", e.target.value)}
           placeholder="What would you like to build?"
-          className="
-            mt-1 w-full rounded-lg px-3 py-2 outline-none
-            bg-[var(--contact-input-bg)] border border-[var(--contact-input-border)]
-            text-[var(--contact-input-text)]
-            focus:ring-4 focus:ring-[var(--contact-input-focus)]
-          "
+          className="mt-1 w-full rounded-lg border border-slate-300/70 dark:border-slate-600 px-3 py-2 outline-none focus:ring-4 focus:ring-green-300/30 dark:bg-transparent"
         />
         {errors.brief && <Err>{errors.brief}</Err>}
       </div>
 
-      <div
-        className="
-          rounded-xl px-4 py-3
-          border border-[var(--contact-panel-border)]
-          bg-[var(--contact-panel-bg)]
-        "
-      >
-        <div className="text-sm text-[var(--contact-ghost-text)]">
+      <div className="rounded-xl border border-green-900/10 dark:border-green-300/15 bg-white/60 dark:bg-white/5 px-4 py-3">
+        <div className="text-sm text-slate-600 dark:text-slate-300">
           <strong>Quick review:</strong> {form.name || "—"} •{" "}
           {form.email || "—"} • {form.phone || "—"} • {form.country || "—"}{" "}
           {form.city ? `(${form.city})` : ""}
@@ -414,18 +390,16 @@ function StepThree({ form, setField, errors }) {
   );
 }
 
-/* ===== Small shared UI bits ===== */
+/* ===== Small shared UI bits (unchanged) ===== */
 function Label({ children }) {
   return (
-    <label className="text-sm font-medium text-[var(--contact-ghost-text)]">
+    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
       {children}
     </label>
   );
 }
 function Err({ children }) {
-  return (
-    <div className="mt-1 text-xs text-[var(--contact-danger)]">{children}</div>
-  );
+  return <div className="mt-1 text-xs text-rose-600">{children}</div>;
 }
 function Input({
   label,
@@ -446,12 +420,10 @@ function Input({
         value={value}
         onChange={onChange}
         className={[
-          "mt-1 w-full rounded-lg border px-3 py-2 outline-none",
-          "bg-[var(--contact-input-bg)] border-[var(--contact-input-border)]",
-          "text-[var(--contact-input-text)] focus:ring-4 focus:ring-[var(--contact-input-focus)]",
-          error
-            ? "border-[var(--contact-danger)] focus:ring-[var(--contact-danger)]/30"
-            : "",
+          "mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-4 focus:ring-green-300/30",
+          "bg-white/70 dark:bg-white/5 border-slate-300/70 dark:border-slate-600",
+          "text-slate-800 dark:text-slate-100",
+          error ? "border-rose-400 focus:ring-rose-300/30" : "",
         ].join(" ")}
       />
       {error ? <Err>{error}</Err> : null}
@@ -459,7 +431,7 @@ function Input({
   );
 }
 
-/* ===== Select & Country ===== */
+/* ===== Select & Country (unchanged UI) ===== */
 export function SelectShell({
   children,
   name,
@@ -477,19 +449,19 @@ export function SelectShell({
         defaultValue={defaultValue}
         onChange={(e) => onChange && onChange(e.target.value)}
         disabled={disabled}
-        className="
-          mt-1 w-full appearance-none rounded-lg
-          bg-[var(--contact-input-bg)]
-          border border-[var(--contact-input-border)]
-          px-3 py-2 pr-8 outline-none
-          text-[var(--contact-input-text)]
-          focus:ring-4 focus:ring-[var(--contact-input-focus)] disabled:opacity-60
-        "
+        className={[
+          "mt-1 w-full appearance-none rounded-lg",
+          "bg-white/80 dark:bg-slate-800/70",
+          "border border-slate-300/70 dark:border-slate-600",
+          "px-3 py-2 pr-8 outline-none",
+          "text-slate-800 dark:text-slate-100",
+          "focus:ring-4 focus:ring-green-300/30 disabled:opacity-60",
+        ].join(" ")}
         aria-placeholder={placeholder}
       >
         {children}
       </select>
-      <span className="pointer-events-none absolute inset-y-0 right-2 grid place-items-center text-[var(--contact-ghost-text-muted)]">
+      <span className="pointer-events-none absolute inset-y-0 right-2 grid place-items-center text-slate-500 dark:text-slate-300">
         <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
           <path d="M6 8l4 4 4-4" />
         </svg>
@@ -501,6 +473,7 @@ export function SelectShell({
 export function CountrySelect({ name, value, onChange }) {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -521,6 +494,7 @@ export function CountrySelect({ name, value, onChange }) {
       alive = false;
     };
   }, []);
+
   return (
     <SelectShell
       name={name}

@@ -1,49 +1,79 @@
-import { FiFlask, FiCheckCircle, FiLeaf, FiShield } from "react-icons/fi";
+"use client";
+import Image from "next/image";
+import { FaFlask, FaCheckCircle, FaLeaf, FaShieldAlt } from "react-icons/fa";
 
-export default function AboutImalex() {
+function AboutImalex({ imageSrc = "/lab-shot.jpg" }) {
   return (
     <section
       id="about"
       className="relative isolate overflow-hidden py-20 sm:py-28"
     >
-      {/* background accents */}
+      {/* soft background accents (pull from brand with alpha fallbacks) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full blur-3xl opacity-20"
+        className="pointer-events-none absolute -top-28 -right-24 h-80 w-80 rounded-full blur-3xl opacity-20"
         style={{
-          background: "radial-gradient(closest-side, #34d39955, transparent)",
+          background:
+            "radial-gradient(closest-side, var(--brand-300-a28, rgba(127,207,167,0.28)), transparent)",
         }}
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-24 -left-24 h-80 w-80 rounded-full blur-3xl opacity-20"
+        className="pointer-events-none absolute -bottom-28 -left-24 h-96 w-96 rounded-full blur-3xl opacity-20"
         style={{
-          background: "radial-gradient(closest-side, #14b8a655, transparent)",
+          background:
+            "radial-gradient(closest-side, var(--brand-700-a26, rgba(60,139,99,0.26)), transparent)",
         }}
       />
 
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div className="grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
           {/* Copy */}
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-200">
-              <FiFlask className="h-4 w-4" />
+          <div className="max-w-xl lg:max-w-none">
+            {/* Eyebrow */}
+            <span
+              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium border bg-clip-padding"
+              style={{
+                borderColor: "var(--brand-700-a25, rgba(60,139,99,0.25))",
+                background: "var(--brand-700-a10, rgba(60,139,99,0.10))",
+                color: "var(--brand-700)",
+              }}
+            >
+              <FaFlask className="h-4 w-4" />
               IMALEX — Natural Formulation Lab
             </span>
 
-            <h2 className="mt-5 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            {/* Title */}
+            <h2
+              className="mt-6 text-3xl sm:text-4xl font-extrabold tracking-tight"
+              style={{ color: "var(--text-primary)" }}
+            >
               Science-grade natural formulations for industry
             </h2>
 
-            <p className="mt-5 text-slate-700 dark:text-slate-300 leading-relaxed">
-              IMALEX is an Algerian startup specializing in **custom natural
-              formulation**. Our team of PhDs, engineers, and biotechnologists
-              partners with brands and manufacturers to design, prototype,
-              validate, and scale products that are **effective, compliant, and
-              planet-minded**.
+            {/* Lead */}
+            <p
+              className="mt-5 text-base sm:text-lg leading-relaxed"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              IMALEX is an Algerian startup specializing in{" "}
+              <strong>custom natural formulation</strong>. We partner with
+              brands and manufacturers to design, prototype, validate, and scale
+              products that are{" "}
+              <strong>effective, compliant, and planet-minded</strong>.
             </p>
 
-            <ul className="mt-6 space-y-3">
+            {/* Subtle divider */}
+            <div
+              className="mt-8 h-px w-full"
+              style={{
+                background:
+                  "linear-gradient(to right, transparent, var(--brand-700-a22, rgba(60,139,99,0.22)), transparent)",
+              }}
+            />
+
+            {/* Bullets */}
+            <ul className="mt-6 space-y-4">
               {[
                 "End-to-end R&D: brief → prototype → stability → dossier → scale-up",
                 "Sectors: cosmetics, nutraceuticals, biofertilizers/biopesticides, animal nutrition, agri-food",
@@ -51,103 +81,138 @@ export default function AboutImalex() {
               ].map((item) => (
                 <li
                   key={item}
-                  className="flex gap-3 text-slate-800 dark:text-slate-200"
+                  className="flex gap-3"
+                  style={{ color: "var(--text-primary)" }}
                 >
-                  <FiCheckCircle className="mt-1 h-5 w-5 text-emerald-500" />
-                  <span>{item}</span>
+                  <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center">
+                    <FaCheckCircle
+                      className="h-5 w-5"
+                      style={{ color: "var(--brand-700)" }}
+                    />
+                  </span>
+                  <span
+                    className="leading-relaxed"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {item}
+                  </span>
                 </li>
               ))}
             </ul>
 
-            {/* Trust badges / values */}
+            {/* Badges */}
             <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
               {[
-                { icon: <FiLeaf />, label: "Natural-first" },
-                { icon: <FiFlask />, label: "Lab-validated" },
-                { icon: <FiShield />, label: "Compliant" },
-                { icon: <FiCheckCircle />, label: "Turnkey" },
+                { icon: <FaLeaf />, label: "Natural-first" },
+                { icon: <FaFlask />, label: "Lab-validated" },
+                { icon: <FaShieldAlt />, label: "Compliant" },
+                { icon: <FaCheckCircle />, label: "Turnkey" },
               ].map((b) => (
                 <div
                   key={b.label}
-                  className="rounded-xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-sm p-4 text-center"
+                  className="rounded-xl backdrop-blur-sm p-4 text-center shadow-sm border"
+                  style={{
+                    borderColor: "var(--border)",
+                    background:
+                      "linear-gradient(135deg, color-mix(in srgb, var(--surface-0) 85%, transparent), color-mix(in srgb, var(--surface-0) 60%, transparent))",
+                  }}
                 >
-                  <div className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-300">
+                  <div
+                    className="mx-auto mb-2 grid h-10 w-10 place-items-center rounded-full"
+                    style={{
+                      background: "var(--brand-700-a15, rgba(60,139,99,0.15))",
+                      color: "var(--brand-700)",
+                    }}
+                  >
                     {b.icon}
                   </div>
-                  <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                  <div
+                    className="text-sm font-semibold"
+                    style={{ color: "var(--text-primary)" }}
+                  >
                     {b.label}
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* CTA */}
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            {/* CTA group */}
+            <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <a
                 href="#services"
-                className="inline-flex justify-center rounded-lg bg-teal-500 px-5 py-3 text-white font-semibold hover:bg-teal-600 transition"
+                className="inline-flex justify-center rounded-lg px-5 py-3 font-semibold transition"
+                style={{ background: "var(--cta-700)", color: "#fff" }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "var(--cta-800)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "var(--cta-700)")
+                }
               >
                 Explore Services
               </a>
               <a
                 href="#contact"
-                className="inline-flex justify-center rounded-lg border border-emerald-500/20 bg-white/70 dark:bg-white/5 px-5 py-3 text-emerald-800 dark:text-emerald-200 font-semibold hover:bg-white/90 dark:hover:bg-white/10 backdrop-blur-sm transition"
+                className="inline-flex justify-center rounded-lg px-5 py-3 font-semibold transition backdrop-blur-sm border"
+                style={{
+                  background: "var(--btn-ghost-bg)",
+                  color: "var(--btn-ghost-text)",
+                  borderColor: "var(--btn-ghost-border)",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background =
+                    "var(--btn-ghost-hover-bg)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "var(--btn-ghost-bg)")
+                }
               >
                 Start a Project
               </a>
             </div>
           </div>
 
-          {/* Visual / stats card */}
+          {/* Visual */}
           <div className="relative">
-            <div className="rounded-2xl border border-black/5 dark:border-white/10 bg-gradient-to-br from-white/80 to-white/60 dark:from-slate-900/70 dark:to-slate-900/40 backdrop-blur-md p-6 shadow-lg">
-              <div className="grid gap-6 sm:grid-cols-2">
-                {/* stat tiles */}
-                <StatTile kpi="120+" label="Formulas delivered" />
-                <StatTile kpi="30–90d" label="Prototype lead time" />
-                <StatTile kpi="EU/DZ" label="Regulatory ready" />
-                <StatTile kpi="4+ labs" label="Test partners" />
+            <div
+              className="relative aspect-[16/11] w-full overflow-hidden rounded-2xl backdrop-blur-md shadow-xl border"
+              style={{
+                borderColor: "var(--border-subtle, rgba(0,0,0,0.06))",
+                background:
+                  "linear-gradient(135deg, color-mix(in srgb, var(--surface-0) 85%, transparent), color-mix(in srgb, var(--surface-0) 60%, transparent))",
+              }}
+            >
+              <Image
+                src={imageSrc}
+                alt="IMALEX lab — natural formulation"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 600px"
+                priority={false}
+              />
+
+              {/* caption chip */}
+              <div className="absolute bottom-4 left-4">
+                <span
+                  className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs backdrop-blur-sm"
+                  style={{
+                    background: "rgba(15,23,42,0.7)",
+                    color: "#fff",
+                  }}
+                >
+                  <FaFlask className="h-3.5 w-3.5" />
+                  In-house R&D & stability testing
+                </span>
               </div>
-
-              {/* mini separators */}
-              <div className="my-6 h-px w-full bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent" />
-
-              {/* sectors list */}
-              <div>
-                <div className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
-                  Key sectors
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "Cosmetics",
-                    "Nutraceuticals",
-                    "Biofertilizers",
-                    "Biopesticides",
-                    "Animal Nutrition",
-                    "Agri-food",
-                  ].map((s) => (
-                    <span
-                      key={s}
-                      className="rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-200"
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* assurance line */}
-              <p className="mt-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
-                We combine **green chemistry** with **biotech** to engineer
-                stable, effective, and compliant products — with full
-                traceability from lab bench to scale-up.
-              </p>
             </div>
 
             {/* decorative ring */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl border border-emerald-500/20"
+              className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl"
+              style={{
+                border: "1px solid var(--brand-700-a22, rgba(60,139,99,0.22))",
+              }}
             />
           </div>
         </div>
@@ -156,16 +221,4 @@ export default function AboutImalex() {
   );
 }
 
-/* small KPI tile */
-function StatTile({ kpi, label }) {
-  return (
-    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-      <div className="text-2xl font-extrabold tracking-tight text-emerald-700 dark:text-emerald-300">
-        {kpi}
-      </div>
-      <div className="mt-1 text-xs text-slate-600 dark:text-slate-400">
-        {label}
-      </div>
-    </div>
-  );
-}
+export default AboutImalex;
