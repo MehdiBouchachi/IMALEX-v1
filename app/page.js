@@ -1,15 +1,31 @@
-"use client";
-import labShot from "@/public/lab-shot.jpg";
-import Process from "./_components/Process";
-import ServicesGrid from "./_components/ServicesGrid";
-import SectorsGrid from "./_components/SectorsGrid";
-import WhyUsFlask from "./_components/WhyUsFlask";
-import Hero from "./_components/Hero";
-import AboutImalex from "./_components/AboutImalex";
-import Section from "./_components/Section";
-import CTA from "./_components/CTA";
-import Contact from "./_components/Contact";
-import Footer from "./_components/Footer";
+import dynamic from "next/dynamic";
+
+const Hero = dynamic(() => import("./_components/Hero"), { ssr: false });
+const Process = dynamic(() => import("./_components/Process"), { ssr: false });
+const WhyUsFlask = dynamic(() => import("./_components/WhyUsFlask"), {
+  ssr: false,
+});
+const ServicesGrid = dynamic(() => import("./_components/ServicesGrid"), {
+  ssr: false,
+});
+const AboutImalex = dynamic(() => import("./_components/AboutImalex"), {
+  ssr: false,
+});
+const Contact = dynamic(() => import("./_components/Contact"), {
+  ssr: false,
+});
+const Footer = dynamic(() => import("./_components/Footer"), {
+  ssr: false,
+});
+const Section = dynamic(() => import("./_components/Section"), {
+  ssr: false,
+});
+const CTA = dynamic(() => import("./_components/CTA"), {
+  ssr: false,
+});
+const SectorsGrid = dynamic(() => import("./_components/SectorsGrid"), {
+  ssr: false,
+});
 
 // optional: control caching/ISR
 // export const revalidate = 60;         // ISR every 60s
@@ -21,7 +37,7 @@ export default function Page() {
     <div className="selection:bg-green-300/40">
       <main>
         <Hero /> {/* client */}
-        <AboutImalex imageSrc={labShot} /> {/* server */}
+        <AboutImalex  /> {/* server */}
         <Section id="services" title="Our Services" eyebrow="What we do">
           <ServicesGrid /> {/* client or server, your file says client */}
         </Section>

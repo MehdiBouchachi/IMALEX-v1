@@ -1,7 +1,10 @@
-import "@/app/_styles/globals.css";
-import Header from "@/app/_components/Header";
+import "./_styles/globals.css";
 import { Josefin_Sans } from "next/font/google";
+import dynamic from "next/dynamic";
 
+const Header = dynamic(() => import("./_components/Header"), {
+  ssr: false,
+});
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   display: "swap",
@@ -18,7 +21,6 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
- 
     <html lang="en" className="scroll-smooth">
       <body
         className={[

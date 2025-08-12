@@ -152,16 +152,15 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <a
             href="#contact"
-            className="hidden sm:inline-flex items-center rounded-lg px-4 py-2 text-white text-sm font-semibold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)]"
-            style={{
-              background: "var(--cta-700)",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.background = "var(--cta-800)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.background = "var(--cta-700)")
-            }
+            className="
+      hidden sm:inline-flex items-center rounded-lg px-4 py-2 text-sm font-semibold
+      text-white
+      bg-[var(--cta-700)]
+      hover:bg-[var(--cta-800)]
+      active:translate-y-[1px]
+      transition-colors duration-200
+      focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)]
+    "
           >
             Request a Quote
           </a>
@@ -360,14 +359,12 @@ function MobileMenu({ sections }) {
                   <a
                     href={href}
                     onClick={() => setOpen(false)}
-                    className="block rounded px-3 py-2 transition"
-                    style={{ color: "var(--text-primary)" }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = "var(--brand-100)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.background = "transparent")
-                    }
+                    className="
+    block rounded px-3 py-2
+    transition-colors duration-200
+    text-[var(--text-primary)]
+    hover:bg-[var(--brand-100)]
+  "
                   >
                     {label}
                   </a>
@@ -379,23 +376,18 @@ function MobileMenu({ sections }) {
               <a
                 href="#contact"
                 onClick={() => setOpen(false)}
-                className="block text-center rounded-lg px-4 py-2 font-semibold transition"
-                style={{ background: "var(--cta-700)", color: "#fff" }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "var(--cta-800)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "var(--cta-700)")
-                }
+                className="
+    block text-center rounded-lg px-4 py-2 font-semibold
+    bg-[var(--cta-700)] text-white
+    transition-colors duration-200
+    hover:bg-[var(--cta-800)]
+  "
               >
                 Request a Quote
               </a>
             </div>
 
-            <div
-              className="mt-3 text-center text-xs"
-              style={{ color: "var(--text-secondary)" }}
-            >
+            <div className="mt-3 text-center text-xs text-[var(--text-secondary)]">
               IMALEX — Natural Formulation Lab
             </div>
           </div>
