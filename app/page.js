@@ -1,29 +1,15 @@
 import dynamic from "next/dynamic";
+import ContactSection from "./_sections/ContactSection";
+import HeroSection from "./_sections/HeroSection";
+import AboutSection from "./_sections/AboutSection";
+import ServicesSection from "./_sections/ServicesSection";
+import SectorsSection from "./_sections/SectorsSection";
+import WhyUsSection from "./_sections/WhyUsSection";
+import ProcessSection from "./_sections/ProcessSection";
+import CTA from "./_components/CTA";
+import Footer from "./_components/footer/Footer";
 
-const Hero = dynamic(() => import("./_components/Hero"), { ssr: false });
-const Process = dynamic(() => import("./_components/Process"), { ssr: false });
-const WhyUsFlask = dynamic(() => import("./_components/WhyUsFlask"), {
-  ssr: false,
-});
-const ServicesGrid = dynamic(() => import("./_components/ServicesGrid"), {
-  ssr: false,
-});
-const AboutImalex = dynamic(() => import("./_components/AboutImalex"), {
-  ssr: false,
-});
-const Contact = dynamic(() => import("./_components/Contact"), {
-  ssr: false,
-});
-const Footer = dynamic(() => import("./_components/Footer"), {
-  ssr: false,
-});
 const Section = dynamic(() => import("./_components/Section"), {
-  ssr: false,
-});
-const CTA = dynamic(() => import("./_components/CTA"), {
-  ssr: false,
-});
-const SectorsGrid = dynamic(() => import("./_components/SectorsGrid"), {
   ssr: false,
 });
 
@@ -36,18 +22,18 @@ export default function Page() {
   return (
     <div className="selection:bg-green-300/40">
       <main>
-        <Hero /> {/* client */}
-        <AboutImalex  /> {/* server */}
+        <HeroSection />
+        <AboutSection />
         <Section id="services" title="Our Services" eyebrow="What we do">
-          <ServicesGrid /> {/* client or server, your file says client */}
+          <ServicesSection />
         </Section>
-        <SectorsGrid /> {/* client */}
-        <WhyUsFlask /> {/* (whichever it is) */}
-        <Process /> {/* client */}
-        <CTA /> {/* server */}
-        <Contact /> {/* server wrapper + client form inside */}
+        <SectorsSection />
+        <WhyUsSection />
+        <ProcessSection />
+        <CTA />
+        <ContactSection />
       </main>
-      <Footer /> {/* server */}
+      <Footer />
     </div>
   );
 }

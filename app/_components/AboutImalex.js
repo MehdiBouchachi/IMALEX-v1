@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { FaFlask, FaCheckCircle, FaLeaf, FaShieldAlt } from "react-icons/fa";
+import Button from "./ui/Button";
 
 function AboutImalex({ imageSrc = "/lab-shot.jpg" }) {
   return (
@@ -137,22 +138,12 @@ function AboutImalex({ imageSrc = "/lab-shot.jpg" }) {
 
             {/* CTA group */}
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
-              <a
-                href="#services"
-                className="inline-flex justify-center rounded-lg px-5 py-3 font-semibold
-              transition bg-[var(--cta-700)] hover:bg-[var(--cta-800)] text-white"
-              >
+              <Button variant="primary" size="mlg" asLink href="#services">
                 Explore Services
-              </a>
-              <a
-                href="#contact"
-                className="inline-flex justify-center rounded-lg px-5 py-3 font-semibold transition
-              backdrop-blur-sm border
-              bg-[var(--btn-ghost-bg)] hover:bg-[var(--btn-ghost-hover-bg)]
-              text-[var(--btn-ghost-text)] border-[var(--btn-ghost-border)]"
-              >
+              </Button>
+              <Button variant="secondary" size="mlg" asLink href="#contact">
                 Start a Project
-              </a>
+              </Button>
             </div>
           </div>
 
@@ -170,7 +161,7 @@ function AboutImalex({ imageSrc = "/lab-shot.jpg" }) {
                 src={imageSrc}
                 alt="IMALEX lab — natural formulation"
                 fill
-                quality={60} // jpeg/webp quality (0–100)
+                quality={60}
                 loading="lazy"
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 600px"

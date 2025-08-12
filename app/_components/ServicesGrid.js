@@ -1,5 +1,6 @@
 // app/_components/ServicesGrid.js
 import Image from "next/image";
+import Button from "./ui/Button";
 
 /* --- tiny inline icons (stroke currentColor) --- */
 const IFlask = (p) => (
@@ -236,13 +237,9 @@ function ServiceTile({ title, line, icon: Icon, image, bullets = [], cta }) {
         {/* actions row */}
         <div className="mt-5 flex flex-wrap items-center gap-3">
           {/* primary CTA (tokens) */}
-          <a
-            href="#contact"
-            className="inline-flex items-center rounded-lg px-3.5 py-2 text-xs font-semibold transition
-                       bg-[var(--cta-bg)] hover:bg-[var(--cta-bg-hover)] text-white "
-          >
+          <Button variant="primary" size="xs" asLink href="#contact">
             {cta}
-          </a>
+          </Button>
 
           <details className="group/details relative w-auto">
             <summary

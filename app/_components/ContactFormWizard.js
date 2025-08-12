@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import Button from "./ui/Button";
 
 /* ===== Contact Form Wizard , pixel-match old ===== */
 export default function ContactFormWizard() {
@@ -124,51 +125,31 @@ export default function ContactFormWizard() {
 
       <div className="mt-6 flex items-center justify-between gap-3">
         {/* Back — ghost (same look) */}
-        <button
+        <Button
+          variant="secondary"
+          size="md"
           type="button"
           onClick={goBack}
           disabled={step === 1}
-          className="
-            rounded-lg px-5 py-3 font-semibold transition
-            border bg-[var(--contact-panel-bg)] hover:bg-[var(--contact-panel-bg-hover)]
-            border-[var(--contact-panel-border)] text-[var(--contact-ghost-text)]
-            disabled:opacity-50
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-            ring-offset-[var(--surface-0)] focus-visible:ring-[var(--contact-input-focus)]
-          "
         >
           Back
-        </button>
+        </Button>
 
         {/* Next/Submit — solid CTA green */}
         {step < 3 ? (
-          <button
-            type="button"
-            onClick={goNext}
-            className="
-              rounded-lg px-6 py-3 font-semibold transition shadow-sm
-              bg-[var(--cta-700)] hover:bg-[var(--cta-800)]
-              text-[var(--cta-50)]
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-              ring-offset-[var(--surface-0)] focus-visible:ring-[var(--contact-input-focus)]
-            "
-          >
+          <Button variant="primary" size="md" type="button" onClick={goNext}>
             Next
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button
+            variant="primary"
+            size="md"
             type="submit"
+            loading={submitting}
             disabled={submitting}
-            className="
-              rounded-lg px-6 py-3 font-semibold transition shadow-sm
-              bg-[var(--cta-700)] hover:bg-[var(--cta-800)]
-              text-[var(--cta-50)] disabled:opacity-60
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-              ring-offset-[var(--surface-0)] focus-visible:ring-[var(--contact-input-focus)]
-            "
           >
-            {submitting ? "Sending…" : "Send inquiry"}
-          </button>
+            {submitting ? "Sending..." : "Send inquiry"}
+          </Button>
         )}
       </div>
     </form>

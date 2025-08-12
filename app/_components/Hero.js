@@ -1,5 +1,6 @@
 "use client";
 import { useMemo } from "react";
+import Button from "./ui/Button";
 
 function Hero() {
   return (
@@ -61,41 +62,12 @@ function Hero() {
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="#contact"
-                className="rounded-lg px-7 py-4 font-semibold text-white transition shadow-md"
-                style={{
-                  background: "var(--cta-700)",
-                  boxShadow:
-                    "0 10px 24px rgba(0,0,0,0.12), 0 8px 18px var(--ring-pulse)",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "var(--cta-800)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "var(--cta-700)")
-                }
-              >
+              <Button variant="primary" size="xlg" asLink href="#contact">
                 Request a Quote
-              </a>
-              <a
-                href="#services"
-                className="rounded-lg px-7 py-4 font-semibold backdrop-blur-sm transition"
-                style={{
-                  background: "var(--btn-ghost-bg)",
-                  color: "var(--btn-ghost-text)",
-                  border: "1px solid var(--btn-ghost-border)",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background =
-                    "var(--btn-ghost-hover-bg)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "var(--btn-ghost-bg)")
-                }
-              >
+              </Button>
+              <Button variant="secondary" size="xlg" asLink href="#services">
                 Discover Our Services
-              </a>
+              </Button>
             </div>
 
             <div
@@ -122,8 +94,6 @@ function Hero() {
 }
 
 /* ===================== WAVES & DOTS ===================== */
-
-// Map wave tones to brand tokens
 function Wave({ className = "", tone = "moss" }) {
   // Read CSS vars once so waves follow brand automatically
   const stops = useMemo(() => {

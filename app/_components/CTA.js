@@ -1,3 +1,5 @@
+import Button from "./ui/Button";
+
 function CTA() {
   return (
     <section
@@ -18,36 +20,13 @@ function CTA() {
         </div>
 
         <div className="flex gap-3">
-          {/* Primary (solid) */}
-          <a
-            href="#contact"
-            className="
-              inline-flex items-center justify-center
-              rounded-lg px-6 py-3 font-semibold transition
-              bg-[var(--cta-bg)] hover:bg-[var(--cta-bg-hover)]
-              text-[var(--cta-50)]
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-              ring-offset-[var(--surface-0)] focus-visible:ring-[var(--ring)]
-              shadow-sm
-            "
-          >
+          <Button variant="primary" size="mlg" asLink href="#contact">
             Request a Quote
-          </a>
+          </Button>
 
-          {/* Secondary (ghost) */}
-          <a
-            href="#services"
-            className="
-              inline-flex items-center justify-center
-              rounded-lg px-6 py-3 font-semibold transition backdrop-blur-sm
-              border bg-[var(--btn-ghost-bg)] hover:bg-[var(--btn-ghost-hover-bg)]
-              border-[var(--btn-ghost-border)] text-[var(--btn-ghost-text)]
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-              ring-offset-[var(--surface-0)] focus-visible:ring-[var(--ring-subtle)]
-            "
-          >
+          <Button variant="secondary" size="mlg" asLink href="#services">
             View Services
-          </a>
+          </Button>
         </div>
       </div>
     </section>

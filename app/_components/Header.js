@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FiSun, FiMoon, FiX, FiMenu } from "react-icons/fi";
+import Button from "./ui/Button";
 
 export default function Header() {
   const [solid, setSolid] = useState(false);
@@ -152,20 +153,16 @@ export default function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <a
+          <Button
+            variant="primary"
+            size="sm"
+            asLink
             href="#contact"
-            className="
-      hidden sm:inline-flex items-center rounded-lg px-4 py-2 text-sm font-semibold
-      text-white
-      bg-[var(--cta-700)]
-      hover:bg-[var(--cta-800)]
-      active:translate-y-[1px]
-      transition-colors duration-200
-      focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)]
-    "
+            className="hidden sm:inline-flex"
           >
             Request a Quote
-          </a>
+          </Button>
+
           <ThemeToggle />
           <MobileMenu sections={sections} />
         </div>
@@ -375,18 +372,16 @@ function MobileMenu({ sections }) {
             </ul>
 
             <div className="mt-4">
-              <a
+              <Button
+                variant="primary"
+                size="lg" // <- matches CTA (px-6 py-3)
+                asLink
                 href="#contact"
+                className="w-full" // keep it inline-sized; use "w-full" if you want full width
                 onClick={() => setOpen(false)}
-                className="
-    block text-center rounded-lg px-4 py-2 font-semibold
-    bg-[var(--cta-700)] text-white
-    transition-colors duration-200
-    hover:bg-[var(--cta-800)]
-  "
               >
                 Request a Quote
-              </a>
+              </Button>
             </div>
 
             <div className="mt-3 text-center text-xs text-[var(--text-secondary)]">

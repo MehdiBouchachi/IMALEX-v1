@@ -7,6 +7,7 @@ import {
   FaIndustry,
 } from "react-icons/fa";
 import { useEffect, useMemo, useRef, useState } from "react";
+import Button from "./ui/Button";
 
 export default function Process() {
   const steps = useMemo(
@@ -444,30 +445,12 @@ function Finale() {
           Ready to turn your hypothesis into a compliant, scalable product?
         </p>
         <div className="mt-6 flex items-center justify-center gap-3">
-          <a
-            href="#contact"
-            className="
-                inline-flex items-center rounded-full px-5 py-2.5 text-sm font-semibold
-                transition-transform duration-150 ease-in-out
-                active:translate-y-[1px]
-                bg-[var(--cta-bg)] text-[var(--cta-50)]
-                shadow-[0_10px_24px_-12px_var(--effect-glow-a)]
-                focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--brand-400)]
-                                                        "
-          >
+          <Button variant="primary" size="lg" asLink href="#contact">
             Start a Project
-          </a>
-          <a
-            href="#services"
-            className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-semibold"
-            style={{
-              background: "var(--btn-ghost-bg)",
-              color: "var(--btn-ghost-text)",
-              border: "1px solid var(--btn-ghost-border)",
-            }}
-          >
+          </Button>
+          <Button variant="secondary" size="lg" asLink href="#services">
             View Services
-          </a>
+          </Button>
         </div>
       </div>
     </div>

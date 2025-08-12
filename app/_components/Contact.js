@@ -1,4 +1,4 @@
-import ContactFormWizard from "./ContactFormWizard";
+import ContactFormWizard from "./contact/ContactFormWizard";
 
 function Contact() {
   return (
