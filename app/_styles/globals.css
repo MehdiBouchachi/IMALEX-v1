@@ -550,6 +550,7 @@ body {
   .anim-pop-lg {
     animation: pop 600ms ease both;
   }
+ 
 
   /* keep your "lite" + accessibility behavior */
   @media (prefers-reduced-motion: reduce) {

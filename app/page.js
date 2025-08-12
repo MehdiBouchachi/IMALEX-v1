@@ -1,13 +1,33 @@
 import dynamic from "next/dynamic";
-import ContactSection from "./_sections/ContactSection";
-import HeroSection from "./_sections/HeroSection";
-import AboutSection from "./_sections/AboutSection";
-import ServicesSection from "./_sections/ServicesSection";
-import SectorsSection from "./_sections/SectorsSection";
-import WhyUsSection from "./_sections/WhyUsSection";
-import ProcessSection from "./_sections/ProcessSection";
-import CTA from "./_components/CTA";
-import Footer from "./_components/footer/Footer";
+
+const ContactSection = dynamic(() => import("./_sections/ContactSection"), {
+  ssr: false,
+});
+const HeroSection = dynamic(() => import("./_sections/HeroSection"), {
+  ssr: true,
+});
+const AboutSection = dynamic(() => import("./_sections/AboutSection"), {
+  ssr: true,
+});
+const ServicesSection = dynamic(() => import("./_sections/ServicesSection"), {
+  ssr: true,
+});
+const SectorsSection = dynamic(() => import("./_sections/SectorsSection"), {
+  ssr: true,
+});
+
+// heavy animations → client only to avoid hydration jank
+const WhyUsSection = dynamic(() => import("./_sections/WhyUsSection"), {
+  ssr: false,
+});
+const ProcessSection = dynamic(() => import("./_sections/ProcessSection"), {
+  ssr: false,
+});
+
+const CTA = dynamic(() => import("./_components/CTA"), { ssr: true });
+const Footer = dynamic(() => import("./_components/footer/Footer"), {
+  ssr: true,
+});
 
 const Section = dynamic(() => import("./_components/Section"), {
   ssr: false,
