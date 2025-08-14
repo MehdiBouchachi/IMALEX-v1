@@ -1160,38 +1160,104 @@ body {
     }
   }
 
-  @media (prefers-color-scheme: light) {
-    .ss4-card {
-      /* Stronger paper white with subtle texture */
-      background: linear-gradient(
-          0deg,
-          rgba(255, 255, 255, 0.94),
-          rgba(255, 255, 255, 0.94)
-        ),
-        var(--surface-1);
-      border-color: rgba(0, 0, 0, 0.06);
-      color: var(--text-primary, #0f172a);
-      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.12),
-        0 1px 0 rgba(255, 255, 255, 0.9) inset;
-    }
+  /* LIGHT THEME (when you are NOT in html.dark) */
+  html:not(.dark) .ss4-card {
+    background: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.94),
+        rgba(255, 255, 255, 0.94)
+      ),
+      var(--surface-1);
+    border-color: rgba(0, 0, 0, 0.06);
+    color: var(--text-primary);
+    box-shadow: 0 22px 60px rgba(15, 23, 42, 0.12),
+      0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  }
+  html:not(.dark) .ss4-title {
+    color: var(--text-primary);
+  }
+  html:not(.dark) .ss4-sub {
+    color: var(--text-secondary);
+  }
+  html:not(.dark) .ss4-ic.ok {
+    background: var(--cta-700);
+    color: #fff;
+  }
+  html:not(.dark) .ss4-ic.err {
+    background: var(--danger-700);
+    color: #fff;
+  }
 
-    /* Make title and body text pop */
-    .ss4-title {
-      color: var(--text-primary, #0f172a);
-    }
-    .ss4-sub {
-      color: var(--text-secondary, #334155);
-    }
+  /* DARK THEME (when html has the .dark class) */
+  html.dark .ss4-overlay {
+    background: rgba(0, 0, 0, 0.62);
+    backdrop-filter: blur(8px);
+  }
 
-    /* Icons: softer background but still distinct in light mode */
-    .ss4-ic.ok {
-      background: var(--cta-700, #3c8b63);
-      color: #fff;
-    }
-    .ss4-ic.err {
-      background: var(--danger-700, #c2410c);
-      color: #fff;
-    }
+  html.dark .ss4-card {
+    /* deep glass, no milky white */
+    background: color-mix(in srgb, var(--surface-1) 96%, #000);
+    border-color: color-mix(in srgb, var(--border) 80%, #000);
+    color: var(--text-primary);
+    box-shadow: 0 22px 70px rgba(0, 0, 0, 0.55);
+  }
+
+  html.dark .ss4-ambient {
+    opacity: 0.65;
+  }
+
+  /* status bar tints */
+  html.dark .ss4-bar.ok {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--cta-700) 85%, #fff),
+      var(--cta-700)
+    );
+  }
+  html.dark .ss4-bar.err {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--danger-700) 80%, #fff),
+      var(--danger-700)
+    );
+  }
+
+  /* icon tile on dark: glassy, not white */
+  html.dark .ss4-ic {
+    background: var(--tile-icon-bg-dark);
+    border-color: var(--tile-icon-border-dark);
+    color: var(--tile-icon-text-dark);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  }
+  html.dark .ss4-ic.ok {
+    background: color-mix(in srgb, var(--cta-700) 28%, transparent);
+    border-color: color-mix(in srgb, var(--cta-700) 45%, transparent);
+    color: #fff;
+  }
+  html.dark .ss4-ic.err {
+    background: color-mix(in srgb, var(--danger-700) 22%, transparent);
+    border-color: color-mix(in srgb, var(--danger-700) 42%, transparent);
+    color: #fff;
+  }
+
+  /* ghost buttons on dark */
+  html.dark .ss4-btn.ghost {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+  }
+  html.dark .ss4-btn.ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* footer divider on dark */
+  html.dark .ss4-foot::before {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(148, 163, 184, 0.28),
+      transparent
+    );
   }
 
   /* responsive: give extra width on big screens, keep cozy on mobile */
