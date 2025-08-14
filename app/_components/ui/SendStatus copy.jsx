@@ -15,21 +15,21 @@ export default function SendStatus({
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
 
-  // tiny ambient spark dots
+  // small ambient spark dots (subtle)
   const sparks = useMemo(
     () =>
-      Array.from({ length: 18 }, (_, i) => ({
+      Array.from({ length: 16 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
         s: 1 + Math.random() * 1.2,
-        d: 2 + Math.random() * 1.1,
+        d: 1.8 + Math.random() * 1,
         dl: Math.random() * 1.2,
       })),
     []
   );
 
-  // ESC closes
+  // ESC to close
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => e.key === "Escape" && onClose?.();
@@ -37,10 +37,11 @@ export default function SendStatus({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // refined confetti (success)
+  // confetti on success (toned down)
   useEffect(() => {
     if (!open || !isSuccess) return;
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches)
+      return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -49,6 +50,7 @@ export default function SendStatus({
       h = 0,
       ctx = null;
     const DPR = Math.min(2, window.devicePixelRatio || 1);
+
     function resize() {
       const box = wrapRef.current?.getBoundingClientRect();
       w = Math.floor((box?.width || 560) * DPR);
@@ -59,6 +61,7 @@ export default function SendStatus({
       canvas.style.height = `${Math.floor(h / DPR)}px`;
       ctx = canvas.getContext("2d");
     }
+
     resize();
     const ro = new ResizeObserver(resize);
     wrapRef.current && ro.observe(wrapRef.current);
@@ -68,27 +71,27 @@ export default function SendStatus({
     const brand700 = pick("--brand-700", "#167a55");
     const brand400 = pick("--brand-400", "#7fcfa7");
     const cta700 = pick("--cta-700", "#3c8b63");
+    const danger700 = pick("--danger-700", "#c2410c");
     const accentA = pick("--effect-glow-a", "rgba(127,207,167,.85)");
-    const gold = "#e6b84d";
-    const palette = [brand700, brand400, cta700, accentA, gold];
+    const palette = [brand700, brand400, cta700, accentA, danger700];
 
-    const N = 70;
+    const N = 60;
     const parts = new Array(N).fill(0).map(() => {
       const angle = (Math.random() * Math.PI) / 2 + Math.PI * 1.25;
-      const speed = 3.2 + Math.random() * 5.2;
+      const speed = 3.5 + Math.random() * 5.5;
       return {
         x: w / 2,
-        y: Math.max(44 * DPR, h * 0.22),
+        y: Math.max(40 * DPR, h * 0.2),
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        rw: 3 + Math.random() * 9,
-        rh: 2 + Math.random() * 6,
+        rw: 4 + Math.random() * 8,
+        rh: 2 + Math.random() * 4,
         r: Math.random() * Math.PI,
-        vr: (Math.random() - 0.5) * 0.18,
+        vr: (Math.random() - 0.5) * 0.16,
         col: palette[(Math.random() * palette.length) | 0],
-        drag: 0.996 - Math.random() * 0.012,
-        g: 0.11 + Math.random() * 0.06,
-        life: 90 + (Math.random() * 30) | 0,
+        drag: 0.996 - Math.random() * 0.01,
+        g: 0.1 + Math.random() * 0.05,
+        life: (80 + Math.random() * 30) | 0,
       };
     });
 
@@ -96,6 +99,7 @@ export default function SendStatus({
     function tick() {
       frame++;
       ctx.clearRect(0, 0, w, h);
+
       parts.forEach((p) => {
         p.vx *= p.drag;
         p.vy = p.vy * p.drag + p.g;
@@ -104,22 +108,19 @@ export default function SendStatus({
         p.r += p.vr;
         p.life--;
 
-        // subtle sheen
-        const g = ctx.createLinearGradient(p.x - p.rw, p.y, p.x + p.rw, p.y);
-        g.addColorStop(0, p.col);
-        g.addColorStop(1, "rgba(255,255,255,.25)");
-
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate(p.r);
-        ctx.fillStyle = g;
-        ctx.globalAlpha = Math.max(0, Math.min(1, p.life / 45));
+        ctx.fillStyle = p.col;
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life / 40));
         ctx.fillRect(-p.rw / 2, -p.rh / 2, p.rw, p.rh);
         ctx.restore();
       });
-      if (frame < 220) rafRef.current = requestAnimationFrame(tick);
+
+      if (frame < 200) rafRef.current = requestAnimationFrame(tick);
     }
     rafRef.current = requestAnimationFrame(tick);
+
     return () => {
       ro.disconnect();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -133,28 +134,24 @@ export default function SendStatus({
     details ??
     (isSuccess
       ? "Thanks for reaching out. We’ll reply shortly."
-      : "We hit a snag. Check your connection and try again.");
+      : "Something went wrong. Please try again.");
 
   return (
     <div
-      className="ss5-overlay"
+      className="ss4-overlay"
       role="dialog"
       aria-modal="true"
-      aria-live="polite"
       onClick={(e) => e.currentTarget === e.target && onClose?.()}
     >
       <div
         ref={wrapRef}
-        className={["ss5-card", isSuccess ? "ok" : "err"].join(" ")}
+        className={["ss4-card", isSuccess ? "ok" : "err"].join(" ")}
       >
-        {/* top bar */}
-        <div className={["ss5-bar", isSuccess ? "ok" : "err"].join(" ")} />
-
-        {/* corner accents */}
-        <div aria-hidden className="ss5-corners" />
+        {/* top status bar (thin, readable) */}
+        <div className={["ss4-bar", isSuccess ? "ok" : "err"].join(" ")} />
 
         {/* close */}
-        <button className="ss5-close" aria-label="Close" onClick={onClose}>
+        <button className="ss4-close" aria-label="Close" onClick={onClose}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path
               d="M6 6l12 12M18 6l-12 12"
@@ -165,88 +162,15 @@ export default function SendStatus({
           </svg>
         </button>
 
-        {/* background wash + textures */}
-        <div aria-hidden className="ss5-ambient" />
+        {/* subtle bg wash */}
+        <div aria-hidden className="ss4-ambient" />
 
-        {/* effects */}
-        {isSuccess && <div aria-hidden className="ss5-ring" />}
-        {isSuccess ? (
-          <canvas ref={canvasRef} className="ss5-confetti" />
-        ) : (
-          <div aria-hidden className="ss5-mist" />
-        )}
+        {/* ring pulse + confetti (success only) */}
+        {isSuccess && <div aria-hidden className="ss4-ring" />}
+        {isSuccess && <canvas ref={canvasRef} className="ss4-confetti" />}
 
-        {/* content */}
-        <div className="ss5-body">
-          <div className="ss5-row">
-            <div className={["ss5-ic", isSuccess ? "ok" : "err"].join(" ")}>
-              {isSuccess ? (
-                // check-circle refined
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                  <path
-                    className="ss5-check"
-                    d="M8.5 12.5l2.8 2.8L16.8 9.8"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              ) : (
-                // error diamond / alert
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <rect
-                    x="5"
-                    y="5"
-                    width="14"
-                    height="14"
-                    rx="2.5"
-                    transform="rotate(45 12 12)"
-                    fill="currentColor"
-                    fillOpacity=".08"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                  <path d="M12 9v4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  <circle cx="12" cy="16.5" r="1.1" fill="currentColor" />
-                </svg>
-              )}
-            </div>
-
-            <div className="ss5-copy">
-              <h3 className="ss5-title">{title}</h3>
-              <p className="ss5-sub">{body}</p>
-
-              <div className="ss5-actions">
-                {!isSuccess && onRetry ? (
-                  <button className="ss5-btn danger" onClick={onRetry}>
-                    Try again
-                  </button>
-                ) : null}
-                <a
-                  className="ss5-btn ghost"
-                  href={`mailto:${
-                    process.env.NEXT_PUBLIC_FALLBACK_EMAIL || "hello@imalex.com"
-                  }`}
-                >
-                  Email us
-                </a>
-                <button className="ss5-btn ghost" onClick={onClose}>
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="ss5-foot">
-          <span>Imalex • Natural Formulation Lab</span>
-          <span>{new Date().toLocaleString()}</span>
-        </div>
-
-        {/* sparkles (subtle) */}
-        <div aria-hidden className="ss5-sparks">
+        {/* tiny sparks */}
+        <div aria-hidden className="ss4-sparks">
           {sparks.map((s) => (
             <span
               key={s.id}
@@ -260,6 +184,78 @@ export default function SendStatus({
               }}
             />
           ))}
+        </div>
+
+        <div className="ss4-body">
+          <div className="ss4-row">
+            <div className={["ss4-ic", isSuccess ? "ok" : "err"].join(" ")}>
+              {/* success: check-circle | error: warning triangle */}
+              {isSuccess ? (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  />
+                  <path
+                    d="M8.5 12.5l2.8 2.8L16.8 9.8"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 4l9 16H3l9-16Z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="currentColor"
+                    fillOpacity=".08"
+                  />
+                  <path
+                    d="M12 9v5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <circle cx="12" cy="16.5" r="1.1" fill="currentColor" />
+                </svg>
+              )}
+            </div>
+
+            <div className="ss4-copy">
+              <h3 className="ss4-title">{title}</h3>
+              <p className="ss4-sub">{body}</p>
+
+              <div className="ss4-actions">
+                {!isSuccess && onRetry ? (
+                  <button className="ss4-btn danger" onClick={onRetry}>
+                    Try again
+                  </button>
+                ) : null}
+                <a
+                  className="ss4-btn ghost"
+                  href={`mailto:${
+                    process.env.NEXT_PUBLIC_FALLBACK_EMAIL || "hello@imalex.com"
+                  }`}
+                >
+                  Email us
+                </a>
+                <button className="ss4-btn ghost" onClick={onClose}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="ss4-foot">
+          <span>Imalex • Natural Formulation Lab</span>
+          <span>{new Date().toLocaleString()}</span>
         </div>
       </div>
     </div>

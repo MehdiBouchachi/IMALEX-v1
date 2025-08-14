@@ -238,7 +238,7 @@ export default function SendStatus({
                   </button>
                 ) : null}
                 <a
-                  className="ss4-btn ghost"
+                  className="ss4-btn ghost emailus"
                   href={`mailto:${
                     process.env.NEXT_PUBLIC_FALLBACK_EMAIL || "hello@imalex.com"
                   }`}
