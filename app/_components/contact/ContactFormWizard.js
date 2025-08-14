@@ -36,6 +36,7 @@ export default function ContactFormWizard() {
       form={form}
       setField={setField}
       errors={showErr[1] ? errors : {}}
+      disabled={submitting}
     />,
     <StepTwo
       key="s2"
@@ -43,12 +44,14 @@ export default function ContactFormWizard() {
       setField={setField}
       toggleNeed={toggleNeed}
       errors={showErr[2] ? errors : {}}
+      disabled={submitting}
     />,
     <StepThree
       key="s3"
       form={form}
       setField={setField}
       errors={showErr[3] ? errors : {}}
+      disabled={submitting}
     />,
   ];
 

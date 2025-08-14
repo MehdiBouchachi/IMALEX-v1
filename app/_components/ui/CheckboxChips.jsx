@@ -22,6 +22,7 @@ export default function CheckboxChips({
   options = [],
   error,
   cols = 2,
+  disabled,
 }) {
   const gridCols =
     {
@@ -54,6 +55,7 @@ export default function CheckboxChips({
                 checked={checked}
                 onChange={() => onToggle(val)}
                 aria-invalid={!!error}
+                disabled={disabled}
               />
               <span className="text-[var(--contact-ghost-text)]">{lab}</span>
             </label>

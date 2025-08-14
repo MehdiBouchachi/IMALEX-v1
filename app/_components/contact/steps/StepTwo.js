@@ -5,7 +5,7 @@ import { Label } from "../../ui/Input";
 import CheckboxChips from "../../ui/CheckboxChips";
 import { NEED_OPTIONS, SECTOR_OPTIONS } from "../constants";
 
-export function StepTwo({ form, setField, toggleNeed, errors }) {
+export function StepTwo({ form, setField, toggleNeed, errors, disabled }) {
   return (
     <>
       <div>
@@ -16,6 +16,7 @@ export function StepTwo({ form, setField, toggleNeed, errors }) {
           onChange={(v) => setField("sector", v)}
           defaultValue=""
           error={errors.sector}
+          disabled={disabled}
         >
           {SECTOR_OPTIONS.map(({ value, label, disabled }) => (
             <option key={label} value={value} disabled={disabled}>
@@ -33,6 +34,7 @@ export function StepTwo({ form, setField, toggleNeed, errors }) {
         options={NEED_OPTIONS} // [ [value, label], ... ]
         error={errors.needs}
         cols={2}
+        disabled={disabled}
       />
     </>
   );

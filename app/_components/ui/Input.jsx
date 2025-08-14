@@ -30,6 +30,7 @@ export function Input({
   value,
   onChange,
   error,
+  disabled,
 }) {
   const inputId = id || name;
   return (
@@ -42,6 +43,7 @@ export function Input({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         className={[
           "mt-1 w-full rounded-lg border px-3 py-2 outline-none",
           "bg-[var(--contact-input-bg)] border-[var(--contact-input-border)]",
@@ -67,6 +69,7 @@ export function TextArea({
   value,
   onChange,
   error,
+  disabled,
 }) {
   const areaId = id || name;
   return (
@@ -79,6 +82,7 @@ export function TextArea({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         className={[
           "mt-1 w-full rounded-lg px-3 py-2 outline-none",
           "bg-[var(--contact-input-bg)] border border-[var(--contact-input-border)]",

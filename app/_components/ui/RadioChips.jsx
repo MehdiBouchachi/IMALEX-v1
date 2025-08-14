@@ -22,6 +22,7 @@ export default function RadioChips({
   options = [],
   error,
   cols = 3,
+  disabled,
 }) {
   return (
     <div>
@@ -46,6 +47,7 @@ export default function RadioChips({
                 checked={selected}
                 onChange={() => onChange(val)}
                 aria-invalid={!!error}
+                disabled={disabled}
               />
               <span className="text-[var(--contact-ghost-text)]">{lab}</span>
             </label>

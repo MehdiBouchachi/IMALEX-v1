@@ -2,7 +2,7 @@ import React from "react";
 import { Input } from "../../ui/Input";
 import { CountrySelect } from "../../ui/Selects";
 
-export function StepOne({ form, setField, errors }) {
+export function StepOne({ form, setField, errors, disabled }) {
   return (
     <div className="grid sm:grid-cols-2 gap-4">
       <Input
@@ -11,6 +11,7 @@ export function StepOne({ form, setField, errors }) {
         value={form.name}
         onChange={(e) => setField("name", e.target.value)}
         error={errors.name}
+        disabled={disabled}
       />
       <Input
         label="Email"
@@ -19,6 +20,7 @@ export function StepOne({ form, setField, errors }) {
         value={form.email}
         onChange={(e) => setField("email", e.target.value)}
         error={errors.email}
+        disabled={disabled}
       />
       <Input
         label="Phone number"
@@ -28,6 +30,7 @@ export function StepOne({ form, setField, errors }) {
         value={form.phone}
         onChange={(e) => setField("phone", e.target.value)}
         error={errors.phone}
+        disabled={disabled}
       />
 
       <div className="grid sm:grid-cols-2 gap-4">
@@ -46,6 +49,7 @@ export function StepOne({ form, setField, errors }) {
           value={form.city}
           onChange={(e) => setField("city", e.target.value)}
           error={errors.city}
+          disabled={disabled}
         />
       </div>
     </div>

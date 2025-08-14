@@ -6,7 +6,7 @@ import { TextArea } from "../../ui/Input"; // or your Field/TextArea
 import RadioChips from "../../ui/RadioChips";
 import InlineNote from "../../ui/InlineNote";
 
-export function StepThree({ form, setField, errors }) {
+export function StepThree({ form, setField, errors, disabled }) {
   const showBriefNote = !form.brief?.trim() || !!errors.brief;
   return (
     <>
@@ -18,6 +18,7 @@ export function StepThree({ form, setField, errors }) {
         options={STAGE_OPTIONS} // [ [value, label], ... ]
         error={errors.stage}
         cols={3}
+        disabled={disabled}
       />
 
       <TextArea
@@ -28,6 +29,7 @@ export function StepThree({ form, setField, errors }) {
         value={form.brief}
         onChange={(e) => setField("brief", e.target.value)}
         error={errors.brief}
+        disabled={disabled}
       />
 
       <InlineNote show={showBriefNote} tone="info" title="Heads up:">
