@@ -35,6 +35,7 @@ export const INITIAL_FORM = {
   needs: [],
   stage: "",
   brief: "",
+  company: "", // ← add this line
 };
 
 export const CONTACT = {

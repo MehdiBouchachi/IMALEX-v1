@@ -1,4 +1,3 @@
-// useContactWizard.js
 "use client";
 import { useCallback, useMemo, useReducer, useState } from "react";
 import { validate } from "./validateWizard";
@@ -25,7 +24,7 @@ export function useContactWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [showErr, setShowErr] = useState({ 1: false, 2: false, 3: false });
 
-  // status modal state (UNCHANGED)
+  // ↓ NEW: status modal state
   const [statusOpen, setStatusOpen] = useState(false);
   const [serverError, setServerError] = useState(null);
 
@@ -101,13 +100,6 @@ export function useContactWizard() {
     }
   }, [send]);
 
-  /* ---------- ONLY NEW: derived props for <SendStatus /> ---------- */
-  const statusVariant = serverError ? "error" : "success";
-  const statusMessage = serverError ? "Send failed" : "Message sent";
-  const statusDetails = serverError
-    ? serverError
-    : "Thanks for reaching out! We’ll reply shortly.";
-
   return {
     step,
     canNext,
@@ -121,15 +113,10 @@ export function useContactWizard() {
     goBack,
     onSubmit,
 
-    // existing modal controls
+    // expose status modal controls
     statusOpen,
     serverError,
     closeStatus: () => setStatusOpen(false),
     retry,
-
-    // new: plug-and-play props for SendStatus
-    statusVariant,
-    statusMessage,
-    statusDetails,
   };
 }
