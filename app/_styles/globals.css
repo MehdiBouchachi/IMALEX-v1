@@ -107,7 +107,7 @@
   --border: rgba(15, 23, 42, 0.12);
   --border-strong: rgba(15, 23, 42, 0.2);
 
-  --eye-brow: hsl(160 32% 24%); /* deeper tone, ~5.7:1 on white */
+  --eye-brow: var(--brand-700);
 
   --ring: rgba(60, 139, 99, 0.35);
   --ring-subtle: rgba(127, 207, 167, 0.35);
@@ -262,8 +262,6 @@ html.dark {
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border: rgba(255, 255, 255, 0.12);
   --border-strong: rgba(255, 255, 255, 0.22);
-
-  --eye-brow: hsl(160 45% 68%); /* between brand-700 & brand-800 */
 
   --ring: rgba(127, 207, 167, 0.45);
   --ring-subtle: rgba(127, 207, 167, 0.35);
