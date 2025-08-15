@@ -5,11 +5,11 @@ export function WizardProgress({
   labels = [],
   total = labels.length || 3,
 }) {
-  const pct = (step / total) * 100;
+  const pct = Math.max(0, Math.min(100, (step / total) * 100));
 
   return (
     <div>
-      <div className="flex items-center justify-between text-xs font-medium text-[var(--contact-ghost-text)]">
+      <div className="mt-3 flex items-center justify-between text-xs font-medium text-[var(--contact-ghost-text)]">
         {labels.map((l, i) => {
           const active = i + 1 <= step;
           return (
@@ -35,15 +35,19 @@ export function WizardProgress({
           );
         })}
       </div>
-
-      <div className="mt-3 h-2 rounded-full overflow-hidden bg-[var(--contact-progress-track)]">
+      <div
+        className="mt-3 h-2 rounded-full overflow-hidden bg-[var(--contact-progress-track)]"
+        role="progressbar"
+        aria-labelledby="wizard-progress-status"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(pct)}
+        aria-valuetext={`${Math.round(pct)}% complete`}
+      >
+        {/* INNER FILL: NO ARIA/ROLE HERE */}
         <div
           className="h-full transition-all bg-[var(--contact-progress-fill)]"
           style={{ width: `${pct}%` }}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={pct}
-          role="progressbar"
         />
       </div>
     </div>
