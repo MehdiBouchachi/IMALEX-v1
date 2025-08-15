@@ -43,7 +43,7 @@ export const CONTACT = {
   title: "Let’s talk formulation",
   blurb:
     "Share your goals, target market, regulatory region and any constraints. We’ll reply with a plan, timeline and budget options.",
-  email: "hello@imalex.bio",
+  email: "contact.imalex.dz@gmail.com",
   phone: "+213000000000",
   phoneDisplay: "+213 000 000 000",
   city: "Algiers",

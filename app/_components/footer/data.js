@@ -29,5 +29,9 @@ export const DEFAULT_COLUMNS = [
 export const DEFAULT_SOCIALS = [
   { label: "LinkedIn", href: "#", Icon: FaLinkedinIn },
   { label: "Twitter", href: "#", Icon: FaTwitter },
-  { label: "Instagram", href: "#", Icon: FaInstagram },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/imalex_dz",
+    Icon: FaInstagram,
+  },
 ];

@@ -240,7 +240,8 @@ export default function SendStatus({
                 <a
                   className="ss4-btn ghost emailus"
                   href={`mailto:${
-                    process.env.NEXT_PUBLIC_FALLBACK_EMAIL || "hello@imalex.com"
+                    process.env.NEXT_PUBLIC_FALLBACK_EMAIL ||
+                    "contact.imalex.dz@gmail.com"
                   }`}
                 >
                   Email us

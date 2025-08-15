@@ -24,7 +24,7 @@ export async function POST(req) {
       );
     }
 
-    // ✅ Domain-level email validation (works for gmail.com and custom domains like imalex.com)
+    // ✅ Domain-level email validation
     const { ok, reason } = await verifyEmailDomain(email);
     if (!ok) {
       return NextResponse.json(
