@@ -32,6 +32,7 @@ export default function RootLayout({ children }) {
           "selection:bg-[rgba(127,207,167,0.35)] ",
         ].join(" ")}
       >
+        {" "}
         <Header />
         <main className="flex-1">{children}</main>
       </body>

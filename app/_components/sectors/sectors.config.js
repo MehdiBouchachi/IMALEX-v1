@@ -8,7 +8,7 @@ export const SECTORS = [
     points: ["Leave-on & rinse-off", "Claims & sensorials"],
   },
   {
-    title: "Nutraceuticals",
+    title: "Food supplements",
     desc: "Capsules, powders, liquids and gummies.",
     icon: INutra,
     points: ["Dose & bioavailability", "Tasty formats"],

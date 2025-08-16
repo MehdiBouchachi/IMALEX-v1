@@ -381,6 +381,58 @@ body {
 
 /* Example component helpers (optional) */
 @layer components {
+  /* ===== Blog filter chips (brand-green, tactile, responsive) ===== */
+  .chip {
+    border: 1px solid var(--chip-bd, var(--border));
+    background: var(--chip-bg, var(--surface-0));
+    color: var(--chip-fg, var(--text-secondary));
+    border-radius: 9999px;
+    padding: 6px 12px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, color 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .chip:hover {
+    border-color: var(--brand-700-a25, rgba(60, 139, 99, 0.25));
+    background: var(--brand-700-a08, rgba(60, 139, 99, 0.08));
+    color: var(--brand-700, #3c8b63);
+  }
+  .chip--active {
+    border-color: var(--brand-700-a25, rgba(60, 139, 99, 0.25));
+    background: var(--brand-700-a10, rgba(60, 139, 99, 0.1));
+    color: var(--brand-700, #3c8b63);
+  }
+
+  /* ===== Inline "Read article →" CTA (brand green) ===== */
+  .read-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--brand-700, #3c8b63);
+    text-underline-offset: 3px;
+    outline: none;
+  }
+  .read-inline:hover {
+    text-decoration: underline;
+  }
+  .read-inline:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .read-inline span {
+    transition: transform 0.18s ease;
+  }
+  .read-inline:hover span {
+    transform: translateX(2px);
+  }
+
+  /* optional: hide scrollbar on the chip row (already in your section styles) */
+
   /* ===== SendStatus v4 — clean, readable, light-first ===== */
 
   .ss4-overlay {

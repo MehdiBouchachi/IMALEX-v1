@@ -24,7 +24,7 @@ We partner with brands and manufacturers to design, prototype, validate, and sca
   ],
   image: {
     src: "/lab-shot.jpg",
-    alt: "IMALEX lab — natural formulation",
+    alt: "IMALEX leader in bioformulation",
     captionIcon: FaFlask,
     caption: "In-house R&D & stability testing",
   },

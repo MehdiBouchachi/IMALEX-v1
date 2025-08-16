@@ -16,8 +16,8 @@ export default function HeroSection() {
             </h1>
             <p className="mt-6 text-base sm:text-lg leading-relaxed text-[var(--text-secondary)]">
               Bespoke scientific formulation services — from research &
-              prototypes to regulatory dossiers and scale-up for cosmetics,
-              nutraceuticals, biofertilizers, animal nutrition, and agri-food.
+              prototypes to regulatory dossiers and scale-up for cosmetics, food
+              supplements, biofertilizers, animal nutrition, and agri-food.
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">

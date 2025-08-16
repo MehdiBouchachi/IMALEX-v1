@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import { fakePosts } from "./_data/fakePosts";
 
 const ContactSection = dynamic(() => import("./_sections/ContactSection"), {
   ssr: false,
@@ -23,6 +24,10 @@ const WhyUsSection = dynamic(() => import("./_sections/WhyUsSection"), {
 const ProcessSection = dynamic(() => import("./_sections/ProcessSection"), {
   ssr: false,
 });
+
+const BlogsSection = dynamic(() => import("./_sections/BlogsSection"), {
+  ssr: true,
+}); // adjust path if needed
 
 const CTA = dynamic(() => import("./_components/CTA"), { ssr: true });
 const Footer = dynamic(() => import("./_components/footer/Footer"), {
@@ -49,6 +54,8 @@ export default function Page() {
         </Section>
         <SectorsSection />
         <WhyUsSection />
+
+        <BlogsSection posts={fakePosts.slice(0, 5)} basePath="/blogs" showCTA />
         <ProcessSection />
         <CTA />
         <ContactSection />

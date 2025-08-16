@@ -1,236 +1,382 @@
+// app/_sections/BlogsSection.js
 "use client";
 
+import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
+import Button from "../_components/ui/Button";
+import EyebrowChip from "../_components/ui/EyebrowChip";
 
-/**
- * BlogsSection
- * - Clean, readable blog grid that follows your token system (CSS variables)
- * - Minimal rounding, no flashy gradients, subtle motion
- * - Dark mode auto via `.dark` theme (uses CSS vars, not Tailwind `dark:` colors)
- * - Drop-in: <BlogsSection posts={posts} basePath="/blog" />
- */
+/** tiny helper */
+const cx = (...a) => a.filter(Boolean).join(" ");
+
 export default function BlogsSection({
-  title = "Latest insights",
-  eyebrow = "From our lab journal",
+  eyebrow = "Latest insights",
+  title = "From the blog",
   description = "Research notes, product science, and field learnings.",
   posts = [],
-  basePath = "/blog",
+  basePath = "/blogs",
   showCTA = true,
 }) {
-  const items = useMemo(() => posts.slice(0, 6), [posts]);
+  // gather unique tags
+  const tags = useMemo(() => {
+    const s = new Set();
+    posts.forEach((p) => (p.tags || []).forEach((t) => s.add(t)));
+    return ["All", ...Array.from(s)];
+  }, [posts]);
+
+  const [selected, setSelected] = useState("All");
+  useEffect(() => {
+    if (!tags.includes(selected)) setSelected("All");
+  }, [tags, selected]);
+
+  const filtered = useMemo(
+    () =>
+      selected === "All"
+        ? posts
+        : posts.filter((p) => (p.tags || []).includes(selected)),
+    [posts, selected]
+  );
+
+  const items = filtered.slice(0, 7); // 1 feature + up to 6 cards
 
   return (
-    <section
-      id="blog"
-      className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8"
-      aria-labelledby="blog-title"
-      style={{ color: "var(--text-primary)" }}
-    >
-      {/* Header */}
-      <header className="mb-8 sm:mb-10 md:mb-12">
-        <div
-          className="mb-2 text-sm tracking-wide opacity-80"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          {eyebrow}
-        </div>
-        <h2
-          id="blog-title"
-          className="text-2xl font-semibold sm:text-3xl"
-          style={{ color: "var(--text-primary)" }}
-        >
-          {title}
-        </h2>
-        {description ? (
-          <p
-            className="mt-2 max-w-3xl text-[15px] leading-relaxed"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            {description}
-          </p>
-        ) : null}
-      </header>
+    <section id="blog" className="relative scroll-mt-24 py-16 sm:py-20">
+      <div className="mx-auto max-w-7xl px-6">
+        {/* header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-3xl">
+            <EyebrowChip>{eyebrow}</EyebrowChip>
+            <h2 className="mt-3 text-[clamp(28px,4vw,42px)] font-extrabold leading-tight text-[var(--text-primary)]">
+              {title}
+            </h2>
+            {description ? (
+              <p className="mt-2 text-[var(--text-secondary)]">{description}</p>
+            ) : null}
+          </div>
 
-      {/* Grid */}
-      <div
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6"
-        role="list"
-        aria-label="Blog posts"
-      >
-        {items.length === 0 ? (
-          <EmptyState />
-        ) : (
-          items.map((p) => (
-            <ArticleCard key={p.slug || p.id} post={p} basePath={basePath} />
-          ))
+          {showCTA && posts.length > 0 && (
+            <Button
+              asLink
+              href={basePath}
+              size="sm"
+              variant="secondary"
+              rounded="lg"
+              className="self-start sm:self-auto"
+            >
+              View all articles
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="-mr-0.5"
+              >
+                <path
+                  d="M5 12h14M13 5l7 7-7 7"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+              </svg>
+            </Button>
+          )}
+        </div>
+
+        {/* responsive filter chips (scrollable on mobile) */}
+        {tags.length > 1 && (
+          <div className="mt-6">
+            <div
+              className="
+    chips-row no-scrollbar -mx-6 flex gap-2 overflow-x-auto px-6 pb-2 pt-0.5
+    snap-x snap-mandatory
+    md:overflow-visible md:flex-wrap md:snap-none
+  "
+              role="tablist"
+              aria-label="Filter articles"
+            >
+              {tags.map((tag) => {
+                const active = tag === selected;
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => setSelected(tag)}
+                    className={cx(
+                      "chip snap-start",
+                      active && "chip--active",
+                      "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
+                    )}
+                    aria-pressed={active}
+                    role="tab"
+                  >
+                    {tag}
+                  </button>
+                );
+              })}
+            </div>
+            <span className="sr-only" aria-live="polite">
+              {items.length} articles shown
+            </span>
+          </div>
+        )}
+
+        {/* ===== Top row: same height left/right on lg+ ===== */}
+        {items.length > 0 && (
+          <div
+            className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr]"
+            style={{ ["--hero-h"]: "clamp(280px, 38vw, 440px)" }}
+          >
+            <FeatureTall
+              post={items[0]}
+              href={`${basePath}/${items[0].slug || items[0].id}`}
+            />
+            {items[1] ? (
+              <CardTall
+                post={items[1]}
+                href={`${basePath}/${items[1].slug || items[1].id}`}
+              />
+            ) : (
+              <div className="hidden lg:block" aria-hidden />
+            )}
+          </div>
+        )}
+
+        {/* grid */}
+        {items.length > 2 && (
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {items.slice(2).map((p) => (
+              <Card
+                key={p.slug || p.id}
+                post={p}
+                href={`${basePath}/${p.slug || p.id}`}
+              />
+            ))}
+          </div>
         )}
       </div>
 
-      {/* Footer CTA */}
-      {showCTA && posts.length > 6 ? (
-        <div className="mt-8 flex items-center justify-center">
-          <Link
-            href={basePath}
-            className="inline-flex items-center gap-2 px-4 py-[10px] text-sm font-medium border transition-shadow"
-            style={{
-              borderColor: "var(--border, #e6e9ee)",
-              color: "var(--text-primary)",
-              background: "var(--surface-0, #ffffff)",
-              boxShadow: "0 1px 0 0 rgba(16,24,40,.04)",
-            }}
-          >
-            View all articles
-            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M5 12h14M13 5l7 7-7 7"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              />
-            </svg>
-          </Link>
-        </div>
-      ) : null}
+      {/* light hover lift, no heavy motion */}
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .blog-card {
+          transition: transform 0.2s ease, box-shadow 0.2s ease,
+            border-color 0.2s ease;
+        }
+        .blog-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        .dark .blog-card:hover {
+          box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .blog-card,
+          .blog-card:hover {
+            transition: none;
+            transform: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }
 
-/* =================== Card =================== */
-function ArticleCard({ post, basePath }) {
-  const href = `${basePath}/${post.slug || post.id || ""}`;
+/* ————— Feature (left) ————— */
+function FeatureTall({ post, href }) {
   const tags = Array.isArray(post.tags) ? post.tags.slice(0, 3) : [];
-
   return (
     <article
-      className="group relative overflow-hidden rounded-[10px] border"
+      className="blog-card relative isolate overflow-hidden rounded-[16px] border"
       style={{
-        background: "var(--surface-0, #ffffff)",
-        borderColor: "var(--border, #e6e9ee)",
+        background: "var(--surface-0)",
+        borderColor: "var(--border)",
+        height: "var(--hero-h)",
       }}
     >
-      {/* Media */}
       <Link
         href={href}
-        className="block focus:outline-none"
         aria-label={post.title}
+        className="absolute inset-0 block focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
       >
-        <div className="relative aspect-[16/9] w-full overflow-hidden">
-          {post.image ? (
-            <Image
-              src={post.image}
-              alt=""
-              fill
-              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-              className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-              priority={false}
-            />
-          ) : (
-            <div
-              className="flex h-full w-full items-center justify-center text-xs"
-              style={{
-                background: "var(--surface-1, #f7f8fa)",
-                color: "var(--text-secondary)",
-              }}
-            >
-              No image
-            </div>
-          )}
-        </div>
+        <Image
+          src={post.image || "/placeholder.png"}
+          alt=""
+          fill
+          sizes="(min-width:1024px) 66vw, 100vw"
+          className="object-cover"
+        />
       </Link>
 
-      {/* Body */}
-      <div className="p-4 sm:p-5">
-        <div className="mb-2 flex flex-wrap items-center gap-2">
-          {tags.map((t) => (
-            <span
-              key={t}
-              className="inline-flex items-center rounded-[8px] px-2 py-1 text-[11px] leading-none border"
-              style={{
-                background: "var(--surface-1, #f7f8fa)",
-                color: "var(--text-secondary)",
-                borderColor: "var(--border, #e6e9ee)",
-              }}
-            >
-              {t}
-            </span>
-          ))}
-          {post.readTime ? (
-            <span
-              className="ml-auto text-[11px] opacity-80"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              {post.readTime} min read
-            </span>
-          ) : null}
-        </div>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
-        <h3 className="line-clamp-2 text-base font-semibold leading-snug">
+      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+        <MetaRow tags={tags} readTime={post.readTime} invert />
+        <h3 className="mt-1 line-clamp-2 text-[clamp(18px,2.2vw,28px)] font-semibold leading-snug text-white">
+          {post.title}
+        </h3>
+        {post.excerpt && (
+          <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-white/85">
+            {post.excerpt}
+          </p>
+        )}
+        <AuthorRow
+          className="mt-3"
+          name={post.author?.name}
+          avatar={post.author?.avatar}
+          date={post.date}
+          invert
+        />
+      </div>
+    </article>
+  );
+}
+
+/* ————— Right tall card ————— */
+function CardTall({ post, href }) {
+  const tags = Array.isArray(post.tags) ? post.tags.slice(0, 3) : [];
+  return (
+    <article
+      className="blog-card grid overflow-hidden rounded-[14px] border"
+      style={{
+        background: "var(--surface-0)",
+        borderColor: "var(--border)",
+        height: "var(--hero-h)",
+        gridTemplateRows: "minmax(0, 58%) auto auto",
+      }}
+    >
+      <Link
+        href={href}
+        className="relative block min-h-0 group focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
+        aria-label={post.title}
+      >
+        <Image
+          src={post.image || "/placeholder.png"}
+          alt=""
+          fill
+          sizes="(min-width:1024px) 33vw, 100vw"
+          className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+        />
+      </Link>
+
+      <div className="min-h-0 p-4 sm:p-5">
+        <MetaRow tags={tags} readTime={post.readTime} />
+        <h3 className="mt-1 line-clamp-2 text-[16px] font-semibold leading-snug">
           <Link
             href={href}
-            className="focus:outline-none focus-visible:ring-2"
             style={{ color: "var(--text-primary)" }}
+            className="focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
           >
             {post.title}
           </Link>
         </h3>
-
-        {post.excerpt ? (
+        {post.excerpt && (
           <p
             className="mt-2 line-clamp-3 text-[13.5px] leading-relaxed"
             style={{ color: "var(--text-secondary)" }}
           >
             {post.excerpt}
           </p>
-        ) : null}
+        )}
 
-        <div className="mt-4 flex items-center justify-between gap-3">
-          <Author
-            id={post.author?.id}
-            name={post.author?.name}
-            avatar={post.author?.avatar}
-          />
-          <time
-            className="text-[12px] tabular-nums opacity-80"
-            dateTime={post.date}
-            style={{ color: "var(--text-secondary)" }}
-          >
-            {formatDate(post.date)}
-          </time>
-        </div>
+        {/* INLINE CTA (brand green) */}
+        <Link href={href} className="read-inline mt-3">
+          Read article <span aria-hidden>→</span>
+        </Link>
       </div>
 
-      {/* Bottom bar link */}
-      <Link
-        href={href}
-        className="mt-1 block border-t px-4 py-3 text-sm font-medium transition-colors"
-        style={{
-          borderColor: "var(--border, #e6e9ee)",
-          color: "var(--brand-700, #147a52)",
-        }}
+      {/* footer: just author/date (no button) */}
+      <div
+        className="border-t px-4 py-3 sm:px-5"
+        style={{ borderColor: "var(--border)" }}
       >
-        Read article →
-      </Link>
-
-      {/* Focus ring (token-based) */}
-      <style jsx>{`
-        article:has(a:focus-visible) {
-          outline: 2px solid var(--ring, #94c2b1);
-          outline-offset: 2px;
-        }
-      `}</style>
+        <Author name={post.author?.name} avatar={post.author?.avatar} />
+      </div>
     </article>
   );
 }
 
-/* ============== Author ============== */
+/* ————— Standard grid cards ————— */
+function Card({ post, href }) {
+  const tags = Array.isArray(post.tags) ? post.tags.slice(0, 3) : [];
+  return (
+    <article
+      className="blog-card grid overflow-hidden rounded-[14px] border"
+      style={{
+        background: "var(--surface-0)",
+        borderColor: "var(--border)",
+        gridTemplateRows: "auto 1fr auto",
+      }}
+    >
+      <Link
+        href={href}
+        aria-label={post.title}
+        className="relative block group focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
+      >
+        <div className="relative aspect-[16/9] w-full overflow-hidden">
+          <Image
+            src={post.image || "/placeholder.png"}
+            alt=""
+            fill
+            sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+        </div>
+      </Link>
+
+      <div className="p-4 sm:p-5">
+        <MetaRow tags={tags} readTime={post.readTime} />
+        <h3 className="mt-1 line-clamp-2 text-[16px] font-semibold leading-snug">
+          <Link
+            href={href}
+            style={{ color: "var(--text-primary)" }}
+            className="focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
+          >
+            {post.title}
+          </Link>
+        </h3>
+        {post.excerpt && (
+          <p
+            className="mt-2 line-clamp-3 text-[13.5px] leading-relaxed"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            {post.excerpt}
+          </p>
+        )}
+
+        {/* INLINE CTA (brand green) */}
+        <Link href={href} className="read-inline mt-3">
+          Read article <span aria-hidden>→</span>
+        </Link>
+      </div>
+
+      {/* footer: just author/date (no button) */}
+      <div
+        className="border-t px-4 py-3 sm:px-5"
+        style={{ borderColor: "var(--border)" }}
+      >
+        <AuthorRow
+          name={post.author?.name}
+          avatar={post.author?.avatar}
+          date={post.date}
+        />
+      </div>
+    </article>
+  );
+}
+
+/* ————— shared bits ————— */
 function Author({ name = "", avatar }) {
   return (
     <div className="flex min-w-0 items-center gap-2">
       <div
         className="relative h-7 w-7 overflow-hidden rounded-full border"
-        style={{ borderColor: "var(--border, #e6e9ee)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         {avatar ? (
           <Image src={avatar} alt="" fill className="object-cover" />
@@ -238,7 +384,7 @@ function Author({ name = "", avatar }) {
           <div
             className="flex h-full w-full items-center justify-center text-[10px]"
             style={{
-              background: "var(--surface-1, #f2f4f7)",
+              background: "var(--surface-1)",
               color: "var(--text-secondary)",
             }}
           >
@@ -255,35 +401,94 @@ function Author({ name = "", avatar }) {
     </div>
   );
 }
-
-/* ============== Empty State ============== */
-function EmptyState() {
+function AuthorRow({
+  name = "",
+  avatar,
+  date,
+  invert = false,
+  className = "",
+}) {
   return (
-    <div
-      className="col-span-full flex items-center justify-center rounded-[10px] border p-10 text-center"
-      style={{
-        background: "var(--surface-0, #ffffff)",
-        borderColor: "var(--border, #e6e9ee)",
-        color: "var(--text-secondary)",
-      }}
-    >
-      <div>
+    <div className={`flex items-center justify-between gap-3 ${className}`}>
+      <div className="flex min-w-0 items-center gap-2">
         <div
-          className="mb-2 text-sm font-medium"
-          style={{ color: "var(--text-primary)" }}
+          className="relative h-7 w-7 overflow-hidden rounded-full border"
+          style={{ borderColor: invert ? "white/25" : "var(--border)" }}
         >
-          No articles yet
+          {avatar ? (
+            <Image src={avatar} alt="" fill className="object-cover" />
+          ) : (
+            <div
+              className="flex h-full w-full items-center justify-center text-[10px]"
+              style={{
+                background: invert
+                  ? "color-mix(in oklab, white 16%, transparent)"
+                  : "var(--surface-1)",
+                color: invert ? "white" : "var(--text-secondary)",
+              }}
+            >
+              {name?.[0]?.toUpperCase() || ""}
+            </div>
+          )}
         </div>
-        <p className="max-w-md text-[13.5px]">
-          Publish your first post to see it here. Titles, tags, and read time
-          are supported out of the box.
-        </p>
+        <span
+          className="truncate text-[13px]"
+          style={{ color: invert ? "white" : "var(--text-secondary)" }}
+        >
+          {name}
+        </span>
       </div>
+
+      <time
+        className="text-[12px] tabular-nums opacity-80"
+        dateTime={date}
+        style={{ color: invert ? "white" : "var(--text-secondary)" }}
+      >
+        {formatDate(date)}
+      </time>
     </div>
   );
 }
-
-/* ============== Utils ============== */
+function MetaRow({ tags = [], readTime, invert = false }) {
+  return (
+    <div className="flex items-center gap-2 text-[11px]">
+      <div className="flex flex-wrap items-center gap-2">
+        {tags.slice(0, 3).map((t) => (
+          <span
+            key={t}
+            className="rounded-[8px] px-2 py-1 border"
+            style={{
+              background: invert
+                ? "color-mix(in oklab, white 16%, transparent)"
+                : "var(--surface-1)",
+              color: invert ? "white" : "var(--text-secondary)",
+              borderColor: invert ? "white/20" : "var(--border)",
+              backdropFilter: invert ? "blur(4px)" : undefined,
+            }}
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+      {readTime ? (
+        <>
+          <span
+            className="opacity-50 mx-1"
+            style={{ color: invert ? "white" : "var(--text-secondary)" }}
+          >
+            •
+          </span>
+          <span
+            className="tabular-nums"
+            style={{ color: invert ? "white" : "var(--text-secondary)" }}
+          >
+            {readTime} min read
+          </span>
+        </>
+      ) : null}
+    </div>
+  );
+}
 function formatDate(input) {
   try {
     const d = new Date(input);
@@ -296,64 +501,4 @@ function formatDate(input) {
   } catch {
     return "";
   }
-}
-
-/* =================== Sample Data (remove in prod) =================== */
-export function DemoBlogs() {
-  const demo = [
-    {
-      id: "1",
-      slug: "why-natural-formulation-scales",
-      title: "Why natural formulation scales in 2025",
-      excerpt:
-        "Bench to pilot: de-risking bio‑based actives with fast iteration and solid QC.",
-      image: "/demo/blog-1.jpg",
-      tags: ["R&D", "Formulation"],
-      readTime: 6,
-      author: { name: "IMALEX Team", avatar: "/demo/avatar-1.jpg" },
-      date: "2025-07-21",
-    },
-    {
-      id: "2",
-      slug: "stability-testing-checklist",
-      title: "Stability testing: a 10‑point checklist for SMEs",
-      excerpt:
-        "How we structure quick stability pre‑checks before committing to full studies.",
-      image: "/demo/blog-2.jpg",
-      tags: ["QA", "Process"],
-      readTime: 5,
-      author: { name: "Dr. Lina Saada", avatar: "/demo/avatar-2.jpg" },
-      date: "2025-06-05",
-    },
-    {
-      id: "3",
-      slug: "nutraceuticals-grit",
-      title: "Nutraceuticals: where efficacy meets manufacturing reality",
-      excerpt:
-        "Choosing actives is easy. Scaling with supply chain and compliance in mind isn’t.",
-      image: "/demo/blog-3.jpg",
-      tags: ["Nutraceuticals"],
-      readTime: 7,
-      author: { name: "IMALEX Lab" },
-      date: "2025-05-12",
-    },
-    {
-      id: "4",
-      slug: "biopesticides-field-notes",
-      title: "Field notes from biopesticides pilots",
-      excerpt:
-        "What we learned moving from growth chamber to field plots in semi‑arid climates.",
-      image: "/demo/blog-4.jpg",
-      tags: ["Biopesticides", "Agri"],
-      readTime: 8,
-      author: { name: "R&D Ops" },
-      date: "2025-04-18",
-    },
-  ];
-
-  return (
-    <div className="py-10" style={{ background: "var(--surface-0)" }}>
-      <BlogsSection posts={demo} basePath="/blog" showCTA />
-    </div>
-  );
 }
