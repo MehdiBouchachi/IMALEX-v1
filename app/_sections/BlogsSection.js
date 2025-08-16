@@ -106,7 +106,7 @@ export default function BlogsSection({
                       active && "chip--active",
                       "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
                     )}
-                    aria-pressed={active}
+                    aria-selected={active}
                     role="tab"
                   >
                     {tag}
@@ -123,7 +123,7 @@ export default function BlogsSection({
         {/* ===== Top row: same height left/right on lg+ ===== */}
         {items.length > 0 && (
           <div
-            className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr]"
+            className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
             style={{ ["--hero-h"]: "clamp(280px, 38vw, 440px)" }}
           >
             <FeatureTall
@@ -190,83 +190,56 @@ export default function BlogsSection({
 /* ————— Feature (left) ————— */
 function FeatureTall({ post, href }) {
   const tags = Array.isArray(post.tags) ? post.tags.slice(0, 3) : [];
+
   return (
     <article
-      className="blog-card relative isolate overflow-hidden rounded-[16px] border"
-      style={{
-        background: "var(--surface-0)",
-        borderColor: "var(--border)",
-        height: "var(--hero-h)",
-      }}
+      className="blog-card overflow-hidden rounded-[16px] border"
+      style={{ background: "var(--surface-0)", borderColor: "var(--border)" }}
     >
-      <Link
-        href={href}
-        aria-label={post.title}
-        className="absolute inset-0 block focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
-      >
-        <Image
-          src={post.image || "/placeholder.png"}
-          alt=""
-          fill
-          sizes="(min-width:1024px) 66vw, 100vw"
-          className="object-cover"
-        />
-      </Link>
+      {/* Image
+          - mobile: aspect box
+          - lg+: fixed equal height via --hero-h */}
+      <div className="relative aspect-[16/9] sm:aspect-[21/9] lg:aspect-auto lg:h-[var(--hero-h)]">
+        <Link
+          href={href}
+          aria-label={post.title}
+          className="absolute inset-0 block focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
+        >
+          <Image
+            src={post.image || "/placeholder.png"}
+            alt=""
+            fill
+            sizes="(min-width:1024px) 66vw, 100vw"
+            className="object-cover"
+          />
+        </Link>
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-
-      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-        <MetaRow tags={tags} readTime={post.readTime} invert />
-        <h3 className="mt-1 line-clamp-2 text-[clamp(18px,2.2vw,28px)] font-semibold leading-snug text-white">
-          {post.title}
-        </h3>
-        {post.excerpt && (
-          <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-white/85">
-            {post.excerpt}
-          </p>
-        )}
-        <AuthorRow
-          className="mt-3"
-          name={post.author?.name}
-          avatar={post.author?.avatar}
-          date={post.date}
-          invert
-        />
+        {/* OVERLAY content → shown from md: up only */}
+        <div className="pointer-events-none absolute inset-0 hidden md:block bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 hidden md:block p-5 sm:p-6">
+          <MetaRow tags={tags} readTime={post.readTime} invert />
+          <h3 className="mt-1 line-clamp-2 text-[clamp(18px,2.2vw,28px)] font-semibold leading-snug text-white">
+            {post.title}
+          </h3>
+          {post.excerpt && (
+            <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-white/85">
+              {post.excerpt}
+            </p>
+          )}
+          <AuthorRow
+            className="mt-3"
+            name={post.author?.name}
+            avatar={post.author?.avatar}
+            date={post.date}
+            invert
+          />
+        </div>
       </div>
-    </article>
-  );
-}
 
-/* ————— Right tall card ————— */
-function CardTall({ post, href }) {
-  const tags = Array.isArray(post.tags) ? post.tags.slice(0, 3) : [];
-  return (
-    <article
-      className="blog-card grid overflow-hidden rounded-[14px] border"
-      style={{
-        background: "var(--surface-0)",
-        borderColor: "var(--border)",
-        height: "var(--hero-h)",
-        gridTemplateRows: "minmax(0, 58%) auto auto",
-      }}
-    >
-      <Link
-        href={href}
-        className="relative block min-h-0 group focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
-        aria-label={post.title}
-      >
-        <Image
-          src={post.image || "/placeholder.png"}
-          alt=""
-          fill
-          sizes="(min-width:1024px) 33vw, 100vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-        />
-      </Link>
-
-      <div className="min-h-0 p-4 sm:p-5">
+      {/* MOBILE content (no overlay) */}
+      <div className="md:hidden p-4 sm:p-5">
         <MetaRow tags={tags} readTime={post.readTime} />
-        <h3 className="mt-1 line-clamp-2 text-[16px] font-semibold leading-snug">
+        <h3 className="mt-1 text-[18px] font-semibold leading-snug">
           <Link
             href={href}
             style={{ color: "var(--text-primary)" }}
@@ -277,25 +250,84 @@ function CardTall({ post, href }) {
         </h3>
         {post.excerpt && (
           <p
-            className="mt-2 line-clamp-3 text-[13.5px] leading-relaxed"
+            className="mt-2 text-[13.5px] leading-relaxed"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            {post.excerpt}
+          </p>
+        )}
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <Link href={href} className="read-inline">
+            Read article <span aria-hidden>→</span>
+          </Link>
+          <AuthorCompact
+            name={post.author?.name}
+            avatar={post.author?.avatar}
+            date={post.date}
+          />
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/* ————— Right tall card ————— */
+function CardTall({ post, href }) {
+  const tags = Array.isArray(post.tags) ? post.tags.slice(0, 3) : [];
+
+  return (
+    <article
+      className="blog-card flex flex-col overflow-hidden rounded-[14px] border lg:h-[var(--hero-h)]"
+      style={{ background: "var(--surface-0)", borderColor: "var(--border)" }}
+    >
+      {/* Image: mobile has its own height; desktop uses a calc of --hero-h */}
+      <Link
+        href={href}
+        aria-label={post.title}
+        className="relative block group focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
+      >
+        <div className="relative h-[min(52vw,260px)] lg:h-[calc(var(--hero-h)*0.58)]">
+          <Image
+            src={post.image || "/placeholder.png"}
+            alt=""
+            fill
+            sizes="(min-width:1024px) 33vw, 100vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+        </div>
+      </Link>
+
+      <div className="p-4 sm:p-5">
+        <MetaRow tags={tags} readTime={post.readTime} />
+        <h3 className="mt-1 text-[17px] sm:text-[16px] font-semibold leading-snug line-clamp-2">
+          <Link
+            href={href}
+            style={{ color: "var(--text-primary)" }}
+            className="focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
+          >
+            {post.title}
+          </Link>
+        </h3>
+        {post.excerpt && (
+          <p
+            className="mt-2 text-[13.5px] leading-relaxed line-clamp-3"
             style={{ color: "var(--text-secondary)" }}
           >
             {post.excerpt}
           </p>
         )}
 
-        {/* INLINE CTA (brand green) */}
-        <Link href={href} className="read-inline mt-3">
-          Read article <span aria-hidden>→</span>
-        </Link>
-      </div>
-
-      {/* footer: just author/date (no button) */}
-      <div
-        className="border-t px-4 py-3 sm:px-5"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <Author name={post.author?.name} avatar={post.author?.avatar} />
+        {/* Actions: stack on mobile, inline ≥sm */}
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <Link href={href} className="read-inline">
+            Read article <span aria-hidden>→</span>
+          </Link>
+          <AuthorCompact
+            name={post.author?.name}
+            avatar={post.author?.avatar}
+            date={post.date}
+          />
+        </div>
       </div>
     </article>
   );
@@ -367,6 +399,54 @@ function Card({ post, href }) {
         />
       </div>
     </article>
+  );
+}
+
+function AuthorCompact({ name = "", avatar, date }) {
+  return (
+    <div className="flex min-w-0 items-center gap-2">
+      <div
+        className="relative h-6 w-6 overflow-hidden rounded-full border"
+        style={{ borderColor: "var(--border)" }}
+      >
+        {avatar ? (
+          <Image src={avatar} alt="" fill className="object-cover" />
+        ) : (
+          <div
+            className="flex h-full w-full items-center justify-center text-[10px]"
+            style={{
+              background: "var(--surface-1)",
+              color: "var(--text-secondary)",
+            }}
+          >
+            {name?.[0]?.toUpperCase() || ""}
+          </div>
+        )}
+      </div>
+      <span
+        className="truncate text-[13px]"
+        style={{ color: "var(--text-secondary)" }}
+      >
+        {name}
+      </span>
+      {date ? (
+        <>
+          <span
+            className="mx-1 opacity-40"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            •
+          </span>
+          <time
+            className="text-[12px] tabular-nums opacity-80"
+            dateTime={date}
+            style={{ color: "var(--text-secondary)" }}
+          >
+            {formatDate(date)}
+          </time>
+        </>
+      ) : null}
+    </div>
   );
 }
 
