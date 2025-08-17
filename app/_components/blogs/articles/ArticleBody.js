@@ -1,6 +1,6 @@
 "use client";
 import Inline from "./Inline";
-import { idFrom } from "./utils";
+import { idFrom } from "../../../blogs/[slug]/utils";
 
 export default function ArticleBody({ blocks = [] }) {
   let firstPara = true;

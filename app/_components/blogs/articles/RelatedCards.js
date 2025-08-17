@@ -1,7 +1,7 @@
 // app/blogs/[slug]/RelatedCards.js
 import Link from "next/link";
 import Image from "next/image";
-import { formatDate } from "./utils";
+import { formatDate } from "../../../blogs/[slug]/utils";
 
 export default function RelatedCards({ posts = [] }) {
   if (!posts.length) return null;

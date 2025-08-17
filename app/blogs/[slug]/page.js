@@ -4,40 +4,45 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { fakePosts } from "../../_data/fakePosts";
-import Inline from "./Inline";
-import RelatedCards from "./RelatedCards";
-import PNCard from "./PNCard";
-import ArticleBody from "./ArticleBody";
+import Inline from "../../_components/blogs/articles/Inline";
+import RelatedCards from "../../_components/blogs/articles/RelatedCards";
+import SkeletonTOC from "../../_components/blogs/articles/_skeletons/SkeletonTOC";
+import SkeletonArticle from "../../_components/blogs/articles/_skeletons/SkeletonArticle";
+import PNCard from "../../_components/blogs/articles/PNCard";
 import { buildTOCGroups, formatDate } from "./utils";
 import dynamic from "next/dynamic";
 
-// Progressive enhancers, client-only
-const ReadingProgress = dynamic(() => import("./ReadingProgress"), {
-  ssr: false,
-  loading: () => null,
-});
-
-const TOCSticky = dynamic(() => import("./TOCSticky"), {
-  ssr: false,
-  loading: () => (
-    <nav className="sticky top-24 text-sm leading-6">
-      <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
-        On this page
-      </h2>
-      <div className="space-y-1">
-        <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
-        <div className="h-6 bg-gray-200 rounded animate-pulse"></div>
-        <div className="h-6 bg-gray-200 rounded animate-pulse"></div>
-      </div>
-    </nav>
-  ),
-});
-
-const CopyCodeButtons = dynamic(() => import("./CopyCodeButtons"), {
-  ssr: false,
-  loading: () => null,
-});
-
+/* ⬇️ client enhancers with loading fallbacks */
+const ReadingProgress = dynamic(
+  () => import("../../_components/blogs/articles/ReadingProgress"),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
+const TOCSticky = dynamic(
+  () => import("../../_components/blogs/articles/TOCSticky"),
+  {
+    ssr: false,
+    loading: () => <SkeletonTOC />,
+  }
+);
+/* ArticleBody is a client component in your repo — keep SSR for SEO,
+   but show SkeletonArticle during client-side transitions */
+const ArticleBody = dynamic(
+  () => import("../../_components/blogs/articles/ArticleBody"),
+  {
+    ssr: true,
+    loading: () => <SkeletonArticle />,
+  }
+);
+const CopyCodeButtons = dynamic(
+  () => import("../../_components/blogs/articles/CopyCodeButtons"),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 export function generateStaticParams() {
   return fakePosts.map((p) => ({ slug: p.slug }));
 }
