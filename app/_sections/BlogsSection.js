@@ -149,9 +149,10 @@ function HeroWide({ post, href, className = "" }) {
       <div className="hero-media" aria-hidden>
         <Image
           src={post.image || "/placeholder.png"}
-          alt=""
+          alt={post.title}
           fill
           sizes="100vw"
+          quality={60}
           className="object-cover"
           style={{ objectPosition: "60% 40%" }}
           priority
@@ -202,8 +203,9 @@ function TallSplit({ post, href }) {
         <div className="media-wrap relative isolate h-[min(48vw,340px)] overflow-hidden rounded-t-[20px]">
           <Image
             src={post.image || "/placeholder.png"}
-            alt=""
+            alt={post.title}
             fill
+            quality={60}
             sizes="(min-width:1024px) 33vw, 100vw"
             className="object-cover"
           />
@@ -261,8 +263,9 @@ function SplitCardV2({ post, href }) {
         <div className="media relative aspect-[16/10] md:h-full md:aspect-auto">
           <Image
             src={post.image || "/placeholder.png"}
-            alt=""
+            alt={post.title}
             fill
+            quality={60}
             sizes="(min-width:1024px) 45vw, 100vw"
             className="object-cover"
             style={{ objectPosition: "55% 45%" }}
@@ -346,8 +349,9 @@ function SquareCard({ post, href }) {
         <div className="media relative aspect-[16/10]">
           <Image
             src={post.image || "/placeholder.png"}
-            alt=""
+            alt={post.title}
             fill
+            quality={60}
             sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
             className="object-cover"
           />
@@ -387,7 +391,13 @@ function AuthorCompact({ name = "", avatar, date }) {
     <div className="flex min-w-0 items-center gap-2">
       <div className="relative h-6 w-6 overflow-hidden rounded-full border border-[var(--edge)]">
         {avatar ? (
-          <Image src={avatar} alt="" fill className="object-cover" />
+          <Image
+            src={avatar}
+            alt={name + "avatar"}
+            quality={60}
+            fill
+            className="object-cover"
+          />
         ) : (
           <div
             className="flex h-full w-full items-center justify-center text-[10px]"
