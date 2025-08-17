@@ -1,37 +1,39 @@
-"use client";
+// app/blogs/[slug]/Inline.js
+// NOTE: no "use client"
 
-/** Minimal inline formatter:
- *  - **bold**, _italic_, `code`, [label](url)
- *  - allows <strong>/<b>, <em>/<i>, <code> if they appear in the text
- *  - everything else is escaped for safety
- */
 export default function Inline({ text = "" }) {
-  const html = toHTML(String(text));
-  return <span dangerouslySetInnerHTML={{ __html: html }} />;
+  return <>{parseInline(String(text))}</>;
 }
 
-function toHTML(src) {
-  // 1) Escape everything
-  let s = src
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+/** Very small inline Markdown parser:
+ *  **bold**  __bold__  *italic*  _italic_  `code`
+ *  [label](https://...) or (/relative)
+ */
+function parseInline(src) {
+  const out = [];
+  let i = 0;
+  const re =
+    /\*\*(.+?)\*\*|__(.+?)__|\*(.+?)\*|_(.+?)_|`([^`]+)`|\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/g;
 
-  // 2) Allow a tiny whitelist of raw HTML tags
-  s = s.replace(/&lt;(\/?)(strong|b|em|i|code)&gt;/g, "<$1$2>");
+  let m;
+  while ((m = re.exec(src))) {
+    if (m.index > i) out.push(src.slice(i, m.index));
 
-  // 3) Markdown-like transforms (simple & safe)
-  // Links: [text](url) (http(s) or /relative)
-  s = s.replace(
-    /\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/g,
-    '<a href="$2" rel="nofollow">$1</a>'
-  );
-  // Inline code: `code`
-  s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
-  // Bold: **text** or __text__
-  s = s.replace(/(\*\*|__)(.+?)\1/g, "<strong>$2</strong>");
-  // Italic: *text* or _text_ (kept simple)
-  s = s.replace(/(\*|_)([^*_]+?)\1/g, "<em>$2</em>");
+    if (m[1] || m[2])
+      out.push(<strong key={out.length}>{m[1] || m[2]}</strong>);
+    else if (m[3] || m[4]) out.push(<em key={out.length}>{m[3] || m[4]}</em>);
+    else if (m[5]) out.push(<code key={out.length}>{m[5]}</code>);
+    else if (m[6] && m[7]) {
+      const href = m[7];
+      out.push(
+        <a key={out.length} href={href} rel="nofollow">
+          {m[6]}
+        </a>
+      );
+    }
 
-  return s;
+    i = re.lastIndex;
+  }
+  if (i < src.length) out.push(src.slice(i));
+  return out;
 }

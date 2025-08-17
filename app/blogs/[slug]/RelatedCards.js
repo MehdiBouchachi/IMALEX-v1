@@ -1,5 +1,7 @@
+// app/blogs/[slug]/RelatedCards.js
 import Link from "next/link";
 import Image from "next/image";
+import { formatDate } from "./utils";
 
 export default function RelatedCards({ posts = [] }) {
   if (!posts.length) return null;
@@ -69,18 +71,4 @@ export default function RelatedCards({ posts = [] }) {
       </div>
     </section>
   );
-}
-
-function formatDate(input) {
-  try {
-    const d = new Date(input);
-    if (Number.isNaN(d.getTime())) return "";
-    return d.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "2-digit",
-    });
-  } catch {
-    return "";
-  }
 }
