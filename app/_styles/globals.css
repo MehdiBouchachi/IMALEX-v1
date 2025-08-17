@@ -7,6 +7,16 @@
 :root {
   color-scheme: light;
 
+  --brandG-500: #3c8b63;
+  --brandG-600: #2f5f4b;
+  --brandG-700: #244b3b;
+  --gold-1: #eddcaa;
+  --gold-2: #c6a763;
+
+  /* ⬅️ main border tint used on hero/cards/chips */
+  --edge: color-mix(in srgb, var(--border) 82%, var(--gold-2) 18%);
+  --edge-strong: color-mix(in srgb, var(--border) 62%, var(--gold-2) 38%);
+
   /* ——— Brand scale (moss/mint/forest) ——— */
   --brand-50: #f1fbf6;
   --brand-100: #e6f7ef;
@@ -205,6 +215,8 @@
 html.dark {
   color-scheme: dark;
 
+  --edge: color-mix(in srgb, var(--border) 70%, var(--gold-2) 30%);
+  --edge-strong: color-mix(in srgb, var(--border) 48%, var(--gold-2) 52%);
   /* ——— Brand stays the same hues but raised for contrast ——— */
   --brand-50: #0b1713;
   --brand-100: #0f211b;
@@ -384,56 +396,381 @@ body {
 
 /* Example component helpers (optional) */
 @layer components {
- 
+  /* ==================== shared text tokens ==================== */
+  .text-primary {
+    @apply text-[color:var(--text-primary)];
+  }
+  .text-secondary {
+    @apply text-[color:var(--text-secondary)];
+  }
+  .text-muted {
+    @apply text-[color:var(--text-muted)];
+  }
 
-  /* ===== Blog filter chips (brand-green, tactile, responsive) ===== */
+  /* ==================== chips (filters/tags) ==================== */
   .chip {
-    border: 1px solid var(--chip-bd, var(--border));
-    background: var(--chip-bg, var(--surface-0));
-    color: var(--chip-fg, var(--text-secondary));
-    border-radius: 9999px;
-    padding: 6px 12px;
-    font-weight: 600;
-    font-size: 0.875rem;
-    white-space: nowrap;
-    transition: background-color 0.15s ease, color 0.15s ease,
-      border-color 0.15s ease;
+    @apply inline-flex items-center rounded-full border px-3 py-2 text-[13px] font-extrabold whitespace-nowrap
+           transition-colors;
+    @apply border-[var(--edge)]
+           text-[color:var(--text-secondary)]
+           bg-[color-mix(in_srgb,var(--surface-0)_85%,transparent)];
   }
   .chip:hover {
-    border-color: var(--brand-700-a25, rgba(60, 139, 99, 0.25));
-    background: var(--brand-700-a08, rgba(60, 139, 99, 0.08));
-    color: var(--brand-700, #3c8b63);
+    @apply border-[color-mix(in_srgb,var(--edge-strong)_100%,transparent)]
+           bg-[color-mix(in_srgb,var(--brand-700)_10%,transparent)]
+           text-[color:var(--brand-700)];
   }
   .chip--active {
-    border-color: var(--brand-700-a25, rgba(60, 139, 99, 0.25));
-    background: var(--brand-700-a10, rgba(60, 139, 99, 0.1));
-    color: var(--brand-700, #3c8b63);
+    @apply border-[color-mix(in_srgb,var(--brand-700)_65%,transparent)]
+           bg-[color-mix(in_srgb,var(--brand-500)_16%,transparent)]
+           text-[color:var(--brand-800)];
   }
 
-  /* ===== Inline "Read article →" CTA (brand green) ===== */
+  /* a one-color pill for meta rows (uses brand green) */
+  .pill {
+    @apply rounded-full border px-2.5 py-1 text-[12px] font-extrabold;
+    @apply border-[color-mix(in_srgb,var(--brand-700)_35%,transparent)]
+           bg-[color-mix(in_srgb,var(--brand-400)_12%,transparent)]
+           text-[color:var(--brand-800)];
+  }
+
+  /* ==================== inline CTA ==================== */
   .read-inline {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-weight: 700;
-    font-size: 0.9375rem;
-    color: var(--brand-700, #3c8b63);
-    text-underline-offset: 3px;
-    outline: none;
+    @apply inline-flex items-center gap-2 font-extrabold text-[14px]
+           text-[color:var(--brand-800)] underline-offset-2;
   }
   .read-inline:hover {
-    text-decoration: underline;
+    @apply underline;
   }
   .read-inline:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 3px;
-    border-radius: 6px;
+    @apply outline-none ring-2 ring-[var(--ring)] rounded-md;
   }
-  .read-inline span {
-    transition: transform 0.18s ease;
+
+  /* ==================== editorial grid (hero/tall/squares) ==================== */
+  .magazine-grid {
+    @apply grid gap-6;
+    grid-template-areas:
+      "hero hero tall"
+      "hero hero tall"
+      "split1 square1 square2";
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-auto-rows: minmax(180px, auto);
   }
-  .read-inline:hover span {
-    transform: translateX(2px);
+  @media (max-width: 1024px) {
+    .magazine-grid {
+      grid-template-areas:
+        "hero  tall"
+        "hero  tall"
+        "split1 split1"
+        "square1 square1"
+        "square2 square2";
+      grid-template-columns: 1.5fr 1fr;
+    }
+  }
+  @media (max-width: 640px) {
+    .magazine-grid {
+      grid-template-areas:
+        "hero"
+        "tall"
+        "split1"
+        "square1"
+        "square2";
+      grid-template-columns: 1fr;
+    }
+  }
+  .magazine-grid > article:nth-child(1) {
+    grid-area: hero;
+  }
+  .magazine-grid > article:nth-child(2) {
+    grid-area: tall;
+  }
+  .magazine-grid > article:nth-child(3) {
+    grid-area: split1;
+  }
+  .magazine-grid > article:nth-child(4) {
+    grid-area: square1;
+  }
+  .magazine-grid > article:nth-child(5) {
+    grid-area: square2;
+  }
+
+  /* ==================== card base + hover polish ==================== */
+  .blog-card {
+    @apply overflow-hidden rounded-[20px] border bg-[var(--surface-0)]
+           border-[var(--edge)]
+           shadow-[0_8px_28px_rgba(0,0,0,0.12)];
+  }
+  .dark .blog-card {
+    @apply shadow-[0_14px_36px_rgba(0,0,0,0.28)];
+  }
+
+  .hover-card {
+    @apply transition-[transform,box-shadow,border-color,filter] duration-200 ease-out;
+  }
+  .hover-card:hover {
+    @apply border-[var(--edge-strong)]
+           shadow-[0_18px_48px_rgba(0,0,0,0.2)] saturate-100;
+  }
+
+  /* media helpers (shared across cards) */
+  .media__edge {
+    @apply absolute inset-0 z-0 pointer-events-none
+           bg-[linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0)_58%),radial-gradient(80%_60%_at_10%_100%,rgba(0,0,0,0.14),transparent_60%)]
+           mix-blend-multiply;
+  }
+  .media__sheen {
+    @apply absolute inset-[-40%_-80%] z-10 pointer-events-none
+           bg-[linear-gradient(75deg,transparent_40%,rgba(255,255,255,0.1)_50%,transparent_60%)]
+           -translate-x-[30%] rotate-[8deg] opacity-0
+           transition duration-300 ease-out;
+  }
+  .hover-card:hover .media__sheen,
+  .tall:hover .media__sheen {
+    @apply opacity-100 translate-x-[10%];
+  }
+
+  /* ==================== HERO (wide) ==================== */
+  .hero {
+    @apply relative isolate min-h-[clamp(320px,44vh,520px)]
+           overflow-hidden rounded-[24px]
+           border border-[var(--edge)]
+           bg-[var(--surface-0)]
+           shadow-[0_18px_56px_rgba(0,0,0,0.18)]
+           transition-[transform,box-shadow,border-color] duration-300 ease-out;
+  }
+  .hero:hover {
+    @apply border-[var(--edge-strong)] shadow-[0_24px_64px_rgba(0,0,0,0.25)];
+  }
+  .hero-media {
+    @apply absolute inset-0;
+  }
+  .hero-veil {
+    @apply absolute inset-0 z-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.42)_0%,rgba(0,0,0,0.28)_40%,rgba(0,0,0,0.12)_85%)];
+  }
+  @media (max-width: 640px) {
+    .hero-veil {
+      background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.38) 0%,
+        rgba(0, 0, 0, 0.22) 46%,
+        rgba(0, 0, 0, 0.06) 82%
+      );
+    }
+  }
+  .hero-content {
+    @apply relative z-10 grid h-full items-end p-[clamp(16px,4vw,40px)];
+  }
+  .hero-plate {
+    @apply max-w-[min(86ch,100%)] rounded-2xl border border-[var(--edge)]
+           bg-[color-mix(in_srgb,var(--surface-0)_14%,transparent)] backdrop-blur-md
+           shadow-[0_10px_34px_rgba(0,0,0,0.18)]
+           px-[clamp(16px,3vw,26px)] py-[clamp(14px,2vw,20px)];
+  }
+  .hero-meta {
+    @apply text-white/95 text-[12px] font-extrabold tracking-wide;
+  }
+  .hero-title {
+    @apply text-balance text-white font-black tracking-[-0.015em] text-[clamp(26px,3.5vw,48px)] leading-[1.08] drop-shadow-[0_1px_4px_rgba(0,0,0,0.35)];
+  }
+  .hero-excerpt {
+    @apply mt-2 max-w-[70ch] text-[clamp(14px,1.5vw,16px)] leading-[1.55] text-white/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.30)];
+  }
+  .hero-cta {
+    @apply inline-flex gap-2 font-black text-[color:var(--gold-1)];
+  }
+  .hero-sheen {
+    @apply absolute inset-[-40%_-80%] z-10 pointer-events-none
+                         bg-[linear-gradient(75deg,transparent_40%,rgba(255,255,255,0.1)_50%,transparent_60%)]
+                         -translate-x-[30%] rotate-[8deg] opacity-0 transition duration-500 ease-out;
+  }
+  .group:hover .hero-sheen {
+    @apply opacity-100 translate-x-[10%];
+  }
+
+  /* ==================== Tall card (image overlay) ==================== */
+  .tall {
+    @apply blog-card;
+  }
+  .tall .media-wrap {
+    @apply relative overflow-hidden rounded-t-[20px] h-[min(48vw,340px)] isolate;
+  }
+  .tall .plate {
+    @apply absolute left-3 right-3 bottom-3 z-10 rounded-xl border border-[var(--edge)]
+           backdrop-blur-md
+           bg-[color-mix(in_srgb,var(--surface-0)_16%,transparent)]
+           shadow-[0_10px_28px_rgba(0,0,0,0.18)] px-3.5 py-2.5;
+  }
+  .tall .meta {
+    @apply text-white/95 text-[12px] font-extrabold tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.30)];
+  }
+  .tall .title {
+    @apply text-white font-black text-[clamp(16px,2vw,20px)] leading-[1.2] tracking-[-0.01em] drop-shadow-[0_1px_3px_rgba(0,0,0,0.30)];
+  }
+  .tall .body {
+    @apply p-5 sm:p-6 flex flex-col gap-2.5;
+  }
+  .tall .excerpt {
+    @apply text-[14px] leading-[1.55] text-[color:var(--text-secondary)];
+  }
+  .tall .t-footer {
+    @apply mt-3.5 border-t pt-3.5 flex items-center justify-between;
+    border-color: var(--edge);
+  }
+
+  /* ==================== Split card V2 (media + editorial panel) ==================== */
+  .split-v2 {
+    @apply relative;
+  }
+  .split-v2 .cut-corner {
+    @apply absolute right-[-1px] top-0 bottom-0 hidden w-[26px] bg-right bg-no-repeat md:block;
+    background-image: radial-gradient(
+      36px 36px at 0 50%,
+      transparent 69%,
+      var(--surface-0) 70%
+    );
+  }
+  .split-v2 .inner {
+    @apply rounded-b-[20px] md:rounded-r-[20px]
+           bg-[linear-gradient(180deg,var(--surface-0),color-mix(in_srgb,var(--surface-0)_92%,transparent))]
+           shadow-[inset_0_0_0_1px_var(--edge),0_1px_0_rgba(255,255,255,0.02)];
+  }
+  .split-v2 .divider {
+    @apply h-px flex-1 bg-[linear-gradient(90deg,transparent,var(--edge),transparent)];
+  }
+  .split-v2 .caption {
+    @apply text-[11px] tracking-[.08em] uppercase text-[color:var(--text-muted)] whitespace-nowrap;
+  }
+  .split-v2 .bullets {
+    @apply grid gap-1.5 pl-[18px] text-[13.5px] text-[color:var(--text-secondary)];
+  }
+  .split-v2 .bullets li {
+    list-style: disc;
+  }
+
+  /* ==================== Blog index controls (search/select shell) ==================== */
+  .blog-controls {
+    @apply grid items-center gap-3 rounded-2xl border p-3
+           border-[var(--border)] bg-[var(--surface-1)]
+           md:grid-cols-[minmax(110px,150px)_1fr_minmax(150px,180px)];
+  }
+  @media (max-width: 520px) {
+    .blog-controls {
+      @apply grid-cols-1;
+    }
+  }
+
+  .blog-input-wrap {
+    @apply relative;
+  }
+  .blog-input {
+    @apply h-[46px] w-full rounded-[14px] border px-10 text-[14px] font-semibold
+           border-[var(--border)]
+           bg-[linear-gradient(0deg,var(--surface-0),var(--surface-0)),color-mix(in_srgb,var(--brand-400)_6%,transparent)]
+           text-[color:var(--text-primary)]
+           transition-[box-shadow,border-color,background] duration-200;
+  }
+  .blog-input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.9;
+  }
+  .blog-input:focus {
+    @apply outline-none;
+    border-color: color-mix(in srgb, var(--brand-600) 55%, var(--border));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-400) 18%, transparent),
+      inset 0 1px 0 rgba(0, 0, 0, 0.02);
+  }
+  .blog-input-icon {
+    @apply pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[color:var(--text-muted)];
+  }
+
+  /* grid used on /blogs list as a fallback util */
+  .cards-grid {
+    @apply grid gap-6 sm:gap-7 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(290px,1fr))];
+  }
+
+  /* ==================== “read more” chip button ==================== */
+  .read-btn {
+    @apply inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[13px] font-extrabold
+           border-[color-mix(in_srgb,var(--brand-700)_30%,transparent)]
+           bg-[color-mix(in_srgb,var(--brand-400)_10%,transparent)]
+           text-[color:var(--brand-800)]
+           transition-[transform,background,border-color] duration-150 ease-out whitespace-nowrap;
+  }
+  .read-btn:hover {
+    @apply -translate-y-px
+           border-[color-mix(in_srgb,var(--brand-700)_45%,transparent)]
+           bg-[color-mix(in_srgb,var(--brand-400)_20%,transparent)];
+  }
+
+  .media {
+    @apply relative overflow-hidden;
+  }
+
+  /* smooth zoom on hover, consistent across cards */
+  .media img,
+  .media [data-nimg="fill"] > img {
+    @apply object-cover transition duration-[450ms]
+         ease-[cubic-bezier(0.22,0.61,0.36,1)];
+  }
+  .hover-card:hover .media img {
+    @apply scale-[1.06] -translate-y-[1.5%];
+  }
+
+  /* split-card specific shaping */
+  .split-v2 .media-bleed > .media {
+    @apply rounded-l-[20px];
+  } /* left side only */
+  @media (max-width: 1024px) {
+    .split-v2 .media-bleed > .media {
+      @apply rounded-t-[20px];
+    }
+  }
+  /* === HERO: clip image + zoom on hover (supports hero__media & hero-media) === */
+  .hero__media,
+  .hero-media {
+    @apply absolute inset-0 overflow-hidden;
+  }
+
+  .hero__media img,
+  .hero-media img,
+  .hero__media [data-nimg="fill"] > img,
+  .hero-media [data-nimg="fill"] > img {
+    @apply object-cover transition duration-[600ms]
+         ease-[cubic-bezier(0.22,0.61,0.36,1)]
+         scale-[1.02];
+  }
+
+  /* hover can come from :hover or parent .group (for keyboard focus styles you may add later) */
+  .hero:hover .hero__media img,
+  .hero:hover .hero-media img,
+  .group:hover .hero__media img,
+  .group:hover .hero-media img {
+    @apply scale-[1.06] -translate-y-[1.5%];
+  }
+
+  /* keep the sheen sweep scoped to the image area */
+  .hero-veil,
+  .hero__veil {
+    @apply absolute inset-0;
+  }
+
+  /* === TALL CARD: clip its image + zoom on hover === */
+  .tall .media-wrap {
+    @apply relative overflow-hidden rounded-t-[20px];
+    /* original height behavior preserved */
+    height: min(48vw, 340px);
+  }
+
+  .tall .media-wrap img,
+  .tall .media-wrap [data-nimg="fill"] > img {
+    @apply object-cover transition duration-[420ms]
+         ease-[cubic-bezier(0.22,0.61,0.36,1)]
+         scale-[1.02];
+  }
+
+  .tall:hover .media-wrap img,
+  .tall:hover .media-wrap [data-nimg="fill"] > img {
+    @apply scale-[1.06];
   }
 
   /* optional: hide scrollbar on the chip row (already in your section styles) */
