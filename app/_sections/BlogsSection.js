@@ -7,7 +7,6 @@ import Link from "next/link";
 import Button from "../_components/ui/Button";
 import EyebrowChip from "../_components/ui/EyebrowChip";
 
-/** tiny helper */
 const cx = (...a) => a.filter(Boolean).join(" ");
 
 export default function BlogsSection({
@@ -18,7 +17,7 @@ export default function BlogsSection({
   basePath = "/blogs",
   showCTA = true,
 }) {
-  // gather unique tags
+  // Tags
   const tags = useMemo(() => {
     const s = new Set();
     posts.forEach((p) => (p.tags || []).forEach((t) => s.add(t)));
@@ -30,28 +29,28 @@ export default function BlogsSection({
     if (!tags.includes(selected)) setSelected("All");
   }, [tags, selected]);
 
-  const filtered = useMemo(
-    () =>
-      selected === "All"
-        ? posts
-        : posts.filter((p) => (p.tags || []).includes(selected)),
-    [posts, selected]
-  );
+  const filtered =
+    selected === "All"
+      ? posts
+      : posts.filter((p) => (p.tags || []).includes(selected));
 
-  const items = filtered.slice(0, 7); // 1 feature + up to 6 cards
+  // Curated arrangement for first 8
+  const items = filtered.slice(0, 8);
 
   return (
-    <section id="blog" className="relative scroll-mt-24 py-16 sm:py-20">
+    <section id="blog" className="relative py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-6">
-        {/* header */}
+        {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-3xl">
             <EyebrowChip>{eyebrow}</EyebrowChip>
-            <h2 className="mt-3 text-[clamp(28px,4vw,42px)] font-extrabold leading-tight text-[var(--text-primary)]">
+            <h2 className="mt-3 text-[clamp(28px,4vw,42px)] font-extrabold leading-tight tracking-[-0.02em] text-[var(--text-primary)]">
               {title}
             </h2>
             {description ? (
-              <p className="mt-2 text-[var(--text-secondary)]">{description}</p>
+              <p className="mt-2 text-[15px] leading-7 text-[var(--text-secondary)]">
+                {description}
+              </p>
             ) : null}
           </div>
 
@@ -83,15 +82,14 @@ export default function BlogsSection({
           )}
         </div>
 
-        {/* responsive filter chips (scrollable on mobile) */}
+        {/* Filters */}
         {tags.length > 1 && (
           <div className="mt-6">
             <div
               className="
-    chips-row no-scrollbar -mx-6 flex gap-2 overflow-x-auto px-6 pb-2 pt-0.5
-    snap-x snap-mandatory
-    md:overflow-visible md:flex-wrap md:snap-none
-  "
+                -mx-6 flex gap-2 overflow-x-auto px-6 pb-2 pt-0.5 no-scrollbar
+                snap-x snap-mandatory md:overflow-visible md:flex-wrap md:snap-none
+              "
               role="tablist"
               aria-label="Filter articles"
             >
@@ -101,11 +99,7 @@ export default function BlogsSection({
                   <button
                     key={tag}
                     onClick={() => setSelected(tag)}
-                    className={cx(
-                      "chip snap-start",
-                      active && "chip--active",
-                      "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
-                    )}
+                    className={cx("chip", active && "chip--active")}
                     aria-selected={active}
                     role="tab"
                   >
@@ -120,42 +114,47 @@ export default function BlogsSection({
           </div>
         )}
 
-        {/* ===== Top row: same height left/right on lg+ ===== */}
+        {/* Empty */}
+        {items.length === 0 && <EmptyState />}
+
+        {/* Editorial grid */}
         {items.length > 0 && (
-          <div
-            className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
-            style={{ ["--hero-h"]: "clamp(280px, 38vw, 440px)" }}
-          >
-            <FeatureTall
-              post={items[0]}
-              href={`${basePath}/${items[0].slug || items[0].id}`}
-            />
-            {items[1] ? (
-              <CardTall
+          <div className="mt-8 mb-0 magazine-grid">
+            {items[0] && (
+              <HeroWide
+                post={items[0]}
+                href={`${basePath}/${items[0].slug || items[0].id}`}
+              />
+            )}
+            {items[1] && (
+              <TallSplit
                 post={items[1]}
                 href={`${basePath}/${items[1].slug || items[1].id}`}
               />
-            ) : (
-              <div className="hidden lg:block" aria-hidden />
             )}
-          </div>
-        )}
 
-        {/* grid */}
-        {items.length > 2 && (
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {items.slice(2).map((p) => (
-              <Card
-                key={p.slug || p.id}
-                post={p}
-                href={`${basePath}/${p.slug || p.id}`}
-              />
-            ))}
+            {items
+              .slice(2)
+              .map((p, i) =>
+                i % 3 === 0 ? (
+                  <SplitCardV2
+                    key={p.slug || p.id}
+                    post={p}
+                    href={`${basePath}/${p.slug || p.id}`}
+                  />
+                ) : (
+                  <SquareCard
+                    key={p.slug || p.id}
+                    post={p}
+                    href={`${basePath}/${p.slug || p.id}`}
+                  />
+                )
+              )}
           </div>
         )}
       </div>
 
-      {/* light hover lift, no heavy motion */}
+      {/* Scoped styles */}
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;
@@ -164,22 +163,573 @@ export default function BlogsSection({
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
+        /* ensure no trailing margin from the last VISIBLE element */
+        #blog > :not(style):last-child {
+          margin-bottom: 0 !important;
+        }
+
+        /* ---------- HERO (classic: softer veil + readable text) ---------- */
+        :root {
+          --brandG-500: #3c8b63;
+          --brandG-600: #2f5f4b;
+          --gold-1: #eddcaa;
+          --gold-2: #c6a763;
+          --edge: color-mix(in srgb, var(--border) 82%, var(--gold-2) 18%);
+        }
+
+        .hero {
+          position: relative;
+
+          min-height: clamp(320px, 44vh, 520px);
+
+          border-radius: 24px;
+          overflow: hidden;
+          border: 1px solid var(--edge);
+          background: var(--surface-0);
+          box-shadow: 0 18px 56px rgba(0, 0, 0, 0.18);
+          isolation: isolate;
+        }
+        .hero__media {
+          position: absolute;
+          inset: 0;
+        }
+        .hero__media img {
+          object-fit: cover;
+        }
+
+        .hero__veil {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.42) 0%,
+            rgba(0, 0, 0, 0.28) 40%,
+            rgba(0, 0, 0, 0.12) 85%
+          );
+        }
+
+        .hero__content {
+          position: relative;
+          z-index: 1;
+          height: 100%;
+          display: grid;
+          align-items: end;
+          padding: clamp(16px, 4vw, 40px);
+        }
+        .hero__plate {
+          max-width: min(86ch, 100%);
+          border-radius: 16px;
+          padding: clamp(14px, 2vw, 20px) clamp(16px, 3vw, 26px);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          background: color-mix(in srgb, var(--surface-0) 14%, transparent);
+          border: 1px solid var(--edge);
+          box-shadow: 0 10px 34px rgba(0, 0, 0, 0.18);
+        }
+        .hero__meta,
+        .hero__title,
+        .hero__excerpt {
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+        }
+        .hero__meta {
+          color: #fff;
+          opacity: 0.95;
+          font-size: 12px;
+          font-weight: 800;
+          letter-spacing: 0.03em;
+        }
+        .hero__title {
+          color: #fff;
+          font-weight: 900;
+          letter-spacing: -0.015em;
+          font-size: clamp(26px, 3.5vw, 48px);
+          line-height: 1.08;
+          text-wrap: balance;
+        }
+        .hero__excerpt {
+          color: #fff;
+          opacity: 0.92;
+          margin-top: 8px;
+          font-size: clamp(14px, 1.5vw, 16px);
+          line-height: 1.55;
+          max-width: 70ch;
+        }
+        .hero__footer {
+          margin-top: 12px;
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+        .hero__cta {
+          color: var(--gold-1);
+          font-weight: 900;
+          display: inline-flex;
+          gap: 8px;
+          text-decoration: none;
+        }
+        /* ---------- HERO HOVER EFFECT ---------- */
+        .hero {
+          transition: transform 0.35s ease, box-shadow 0.35s ease,
+            border-color 0.35s ease;
+        }
+        .hero:hover {
+          box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+          border-color: var(--edge-strong);
+        }
+
+        /* zoom on image */
+        .hero__media img {
+          transform: scale(1.02);
+          transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        .hero:hover .hero__media img {
+          transform: scale(1.06);
+        }
+
+        /* sheen sweep */
+        .hero__sheen {
+          position: absolute;
+          inset: -40% -80%;
+          z-index: 1;
+          pointer-events: none;
+          background: linear-gradient(
+            75deg,
+            transparent 40%,
+            rgba(255, 255, 255, 0.1) 50%,
+            transparent 60%
+          );
+          transform: translateX(-30%) rotate(8deg);
+          opacity: 0;
+          transition: opacity 0.25s ease,
+            transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        .hero:hover .hero__sheen {
+          opacity: 1;
+          transform: translateX(10%) rotate(8deg);
+        }
+
+        @media (max-width: 640px) {
+          .hero__veil {
+            background: linear-gradient(
+              180deg,
+              rgba(0, 0, 0, 0.38) 0%,
+              rgba(0, 0, 0, 0.22) 46%,
+              rgba(0, 0, 0, 0.06) 82%
+            );
+          }
+        }
+
+        /* ---------- Mansory palette ---------- */
+        :root {
+          --brandG-500: #3c8b63;
+          --brandG-600: #2f5f4b;
+          --brandG-700: #244b3b;
+          --gold-1: #eddcaa;
+          --gold-2: #c6a763;
+          --edge-strong: color-mix(
+            in srgb,
+            var(--border) 48%,
+            var(--gold-2) 52%
+          );
+        }
+
+        /* Chips */
+        .chip {
+          border: 1px solid var(--edge);
+          background: color-mix(in srgb, var(--surface-0) 85%, transparent);
+          color: var(--text-secondary);
+          border-radius: 999px;
+          padding: 8px 14px;
+          font-size: 13px;
+          font-weight: 800;
+          line-height: 1;
+          white-space: nowrap;
+          transition: background 120ms ease, color 120ms ease,
+            border-color 120ms ease;
+        }
+        .chip:hover {
+          border-color: var(--edge-strong);
+        }
+        .chip--active {
+          background: color-mix(in srgb, var(--brandG-500) 16%, transparent);
+          color: var(--brandG-700);
+          border-color: color-mix(in srgb, var(--brandG-500) 65%, transparent);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        /* Editorial Grid — hero spans two rows */
+        .magazine-grid {
+          display: grid;
+          gap: 24px;
+          grid-template-areas:
+            "hero hero tall"
+            "hero hero tall"
+            "split1 square1 square2";
+          grid-template-columns: 2fr 1fr 1fr;
+          align-items: stretch;
+          grid-auto-rows: minmax(180px, auto);
+        }
+        @media (max-width: 1024px) {
+          .magazine-grid {
+            grid-template-areas:
+              "hero  tall"
+              "hero  tall"
+              "split1 split1"
+              "square1 square1"
+              "square2 square2";
+            grid-template-columns: 1.5fr 1fr;
+          }
+        }
+        @media (max-width: 640px) {
+          .magazine-grid {
+            grid-template-areas:
+              "hero"
+              "tall"
+              "split1"
+              "square1"
+              "square2";
+            grid-template-columns: 1fr;
+          }
+        }
+        .magazine-grid > article:nth-child(1) {
+          grid-area: hero;
+        }
+        .magazine-grid > article:nth-child(2) {
+          grid-area: tall;
+        }
+        .magazine-grid > article:nth-child(3) {
+          grid-area: split1;
+        }
+        .magazine-grid > article:nth-child(4) {
+          grid-area: square1;
+        }
+        .magazine-grid > article:nth-child(5) {
+          grid-area: square2;
+        }
+        .magazine-grid > article:nth-child(6) {
+          grid-area: split2;
+        }
+        .magazine-grid > article:nth-child(7) {
+          grid-area: square3;
+        }
+        .magazine-grid > article:nth-child(8) {
+          grid-area: square4;
+        }
+
+        /* Card primitives + polish */
         .blog-card {
-          transition: transform 0.2s ease, box-shadow 0.2s ease,
-            border-color 0.2s ease;
+          background: var(--surface-0);
+          border: 1px solid var(--edge);
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
         }
-        .blog-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        .dark .blog-card {
+          box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
         }
-        .dark .blog-card:hover {
-          box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+        .blog-card .title {
+          color: var(--text-primary);
+          font-weight: 800;
+          letter-spacing: -0.01em;
+        }
+        .blog-card .excerpt {
+          color: var(--text-secondary);
+        }
+        .meta,
+        .blog-card .meta {
+          color: var(--text-muted);
+          font-size: 12px;
+        }
+
+        /* Unified ONE-COLOR tag system (brand green) */
+        .meta .pill,
+        .blog-card .pill {
+          border: 1px solid
+            color-mix(in srgb, var(--brandG-500) 65%, transparent);
+          background: color-mix(in srgb, var(--brandG-500) 18%, transparent);
+          color: var(--brandG-600);
+          padding: 5px 10px;
+          border-radius: 999px;
+          font-weight: 800;
+        }
+
+        .read-inline {
+          display: inline-flex;
+          gap: 8px;
+          align-items: center;
+          font-weight: 800;
+          font-size: 14px;
+          color: var(--brandG-600);
+        }
+        .dark .read-inline {
+          color: var(--brandG-500);
+        }
+
+        /* -------- Split Card V2 (editorial panel + diagonal seam) -------- */
+        .split-v2 {
+          position: relative;
+        }
+        .split-v2 .media-bleed > div {
+          border-top-left-radius: 20px;
+          border-bottom-left-radius: 20px;
+        }
+        .split-v2 .cut-corner {
+          position: absolute;
+          right: -1px;
+          top: 0;
+          bottom: 0;
+          width: 26px;
+          background: radial-gradient(
+              36px 36px at 0 50%,
+              transparent 69%,
+              var(--surface-0) 70%
+            )
+            right/26px 100% no-repeat;
+        }
+        .split-v2 .inner {
+          background: linear-gradient(
+            180deg,
+            var(--surface-0),
+            color-mix(in srgb, var(--surface-0) 92%, transparent)
+          );
+          box-shadow: inset 0 0 0 1px var(--edge),
+            0 1px 0 rgba(255, 255, 255, 0.02);
+          border-top-right-radius: 20px;
+          border-bottom-right-radius: 20px;
+        }
+        .split-v2 .divider {
+          flex: 1 1 auto;
+          height: 1px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            var(--edge),
+            transparent
+          );
+        }
+        .split-v2 .caption {
+          font-size: 11px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          white-space: nowrap;
+        }
+        .split-v2 .bullets {
+          margin: 0;
+          padding-left: 18px;
+          display: grid;
+          gap: 6px;
+          color: var(--text-secondary);
+          font-size: 13.5px;
+        }
+        .split-v2 .bullets li {
+          list-style: disc;
+        }
+
+        @media (max-width: 1024px) {
+          .split-v2 .cut-corner {
+            display: none !important;
+          }
+          .split-v2 .inner {
+            border-radius: 0 0 20px 20px;
+          }
+          .split-v2 .media-bleed > div {
+            border-radius: 20px 20px 0 0;
+          }
+        }
+
+        /* ---------- Extra polish for the Tall card image top ---------- */
+        /* ---------------- Tall card: OVERLAY TITLE + TAGS ---------------- */
+        .tall {
+          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+        }
+        .tall .media-wrap {
+          position: relative;
+          height: min(48vw, 340px);
+
+          overflow: hidden;
+          border-radius: 20px 20px 0 0;
+          isolation: isolate;
+        }
+        .tall .media-wrap img,
+        .tall .media-wrap span[data-nimg="fill"] > img {
+          object-fit: cover;
+          transform: scale(1.02);
+          transition: transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        .tall:hover .media-wrap img {
+          transform: scale(1.06);
+        }
+        /* contrast + vignette */
+        .tall .media__edge {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          pointer-events: none;
+          background: linear-gradient(
+              180deg,
+              rgba(0, 0, 0, 0.22),
+              rgba(0, 0, 0, 0) 56%
+            ),
+            radial-gradient(
+              80% 60% at 10% 100%,
+              rgba(0, 0, 0, 0.14),
+              transparent 60%
+            );
+        }
+        .tall .media__sheen {
+          position: absolute;
+          inset: -40% -80%;
+          z-index: 1;
+          pointer-events: none;
+          background: linear-gradient(
+            75deg,
+            transparent 40%,
+            rgba(255, 255, 255, 0.1) 50%,
+            transparent 60%
+          );
+          transform: translateX(-30%) rotate(8deg);
+          opacity: 0;
+          transition: opacity 0.18s ease,
+            transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        .tall:hover .media__sheen {
+          opacity: 1;
+          transform: translateX(10%) rotate(8deg);
+        }
+        /* glass plate */
+        .tall .plate {
+          position: absolute;
+          left: 12px;
+          right: 12px;
+          bottom: 12px;
+          z-index: 2;
+          border-radius: 12px;
+          padding: 10px 12px;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          background: color-mix(in srgb, var(--surface-0) 16%, transparent);
+          border: 1px solid var(--edge);
+          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+        }
+        .tall .meta,
+        .tall .title {
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        .tall .meta {
+          color: #fff;
+          opacity: 0.96;
+          font-size: 12px;
+          font-weight: 800;
+          letter-spacing: 0.02em;
+        }
+        .tall .title {
+          color: #fff;
+          font-weight: 900;
+          font-size: clamp(16px, 2vw, 20px);
+          line-height: 1.2;
+          letter-spacing: -0.01em;
+          text-wrap: balance;
+        }
+        /* body below */
+        .tall .body {
+          padding: 18px 20px 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .tall .excerpt {
+          color: var(--text-secondary);
+          font-size: 14px;
+          line-height: 1.55;
+        }
+        .tall .t-footer {
+          margin-top: 14px;
+          padding-top: 14px;
+          border-top: 1px solid var(--edge);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        /* mobile image height */
+        @media (max-width: 640px) {
+          .tall .media-wrap {
+            height: 220px;
+          }
+        }
+
+        /* ---------- HOVER POLISH for cards below hero ---------- */
+        .hover-card {
+          transition: transform 0.18s ease, box-shadow 0.18s ease,
+            border-color 0.18s ease, filter 0.18s ease;
+        }
+        .hover-card:hover {
+          box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
+          border-color: var(--edge-strong);
+          filter: saturate(1.02);
+        }
+        .media {
+          position: relative;
+          overflow: hidden;
+        }
+        .media img {
+          object-fit: cover;
+          transform: scale(1.02);
+          transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        .hover-card:hover .media img {
+          transform: scale(1.06);
+        }
+        .media__edge {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          pointer-events: none;
+          background: linear-gradient(
+              180deg,
+              rgba(0, 0, 0, 0.18),
+              rgba(0, 0, 0, 0) 58%
+            ),
+            radial-gradient(
+              80% 60% at 10% 100%,
+              rgba(0, 0, 0, 0.14),
+              transparent 60%
+            );
+          mix-blend-mode: multiply;
+        }
+        .media__sheen {
+          position: absolute;
+          inset: -40% -80%;
+          z-index: 1;
+          pointer-events: none;
+          background: linear-gradient(
+            75deg,
+            transparent 40%,
+            rgba(255, 255, 255, 0.1) 50%,
+            transparent 60%
+          );
+          transform: translateX(-30%) rotate(8deg);
+          opacity: 0;
+          transition: opacity 0.2s ease,
+            transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        .hover-card:hover .media__sheen {
+          opacity: 1;
+          transform: translateX(10%) rotate(8deg);
         }
         @media (prefers-reduced-motion: reduce) {
-          .blog-card,
-          .blog-card:hover {
-            transition: none;
-            transform: none;
+          .hover-card,
+          .media img,
+          .media__sheen {
+            transition: none !important;
+          }
+          .hover-card:hover .media img {
+            transform: none !important;
+          }
+          .hover-card:hover .media__sheen {
+            opacity: 0 !important;
           }
         }
       `}</style>
@@ -187,138 +737,125 @@ export default function BlogsSection({
   );
 }
 
-/* ————— Feature (left) ————— */
-function FeatureTall({ post, href }) {
-  const tags = Array.isArray(post.tags) ? post.tags.slice(0, 3) : [];
+/* ---------------------- Components ---------------------- */
 
+function EmptyState() {
   return (
-    <article
-      className="blog-card overflow-hidden rounded-[16px] border"
-      style={{ background: "var(--surface-0)", borderColor: "var(--border)" }}
+    <div
+      className="mt-10 grid place-items-center rounded-xl border p-10 text-center"
+      style={{ background: "var(--surface-0)", borderColor: "var(--edge)" }}
     >
-      {/* Image
-          - mobile: aspect box
-          - lg+: fixed equal height via --hero-h */}
-      <div className="relative aspect-[16/9] sm:aspect-[21/9] lg:aspect-auto lg:h-[var(--hero-h)]">
-        <Link
-          href={href}
-          aria-label={post.title}
-          className="absolute inset-0 block focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
+      <div className="mx-auto max-w-xl">
+        <h3
+          className="text-lg font-semibold"
+          style={{ color: "var(--text-primary)" }}
         >
-          <Image
-            src={post.image || "/placeholder.png"}
-            alt=""
-            fill
-            sizes="(min-width:1024px) 66vw, 100vw"
-            className="object-cover"
-          />
-        </Link>
-
-        {/* OVERLAY content → shown from md: up only */}
-        <div className="pointer-events-none absolute inset-0 hidden md:block bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 hidden md:block p-5 sm:p-6">
-          <MetaRow tags={tags} readTime={post.readTime} invert />
-          <h3 className="mt-1 line-clamp-2 text-[clamp(18px,2.2vw,28px)] font-semibold leading-snug text-white">
-            {post.title}
-          </h3>
-          {post.excerpt && (
-            <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-white/85">
-              {post.excerpt}
-            </p>
-          )}
-          <AuthorRow
-            className="mt-3"
-            name={post.author?.name}
-            avatar={post.author?.avatar}
-            date={post.date}
-            invert
-          />
+          No articles yet
+        </h3>
+        <p className="mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
+          We’re preparing research notes and case studies. Check back soon—or
+          explore our services in the meantime.
+        </p>
+        <div className="mt-4">
+          <Link href="/services" className="read-inline">
+            Explore services <span aria-hidden>→</span>
+          </Link>
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* MOBILE content (no overlay) */}
-      <div className="md:hidden p-4 sm:p-5">
-        <MetaRow tags={tags} readTime={post.readTime} />
-        <h3 className="mt-1 text-[18px] font-semibold leading-snug">
-          <Link
-            href={href}
-            style={{ color: "var(--text-primary)" }}
-            className="focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
-          >
-            {post.title}
-          </Link>
-        </h3>
-        {post.excerpt && (
-          <p
-            className="mt-2 text-[13.5px] leading-relaxed"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            {post.excerpt}
-          </p>
-        )}
-        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <Link href={href} className="read-inline">
-            Read article <span aria-hidden>→</span>
-          </Link>
-          <AuthorCompact
-            name={post.author?.name}
-            avatar={post.author?.avatar}
-            date={post.date}
-          />
+/* 1) HERO WIDE — fills two rows */
+function HeroWide({ post, href, className = "" }) {
+  const tags = (post.tags || []).slice(0, 3);
+  return (
+    <article className={`hero ${className}`}>
+      <div className="hero__media" aria-hidden>
+        <Image
+          src={post.image || "/placeholder.png"}
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover"
+          style={{ objectPosition: "60% 40%" }}
+          priority
+        />
+        <div className="hero__veil" />
+        <span className="hero__sheen" aria-hidden /> {/* 👈 add this */}
+      </div>
+
+      <div className="hero__content">
+        <div className="hero__plate">
+          <div className="hero__meta">
+            {tags.join(" · ")}
+            {post.readTime ? ` · ${post.readTime}` : ""}
+          </div>
+          <h3 className="hero__title">
+            <Link href={href} className="focus-visible:outline-none">
+              {post.title}
+            </Link>
+          </h3>
+          {post.excerpt && <p className="hero__excerpt">{post.excerpt}</p>}
+          <div className="hero__footer">
+            <Link href={href} className="hero__cta">
+              Read article <span aria-hidden>→</span>
+            </Link>
+            <span className="hero__meta">
+              {post.author?.name ? `By ${post.author.name}` : ""}
+              {post.author?.name && post.date ? " · " : ""}
+              {post.date || ""}
+            </span>
+          </div>
         </div>
       </div>
     </article>
   );
 }
 
-/* ————— Right tall card ————— */
-function CardTall({ post, href }) {
-  const tags = Array.isArray(post.tags) ? post.tags.slice(0, 3) : [];
+/* 2) TALL SPLIT — column look with divider footer (kept) */
+/* 2) TALL SPLIT — overlay title + tags inside image (no nested anchors) */
+function TallSplit({ post, href }) {
+  const tags = (post.tags || []).slice(0, 3);
 
   return (
-    <article
-      className="blog-card flex flex-col overflow-hidden rounded-[14px] border lg:h-[var(--hero-h)]"
-      style={{ background: "var(--surface-0)", borderColor: "var(--border)" }}
-    >
-      {/* Image: mobile has its own height; desktop uses a calc of --hero-h */}
-      <Link
-        href={href}
-        aria-label={post.title}
-        className="relative block group focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
-      >
-        <div className="relative h-[min(52vw,260px)] lg:h-[calc(var(--hero-h)*0.58)]">
+    <article className="blog-card tall flex flex-col overflow-hidden">
+      {/* One link only (prevents hydration errors) */}
+      <Link href={href} aria-label={post.title} className="block">
+        <div className="media-wrap">
           <Image
             src={post.image || "/placeholder.png"}
             alt=""
             fill
             sizes="(min-width:1024px) 33vw, 100vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            className="object-cover"
+            priority={false}
           />
+
+          {/* soft edge + sheen */}
+          <span className="media__edge" aria-hidden />
+          <span className="media__sheen" aria-hidden />
+
+          {/* glass plate with tags + title */}
+          <div className="plate">
+            {tags.length > 0 && (
+              <div className="meta">
+                {tags.join(" · ")}
+                {post.readTime ? ` · ${post.readTime}` : ""}
+              </div>
+            )}
+            <h3 className="title">
+              {/* Use a <span> to avoid nested <a> inside the Link */}
+              <span className="focus-visible:outline-none">{post.title}</span>
+            </h3>
+          </div>
         </div>
       </Link>
 
-      <div className="p-4 sm:p-5">
-        <MetaRow tags={tags} readTime={post.readTime} />
-        <h3 className="mt-1 text-[17px] sm:text-[16px] font-semibold leading-snug line-clamp-2">
-          <Link
-            href={href}
-            style={{ color: "var(--text-primary)" }}
-            className="focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
-          >
-            {post.title}
-          </Link>
-        </h3>
-        {post.excerpt && (
-          <p
-            className="mt-2 text-[13.5px] leading-relaxed line-clamp-3"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            {post.excerpt}
-          </p>
-        )}
-
-        {/* Actions: stack on mobile, inline ≥sm */}
-        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      {/* body below the image stays simple */}
+      <div className="body">
+        {post.excerpt && <p className="excerpt line-clamp-3">{post.excerpt}</p>}
+        <div className="t-footer">
           <Link href={href} className="read-inline">
             Read article <span aria-hidden>→</span>
           </Link>
@@ -333,81 +870,150 @@ function CardTall({ post, href }) {
   );
 }
 
-/* ————— Standard grid cards ————— */
-function Card({ post, href }) {
-  const tags = Array.isArray(post.tags) ? post.tags.slice(0, 3) : [];
+/* 3) SPLIT CARD V2 — editorial inner panel + diagonal seam (+hover polish) */
+function SplitCardV2({ post, href }) {
+  const tags = (post.tags || []).slice(0, 3);
+
   return (
-    <article
-      className="blog-card grid overflow-hidden rounded-[14px] border"
-      style={{
-        background: "var(--surface-0)",
-        borderColor: "var(--border)",
-        gridTemplateRows: "auto 1fr auto",
-      }}
-    >
+    <article className="blog-card hover-card split-v2 grid grid-cols-1 md:grid-cols-[1.08fr_1fr] overflow-hidden">
+      {/* Media */}
       <Link
         href={href}
         aria-label={post.title}
-        className="relative block group focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
+        className="relative block media-bleed"
       >
-        <div className="relative aspect-[16/9] w-full overflow-hidden">
+        <div className="relative media aspect-[16/10] md:aspect-auto md:h-full">
+          <Image
+            src={post.image || "/placeholder.png"}
+            alt=""
+            fill
+            sizes="(min-width:1024px) 45vw, 100vw"
+            className="object-cover"
+            style={{ objectPosition: "55% 45%" }}
+          />
+          <span className="media__edge" />
+          <span className="media__sheen" aria-hidden />
+        </div>
+        <div className="cut-corner hidden md:block" aria-hidden />
+      </Link>
+
+      {/* Content */}
+      <div className="inner p-5 sm:p-6 md:p-7 flex flex-col">
+        <div className="flex items-center gap-2 meta">
+          {tags.map((t) => (
+            <span key={t} className="pill">
+              {t}
+            </span>
+          ))}
+          {post.readTime && (
+            <span
+              className="ml-1 text-[11px] font-medium"
+              style={{ color: "var(--text-muted)" }}
+            >
+              • {post.readTime}
+            </span>
+          )}
+        </div>
+
+        <h3 className="title mt-2 text-[20px] md:text-[22px] leading-snug tracking-[-0.01em] line-clamp-2">
+          <Link href={href}>{post.title}</Link>
+        </h3>
+
+        {post.excerpt && (
+          <p className="excerpt mt-2 text-[14px] leading-relaxed md:line-clamp-4">
+            {post.excerpt}
+          </p>
+        )}
+
+        <div className="mt-4 mb-3 flex items-center gap-3">
+          <span className="divider" />
+          <span className="caption">Key takeaways</span>
+        </div>
+
+        <ul className="bullets">
+          {(post.bullets && post.bullets.length > 0
+            ? post.bullets.slice(0, 3)
+            : [
+                "Practical guidance for SMEs",
+                "What to watch in regulation",
+                "Process notes from the lab",
+              ]
+          ).map((b, i) => (
+            <li key={i}>{b}</li>
+          ))}
+        </ul>
+
+        <div
+          className="mt-auto pt-4 border-t"
+          style={{ borderColor: "var(--edge)" }}
+        >
+          <div className="flex items-center justify-between">
+            <Link href={href} className="read-inline">
+              Read article <span aria-hidden>→</span>
+            </Link>
+            <AuthorCompact
+              name={post.author?.name}
+              avatar={post.author?.avatar}
+              date={post.date}
+            />
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/* 4) SQUARE CARD — classic image-top (+hover polish) */
+function SquareCard({ post, href }) {
+  const tags = (post.tags || []).slice(0, 3);
+  return (
+    <article className="blog-card hover-card overflow-hidden">
+      <Link href={href} aria-label={post.title} className="relative block">
+        <div className="relative media aspect-[16/10]">
           <Image
             src={post.image || "/placeholder.png"}
             alt=""
             fill
             sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            className="object-cover"
           />
+          <span className="media__edge" />
+          <span className="media__sheen" aria-hidden />
         </div>
       </Link>
-
-      <div className="p-4 sm:p-5">
+      <div className="p-5 sm:p-6">
         <MetaRow tags={tags} readTime={post.readTime} />
-        <h3 className="mt-1 line-clamp-2 text-[16px] font-semibold leading-snug">
-          <Link
-            href={href}
-            style={{ color: "var(--text-primary)" }}
-            className="focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface-0)]"
-          >
-            {post.title}
-          </Link>
+        <h3 className="title mt-1 text-[16px] leading-snug line-clamp-2">
+          <Link href={href}>{post.title}</Link>
         </h3>
         {post.excerpt && (
-          <p
-            className="mt-2 line-clamp-3 text-[13.5px] leading-relaxed"
-            style={{ color: "var(--text-secondary)" }}
-          >
+          <p className="excerpt mt-2 text-[13.5px] leading-relaxed line-clamp-3">
             {post.excerpt}
           </p>
         )}
-
-        {/* INLINE CTA (brand green) */}
-        <Link href={href} className="read-inline mt-3">
-          Read article <span aria-hidden>→</span>
-        </Link>
-      </div>
-
-      {/* footer: just author/date (no button) */}
-      <div
-        className="border-t px-4 py-3 sm:px-5"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <AuthorRow
-          name={post.author?.name}
-          avatar={post.author?.avatar}
-          date={post.date}
-        />
+        <div className="mt-3 flex items-center justify-between">
+          <Link href={href} className="read-inline">
+            Read article <span aria-hidden>→</span>
+          </Link>
+          <AuthorCompact
+            name={post.author?.name}
+            avatar={post.author?.avatar}
+            date={post.date}
+          />
+        </div>
       </div>
     </article>
   );
 }
+
+/* ------------- Bits ------------- */
 
 function AuthorCompact({ name = "", avatar, date }) {
   return (
     <div className="flex min-w-0 items-center gap-2">
       <div
         className="relative h-6 w-6 overflow-hidden rounded-full border"
-        style={{ borderColor: "var(--border)" }}
+        style={{ borderColor: "var(--edge)" }}
       >
         {avatar ? (
           <Image src={avatar} alt="" fill className="object-cover" />
@@ -416,169 +1022,107 @@ function AuthorCompact({ name = "", avatar, date }) {
             className="flex h-full w-full items-center justify-center text-[10px]"
             style={{
               background: "var(--surface-1)",
-              color: "var(--text-secondary)",
+              color: "var(--text-muted)",
             }}
           >
-            {name?.[0]?.toUpperCase() || ""}
+            {name ? name[0] : "?"}
           </div>
         )}
       </div>
-      <span
-        className="truncate text-[13px]"
-        style={{ color: "var(--text-secondary)" }}
-      >
-        {name}
-      </span>
-      {date ? (
-        <>
-          <span
-            className="mx-1 opacity-40"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            •
-          </span>
-          <time
-            className="text-[12px] tabular-nums opacity-80"
-            dateTime={date}
-            style={{ color: "var(--text-secondary)" }}
-          >
-            {formatDate(date)}
-          </time>
-        </>
-      ) : null}
-    </div>
-  );
-}
-
-/* ————— shared bits ————— */
-function Author({ name = "", avatar }) {
-  return (
-    <div className="flex min-w-0 items-center gap-2">
-      <div
-        className="relative h-7 w-7 overflow-hidden rounded-full border"
-        style={{ borderColor: "var(--border)" }}
-      >
-        {avatar ? (
-          <Image src={avatar} alt="" fill className="object-cover" />
-        ) : (
-          <div
-            className="flex h-full w-full items-center justify-center text-[10px]"
-            style={{
-              background: "var(--surface-1)",
-              color: "var(--text-secondary)",
-            }}
-          >
-            {name?.[0]?.toUpperCase() || ""}
-          </div>
-        )}
-      </div>
-      <span
-        className="truncate text-[13px]"
-        style={{ color: "var(--text-secondary)" }}
-      >
-        {name}
-      </span>
-    </div>
-  );
-}
-function AuthorRow({
-  name = "",
-  avatar,
-  date,
-  invert = false,
-  className = "",
-}) {
-  return (
-    <div className={`flex items-center justify-between gap-3 ${className}`}>
-      <div className="flex min-w-0 items-center gap-2">
+      <div className="min-w-0 text-[12px] leading-tight">
         <div
-          className="relative h-7 w-7 overflow-hidden rounded-full border"
-          style={{ borderColor: invert ? "white/25" : "var(--border)" }}
+          className="truncate font-semibold"
+          style={{ color: "var(--text-primary)" }}
         >
-          {avatar ? (
-            <Image src={avatar} alt="" fill className="object-cover" />
-          ) : (
-            <div
-              className="flex h-full w-full items-center justify-center text-[10px]"
-              style={{
-                background: invert
-                  ? "color-mix(in oklab, white 16%, transparent)"
-                  : "var(--surface-1)",
-                color: invert ? "white" : "var(--text-secondary)",
-              }}
-            >
-              {name?.[0]?.toUpperCase() || ""}
-            </div>
-          )}
+          {name || "—"}
         </div>
-        <span
-          className="truncate text-[13px]"
-          style={{ color: invert ? "white" : "var(--text-secondary)" }}
-        >
-          {name}
-        </span>
+        {date && (
+          <div className="truncate" style={{ color: "var(--text-muted)" }}>
+            {date}
+          </div>
+        )}
       </div>
-
-      <time
-        className="text-[12px] tabular-nums opacity-80"
-        dateTime={date}
-        style={{ color: invert ? "white" : "var(--text-secondary)" }}
-      >
-        {formatDate(date)}
-      </time>
     </div>
   );
 }
-function MetaRow({ tags = [], readTime, invert = false }) {
+
+function AuthorRow({ name, avatar, date, invert = false, className = "" }) {
   return (
-    <div className="flex items-center gap-2 text-[11px]">
-      <div className="flex flex-wrap items-center gap-2">
-        {tags.slice(0, 3).map((t) => (
-          <span
-            key={t}
-            className="rounded-[8px] px-2 py-1 border"
+    <div className={cx("flex items-center gap-3", className)}>
+      <div
+        className="relative h-8 w-8 overflow-hidden rounded-full border"
+        style={{
+          borderColor: invert ? "rgba(255,255,255,0.35)" : "var(--edge)",
+        }}
+      >
+        {avatar ? (
+          <Image src={avatar} alt="" fill className="object-cover" />
+        ) : (
+          <div
+            className="flex h-full w-full items-center justify-center text-[11px]"
             style={{
               background: invert
-                ? "color-mix(in oklab, white 16%, transparent)"
+                ? "rgba(255,255,255,0.14)"
                 : "var(--surface-1)",
-              color: invert ? "white" : "var(--text-secondary)",
-              borderColor: invert ? "white/20" : "var(--border)",
-              backdropFilter: invert ? "blur(4px)" : undefined,
+              color: invert ? "rgba(255,255,255,0.92)" : "var(--text-muted)",
             }}
           >
-            {t}
-          </span>
-        ))}
+            {name ? name[0] : "?"}
+          </div>
+        )}
       </div>
-      {readTime ? (
-        <>
-          <span
-            className="opacity-50 mx-1"
-            style={{ color: invert ? "white" : "var(--text-secondary)" }}
+      <div className="min-w-0 text-[13px] leading-tight">
+        <div
+          className="truncate font-semibold"
+          style={{ color: invert ? "#fff" : "var(--text-primary)" }}
+        >
+          {name || "—"}
+        </div>
+        {date && (
+          <div
+            className="truncate"
+            style={{
+              color: invert ? "rgba(255,255,255,0.85)" : "var(--text-muted)",
+            }}
           >
-            •
-          </span>
-          <span
-            className="tabular-nums"
-            style={{ color: invert ? "white" : "var(--text-secondary)" }}
-          >
-            {readTime} min read
-          </span>
-        </>
-      ) : null}
+            {date}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-function formatDate(input) {
-  try {
-    const d = new Date(input);
-    if (Number.isNaN(d.getTime())) return "";
-    return d.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "2-digit",
-    });
-  } catch {
-    return "";
-  }
+
+function MetaRow({ tags = [], readTime, invert = false }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-[12px] meta">
+      {tags.map((t) => (
+        <span
+          key={t}
+          className="pill"
+          style={{
+            borderColor: invert
+              ? "rgba(255,255,255,0.35)"
+              : "color-mix(in srgb, var(--brandG-500) 65%, transparent)",
+            background: invert
+              ? "rgba(255,255,255,0.14)"
+              : "color-mix(in srgb, var(--brandG-500) 18%, transparent)",
+            color: invert ? "#fff" : "var(--brandG-600)",
+          }}
+        >
+          {t}
+        </span>
+      ))}
+      {readTime ? (
+        <span
+          className="ml-1 text-[11px] font-medium"
+          style={{
+            color: invert ? "rgba(255,255,255,0.85)" : "var(--text-muted)",
+          }}
+        >
+          • {readTime}
+        </span>
+      ) : null}
+    </div>
+  );
 }

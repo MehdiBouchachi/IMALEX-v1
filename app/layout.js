@@ -16,7 +16,7 @@ export const metadata = {
     default: "Welcome | IMALEX",
   },
   description:
-    "Luxurious cabin hotel, located in the heart of the Italian Dolomites, surrounded by the most beautiful mountains and the darkest forests in the world.",
+    "IMALEX, a science-driven startup, develops natural solutions in cosmetics, food supplements, biopesticides, animal nutrition, and agri-food.",
 };
 
 export default function RootLayout({ children }) {

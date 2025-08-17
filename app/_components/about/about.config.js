@@ -9,7 +9,7 @@ export const ABOUT_COPY = {
 We partner with brands and manufacturers to design, prototype, validate, and scale products that are effective, compliant, and planet-minded.`,
   bullets: [
     "End-to-end R&D: brief → prototype → stability → dossier → scale-up",
-    "Sectors: cosmetics, nutraceuticals, biofertilizers/biopesticides, animal nutrition, agri-food",
+    "Sectors: cosmetics, food supplements, biofertilizers/biopesticides, animal nutrition, agri-food",
     "Regulatory alignment (DZ / EU): labels, INCI, safety, technical files",
   ],
   badges: [

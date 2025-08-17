@@ -509,7 +509,7 @@ export const fakePosts = [
     title: "Sourcing Cosmetic Actives Responsibly",
     excerpt:
       "Balance innovation, sustainability, and cost when selecting actives for new lines.",
-    image: "/demo/blog-5.jpeg",
+    image: "/demo/blog-5.jpg",
     tags: ["Cosmetics", "Sourcing"],
     readTime: 5,
     author: { name: "Product Dev", avatar: "/demo/avatar-3.jpg" },
@@ -522,7 +522,47 @@ export const fakePosts = [
     title: "Lab Automation: Small Changes with Big Impact",
     excerpt:
       "Incremental automation in QC labs improves throughput and data reliability.",
-    image: "/demo/blog-6.jpeg",
+    image: "/demo/blog-6.jpg",
+    tags: ["Lab", "Automation"],
+    readTime: 4,
+    author: { name: "QA Team" },
+    date: "2025-05-20",
+    content: longBodyC,
+  },
+
+  {
+    id: "7",
+    slug: "biopesticide-field-pilots-v1",
+    title: "Biopesticide Field Pilots: Lessons from Semi-Arid Climates",
+    excerpt:
+      "Key agronomic and regulatory learnings from the 2024–2025 pilot season.",
+    image: "/demo/blog-4.jpg",
+    tags: ["Biopesticides", "Agriculture"],
+    readTime: 8,
+    author: { name: "Field Ops" },
+    date: "2025-06-12",
+    content: longBodyA,
+  },
+  {
+    id: "8",
+    slug: "cosmetic-active-sourcing-v1",
+    title: "Sourcing Cosmetic Actives Responsibly",
+    excerpt:
+      "Balance innovation, sustainability, and cost when selecting actives for new lines.",
+    image: "/demo/blog-5.jpg",
+    tags: ["Cosmetics", "Sourcing"],
+    readTime: 5,
+    author: { name: "Product Dev", avatar: "/demo/avatar-3.jpg" },
+    date: "2025-06-01",
+    content: longBodyB, // ⬅️ big body #1
+  },
+  {
+    id: "9",
+    slug: "lab-automation-benefits-v1",
+    title: "Lab Automation: Small Changes with Big Impact",
+    excerpt:
+      "Incremental automation in QC labs improves throughput and data reliability.",
+    image: "/demo/blog-6.jpg",
     tags: ["Lab", "Automation"],
     readTime: 4,
     author: { name: "QA Team" },

@@ -197,6 +197,9 @@
   --footer-border: rgba(20, 83, 45, 0.1); /* old: green-900/10 */
   --footer-link-hover: #15803d; /* old: green-700 */
   --footer-icon-hover-border: #22c55e; /* old: green-500 */
+
+  --blog-reveal-delay-step: 80ms; /* stagger unit */
+  --blog-tilt-z: 22px;
 }
 
 html.dark {
@@ -381,6 +384,8 @@ body {
 
 /* Example component helpers (optional) */
 @layer components {
+ 
+
   /* ===== Blog filter chips (brand-green, tactile, responsive) ===== */
   .chip {
     border: 1px solid var(--chip-bd, var(--border));

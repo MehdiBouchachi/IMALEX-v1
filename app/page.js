@@ -26,7 +26,7 @@ const ProcessSection = dynamic(() => import("./_sections/ProcessSection"), {
 });
 
 const BlogsSection = dynamic(() => import("./_sections/BlogsSection"), {
-  ssr: true,
+  ssr: false,
 }); // adjust path if needed
 
 const CTA = dynamic(() => import("./_components/CTA"), { ssr: true });
