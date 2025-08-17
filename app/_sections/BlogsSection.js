@@ -899,9 +899,23 @@ function SplitCardV2({ post, href }) {
 
       {/* Content */}
       <div className="inner p-5 sm:p-6 md:p-7 flex flex-col">
-        <div className="flex items-center gap-2 meta">
+        <div className="flex items-center gap-3 meta">
           {tags.map((t) => (
-            <span key={t} className="pill">
+            <span
+              key={t}
+              className="pill"
+              style={{
+                border:
+                  "1px solid color-mix(in srgb, var(--brand-700) 35%, transparent)",
+                background:
+                  "color-mix(in srgb, var(--brand-400) 12%, transparent)",
+                color: "var(--brand-800)",
+                borderRadius: "999px",
+                padding: "4px 10px",
+                fontSize: "12px",
+                fontWeight: 600,
+              }}
+            >
               {t}
             </span>
           ))}
@@ -1095,19 +1109,20 @@ function AuthorRow({ name, avatar, date, invert = false, className = "" }) {
 
 function MetaRow({ tags = [], readTime, invert = false }) {
   return (
-    <div className="flex flex-wrap items-center gap-2 text-[12px] meta">
+    <div className="flex flex-wrap items-center gap-3 text-[12px] meta">
       {tags.map((t) => (
         <span
           key={t}
           className="pill"
           style={{
-            borderColor: invert
-              ? "rgba(255,255,255,0.35)"
-              : "color-mix(in srgb, var(--brandG-500) 65%, transparent)",
-            background: invert
-              ? "rgba(255,255,255,0.14)"
-              : "color-mix(in srgb, var(--brandG-500) 18%, transparent)",
-            color: invert ? "#fff" : "var(--brandG-600)",
+            border:
+              "1px solid color-mix(in srgb, var(--brand-700) 35%, transparent)",
+            background: "color-mix(in srgb, var(--brand-400) 12%, transparent)",
+            color: "var(--brand-800)",
+            borderRadius: "999px",
+            padding: "4px 10px",
+            fontSize: "12px",
+            fontWeight: 600,
           }}
         >
           {t}

@@ -30,9 +30,7 @@ const BlogsSection = dynamic(() => import("./_sections/BlogsSection"), {
 }); // adjust path if needed
 
 const CTA = dynamic(() => import("./_components/CTA"), { ssr: true });
-const Footer = dynamic(() => import("./_components/footer/Footer"), {
-  ssr: true,
-});
+
 
 const Section = dynamic(() => import("./_components/Section"), {
   ssr: false,
@@ -60,7 +58,6 @@ export default function Page() {
         <CTA />
         <ContactSection />
       </main>
-      <Footer />
     </div>
   );
 }

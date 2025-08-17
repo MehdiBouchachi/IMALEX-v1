@@ -5,6 +5,9 @@ import { Josefin_Sans } from "next/font/google";
 const Header = dynamic(() => import("./_components/header/Header"), {
   ssr: false,
 });
+const Footer = dynamic(() => import("./_components/footer/Footer"), {
+  ssr: true,
+});
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   display: "swap",
@@ -35,6 +38,7 @@ export default function RootLayout({ children }) {
         {" "}
         <Header />
         <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );
