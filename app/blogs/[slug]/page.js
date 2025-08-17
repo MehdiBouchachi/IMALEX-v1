@@ -6,7 +6,7 @@ import { fakePosts } from "../../_data/fakePosts";
 import Inline from "./Inline";
 import RelatedCards from "./RelatedCards";
 
-/* ---------- utils ---------- */
+/* --------------------------------- helpers -------------------------------- */
 const idFrom = (txt) =>
   String(txt)
     .toLowerCase()
@@ -15,24 +15,55 @@ const idFrom = (txt) =>
     .replace(/\s+/g, "-")
     .slice(0, 80);
 
-const buildTOC = (blocks = []) => {
-  const items = [];
-  let h2 = 0,
-    h3 = 0;
+/** Grouped TOC like pro docs */
+const buildTOCGroups = (blocks = []) => {
+  const groups = [];
+  let cur = null;
+  let n2 = 0;
+  let n3 = 0;
   for (const b of blocks) {
     if (b.t === "h2") {
-      h2 += 1;
-      h3 = 0;
-      items.push({ id: idFrom(b.x), text: b.x, level: 2, num: String(h2) });
+      n2 += 1;
+      n3 = 0;
+      cur = {
+        id: idFrom(b.x),
+        text: b.x,
+        num: String(n2),
+        level: 2,
+        children: [],
+      };
+      groups.push(cur);
     } else if (b.t === "h3") {
-      if (h2 === 0) h2 = 1;
-      h3 += 1;
-      items.push({ id: idFrom(b.x), text: b.x, level: 3, num: `${h2}.${h3}` });
+      if (!cur) {
+        n2 = 1;
+        cur = {
+          id: idFrom(b.x),
+          text: b.x,
+          num: String(n2),
+          level: 2,
+          children: [],
+        };
+        groups.push(cur);
+      } else {
+        n3 += 1;
+        cur.children.push({
+          id: idFrom(b.x),
+          text: b.x,
+          num: `${n2}.${n3}`,
+          level: 3,
+        });
+      }
     }
   }
-  return items.length
-    ? items
-    : [{ id: "top", text: "Overview", level: 2, num: "1" }]; // fallback
+  if (!groups.length)
+    groups.push({
+      id: "top",
+      text: "Overview",
+      num: "1",
+      level: 2,
+      children: [],
+    });
+  return groups;
 };
 
 export function generateStaticParams() {
@@ -48,14 +79,15 @@ export function generateMetadata({ params }) {
   };
 }
 
-/* ---------- reading bar (unchanged) ---------- */
+/* ------------------------------ reading bar ------------------------------ */
 function ReadingProgress() {
   return (
     <>
       <div className="read-progress" aria-hidden />
       <style>{`
         @supports (scroll-timeline: auto) {
-          .read-progress{position:fixed;inset:0 auto auto 0;height:3px;width:100%;background:linear-gradient(90deg,var(--brand-700) 0 0) no-repeat var(--surface-0);z-index:60;--_size:0%;background-size:var(--_size) 100%;border-radius:0 0 2px 0;scroll-timeline:--doc both;animation-timeline:--doc;animation:grow 1s both}
+          .read-progress{position:fixed;inset:0 auto auto 0;height:3px;width:100%;background:linear-gradient(90deg,var(--brand-700) 0 0) no-repeat var(--surface-0);
+            z-index:60;--_size:0%;background-size:var(--_size) 100%;border-radius:0 0 2px 0;scroll-timeline:--doc both;animation-timeline:--doc;animation:grow 1s both}
           @scroll-timeline --doc {source:auto;orientation:block}
           @keyframes grow{from{--_size:0%}to{--_size:100%}}
         }
@@ -66,83 +98,118 @@ function ReadingProgress() {
       <script
         dangerouslySetInnerHTML={{
           __html: `
-        (function(){ if (CSS.supports && CSS.supports('scroll-timeline:auto')) return;
-          var bar=document.querySelector('.read-progress'); if(!bar) return;
-          function onScroll(){var el=document.documentElement; var h=el.scrollHeight-el.clientHeight; var p=h>0?(el.scrollTop/h)*100:0; bar.style.setProperty('--_w',p.toFixed(2)+'%');}
-          onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
-        })();
-      `,
+          (function(){
+            if (CSS && CSS.supports && CSS.supports('scroll-timeline:auto')) return;
+            var bar=document.querySelector('.read-progress'); if(!bar) return;
+            function onScroll(){var el=document.documentElement; var h=el.scrollHeight-el.clientHeight; var p=h>0?(el.scrollTop/h)*100:0; bar.style.setProperty('--_w',p.toFixed(2)+'%');}
+            onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
+          })();`,
         }}
       />
     </>
   );
 }
 
-/* ---------- PRO TOC (sticky in column) ---------- */
-function ProTOC({ items, id = "toc-desktop" }) {
+/* ------------------------------ Sticky TOC ------------------------------- */
+function TOCSticky({ groups, id = "toc-sticky" }) {
   return (
-    <nav className="toc" aria-label="On this page" id={id}>
-      <div className="toc__header">
-        <span className="toc__title">On this page</span>
-      </div>
-      <ol className="toc__list">
-        {items.map((it) => (
-          <li key={it.id} className={`toc__item toc__lvl-${it.level}`}>
-            <a href={`#${it.id}`} className="toc__link">
-              <span className="toc__num" aria-hidden>
-                {it.num}
-              </span>
-              <span className="toc__text">{it.text}</span>
+    <nav id={id} className="toc-sticky" aria-label="On this page">
+      <div className="toc-title">On this page</div>
+      <ol className="toc-root">
+        {groups.map((g) => (
+          <li key={g.id} className="toc-item">
+            <a className="toc-link" href={`#${g.id}`} data-id={g.id}>
+              <span className="toc-bullet" aria-hidden />
+              <span className="toc-text">{g.text}</span>
             </a>
+            {g.children.length > 0 && (
+              <ol className="toc-children">
+                {g.children.map((c) => (
+                  <li key={c.id}>
+                    <a href={`#${c.id}`} className="toc-sublink" data-id={c.id}>
+                      {c.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            )}
           </li>
         ))}
       </ol>
 
       <style>{`
-        .toc{position:sticky; top:96px; padding:12px; border:1px solid var(--border); border-radius:14px; background:var(--surface-0);
-             box-shadow:0 1px 0 rgba(255,255,255,.06); max-height:calc(100svh - 110px); overflow:auto}
-        .toc__header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-        .toc__title{font-weight:900;letter-spacing:.03em;font-size:12px;text-transform:uppercase;color:var(--text-secondary)}
-        .toc__list{list-style:none;padding:6px 2px 4px 2px;margin:0;display:grid;gap:4px}
-        .toc__lvl-3{padding-left:16px}
-        .toc__link{position:relative;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px;
-                   text-decoration:none;color:var(--text-secondary);font-size:13px;padding:6px 10px;border-radius:8px;border:1px solid transparent}
-        .toc__link:hover{background:color-mix(in srgb,var(--brand-400) 10%, transparent)}
-        .toc__link[aria-current="true"]{color:var(--text-primary);background:color-mix(in srgb,var(--brand-400) 14%,transparent);
-                   border-color:color-mix(in srgb,var(--brand-700) 26%,transparent)}
-        .toc__link[aria-current="true"]::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;background:color-mix(in srgb,var(--brand-700) 70%,transparent);border-radius:2px}
-        .toc__num{min-width:32px;height:22px;display:inline-grid;place-items:center;font-variant-numeric:tabular-nums;font-weight:900;font-size:11px;letter-spacing:.02em;
-                  color:var(--brand-800);background:color-mix(in srgb,var(--brand-400) 14%,transparent);border:1px solid color-mix(in srgb,var(--brand-700) 22%,transparent);border-radius:6px}
-        @media (max-width:1023px){ .toc{display:none} } /* hide desktop TOC on mobile */
+        .toc-sticky{
+          position: sticky;
+          top: var(--toc-top, 112px);
+          max-height: calc(100svh - var(--toc-top, 112px) - 16px);
+          overflow: auto;
+          padding: 0 2px 6px 0;
+          background: transparent;
+          border: 0;
+          box-shadow: none;
+        }
+        @media (max-width:1023px){ .toc-sticky{ display:none } }
+
+        .toc-title{
+          margin: 0 0 10px 0;
+          font-size: 11px; font-weight: 900; letter-spacing: .08em;
+          color: var(--text-muted); text-transform: uppercase;
+        }
+        .toc-root{ list-style:none; padding:0; margin:0; }
+        .toc-item{ margin: 6px 0; }
+
+        .toc-link{
+          display:flex; align-items:baseline; gap:10px;
+          padding: 6px 0; text-decoration:none;
+          color: var(--text-primary); font-weight: 800; line-height: 1.35;
+        }
+        .toc-bullet{
+          flex:0 0 auto; margin-top:.52em; width:6px; height:6px; border-radius:999px;
+          background: color-mix(in srgb, var(--text-secondary) 55%, transparent);
+        }
+        .toc-link[aria-current="true"] .toc-bullet{ background: var(--brand-700) }
+        .toc-link[aria-current="true"]{ color: var(--text-primary) }
+
+        .toc-children{
+          list-style:none; padding: 2px 0 0 16px; margin:0;
+          border-left: 1px solid color-mix(in srgb, var(--text-secondary) 20%, transparent);
+        }
+        .toc-sublink{
+          display:block; padding: 5px 0 5px 12px;
+          color: var(--text-secondary); text-decoration:none; font-weight: 600;
+        }
+        .toc-sublink:hover{ color: var(--text-primary); text-decoration: underline; }
+        .toc-sublink[aria-current="true"]{ color: var(--text-primary); font-weight: 800; }
       `}</style>
 
-      {/* scroll-spy + keyboard nav, scoped to this nav */}
+      {/* Scroll-spy & smooth scroll (scoped to this nav) */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
-        (function(){
-          var panel=document.getElementById('${id}'); if(!panel) return;
-          var links=[].slice.call(panel.querySelectorAll('.toc__link'));
-          // keyboard
-          panel.addEventListener('keydown',function(e){
-            var i=links.findIndex(l=>l===document.activeElement);
-            if(e.key==='ArrowDown'){e.preventDefault();(links[i+1]||links[0]).focus();}
-            if(e.key==='ArrowUp'){e.preventDefault();(links[i-1]||links[links.length-1]).focus();}
-            if(e.key==='Home'){e.preventDefault();links[0].focus();}
-            if(e.key==='End'){e.preventDefault();links[links.length-1].focus();}
-          });
-          // spy
-          var map=new Map(); links.forEach(a=>map.set(a.getAttribute('href').slice(1),a));
-          var spy=new IntersectionObserver((entries)=>{
-            var vis=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio);
-            if(!vis.length) return;
-            var id=vis[0].target.id;
-            links.forEach(a=>a.removeAttribute('aria-current'));
-            var active=map.get(id); if(active) active.setAttribute('aria-current','true');
-          },{rootMargin:'-40% 0px -55% 0px',threshold:[0,.25,.5,.75,1]});
-          map.forEach((a,id)=>{var el=document.getElementById(id); if(el) spy.observe(el);});
-        })();
-      `,
+          (function(){
+            var panel=document.getElementById('${id}'); if(!panel) return;
+            var headerOffset=112; panel.style.setProperty('--toc-top', headerOffset+'px');
+
+            var links=[].slice.call(panel.querySelectorAll('.toc-link, .toc-sublink'));
+            var map=new Map(); links.forEach(a=>map.set(a.dataset.id || (a.getAttribute('href')||'').slice(1), a));
+
+            var spy=new IntersectionObserver((entries)=>{
+              var vis=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio);
+              if(!vis.length) return;
+              var id=vis[0].target.id;
+              links.forEach(a=>a.removeAttribute('aria-current'));
+              var active=map.get(id); if(active) active.setAttribute('aria-current','true');
+            },{rootMargin:'-40% 0px -55% 0px', threshold:[0,.25,.5,.75,1]});
+            map.forEach((a,id)=>{ var el=document.getElementById(id); if(el) spy.observe(el); });
+
+            panel.addEventListener('click', function(e){
+              var a=e.target.closest('a[href^="#"]'); if(!a) return;
+              var id=a.getAttribute('href').slice(1); var el=document.getElementById(id); if(!el) return;
+              e.preventDefault();
+              var y=el.getBoundingClientRect().top + scrollY - headerOffset + 2;
+              window.scrollTo({top:y, behavior:'smooth'});
+            });
+          })();`,
         }}
       />
     </nav>
@@ -160,17 +227,18 @@ export default function BlogPost({ params }) {
 
   const base = process.env.NEXT_PUBLIC_SITE_URL || "";
   const canonical = base ? `${base}/blogs/${post.slug}` : "";
-  const tocItems = buildTOC(post.content);
+
+  const tocGroups = buildTOCGroups(post.content);
 
   return (
     <div className="min-h-screen bg-[var(--surface-0)]">
       <ReadingProgress />
 
-      {/* Desktop grid: left TOC column, divider, content */}
-      <div className="mx-auto max-w-7xl px-4 pb-16 pt-20 md:pt-24 lg:grid lg:grid-cols-[300px_1px_minmax(0,1fr)] lg:gap-10">
-        {/* DESKTOP TOC in the left column (sticky) */}
+      {/* The grid container ends BEFORE the site footer, so sticky TOC never overlaps footer */}
+      <div className="mx-auto max-w-7xl px-4 pb-20 pt-20 md:pt-24 lg:grid lg:grid-cols-[300px_1px_minmax(0,1fr)] lg:gap-10">
+        {/* Left column: sticky, borderless TOC */}
         <aside className="hidden self-start lg:block">
-          <ProTOC items={tocItems} />
+          <TOCSticky groups={tocGroups} />
         </aside>
 
         {/* Divider */}
@@ -182,7 +250,7 @@ export default function BlogPost({ params }) {
 
         {/* Article */}
         <article className="mx-auto w-full max-w-3xl">
-          <div className="mb-2 text-sm">
+          <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
             <Link
               href="/blogs"
               className="underline-offset-2 hover:underline"
@@ -190,13 +258,17 @@ export default function BlogPost({ params }) {
             >
               IMALEX Blog
             </Link>
+            <span aria-hidden>•</span>
+            <span style={{ color: "var(--text-secondary)" }}>
+              {formatDate(post.date)} · {post.readTime} min read
+            </span>
           </div>
 
           <h1
             className="mb-2 font-extrabold leading-tight tracking-[-0.015em]"
             style={{
               color: "var(--text-primary)",
-              fontSize: "clamp(30px, 5vw, 44px)",
+              fontSize: "clamp(32px, 5.2vw, 46px)",
               textWrap: "balance",
             }}
           >
@@ -205,19 +277,15 @@ export default function BlogPost({ params }) {
 
           {post.excerpt && (
             <p
-              className="leading-relaxed"
-              style={{
-                color: "var(--text-secondary)",
-                fontSize: "18px",
-                textWrap: "balance",
-              }}
+              className="leading-relaxed text-[18px]"
+              style={{ color: "var(--text-secondary)", textWrap: "balance" }}
             >
               <Inline text={post.excerpt} />
             </p>
           )}
 
           <div
-            className="mt-3 flex flex-wrap items-center gap-3 text-[13px]"
+            className="mt-4 flex flex-wrap items-center gap-3 text-[13px]"
             style={{ color: "var(--text-secondary)" }}
           >
             <div className="flex items-center gap-2">
@@ -232,10 +300,6 @@ export default function BlogPost({ params }) {
               )}
               <span>{post.author?.name ?? "IMALEX"}</span>
             </div>
-            <span>•</span>
-            <span>{formatDate(post.date)}</span>
-            <span>•</span>
-            <span>{post.readTime} min read</span>
             {!!post.tags?.length && (
               <>
                 <span>•</span>
@@ -279,8 +343,54 @@ export default function BlogPost({ params }) {
             </figure>
           )}
 
-          {/* Mobile TOC — simple collapsible: you can keep your previous mobile version if you like; 
-              here we just hide desktop TOC and let readers scroll on mobile. */}
+          {/* Mobile outline */}
+          <details className="lg:hidden mb-4 group">
+            <summary
+              className="cursor-pointer select-none rounded-lg px-3 py-2 text-sm font-semibold"
+              style={{
+                color: "var(--text-primary)",
+                background:
+                  "color-mix(in srgb, var(--brand-400) 10%, transparent)",
+                border: "1px solid var(--border)",
+              }}
+            >
+              On this page{" "}
+              <span className="ml-1 opacity-60 text-xs">(outline)</span>
+            </summary>
+            <nav className="mt-2 pl-2">
+              <ol className="list-none p-0 m-0">
+                {tocGroups.map((g) => (
+                  <li key={g.id} className="py-1">
+                    <a
+                      href={`#${g.id}`}
+                      className="inline-flex items-baseline gap-2 text-[15px] font-semibold hover:underline"
+                      style={{ color: "var(--text-primary)" }}
+                    >
+                      <span
+                        className="inline-block h-[6px] w-[6px] rounded-full"
+                        style={{ background: "var(--brand-700)" }}
+                      />
+                      {g.text}
+                    </a>
+                    {g.children.length > 0 && (
+                      <ol className="mt-1 ml-5 list-none">
+                        {g.children.map((c) => (
+                          <li key={c.id} className="py-0.5">
+                            <a
+                              href={`#${c.id}`}
+                              className="text-[14px] text-[var(--text-secondary)] hover:underline"
+                            >
+                              {c.text}
+                            </a>
+                          </li>
+                        ))}
+                      </ol>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </details>
 
           <div className="prose-area max-w-none">
             <Article blocks={post.content} />
@@ -359,15 +469,15 @@ export default function BlogPost({ params }) {
         ↑ Top
       </a>
 
-      {/* Prose styles (unchanged) */}
+      {/* ------------------------------ styles ------------------------------ */}
       <style>{`
         :root { font-optical-sizing: auto; }
-        .prose-area { color: var(--text-secondary); line-height: 1.82; font-size: 16.2px; }
-        .prose-area p { margin: .7rem 0 1rem; }
+        .prose-area { color: var(--text-secondary); line-height: 1.84; font-size: 16.2px; }
+        .prose-area p { margin: .7rem 0 1.05rem; }
         .prose-area p:first-of-type { font-size: 18px; color: var(--text-primary); text-wrap: balance; }
-        .prose-area h2, .prose-area h3 { color: var(--text-primary); font-weight: 900; letter-spacing: -0.012em; scroll-margin-top: 92px; text-wrap: balance; }
-        .prose-area h2 { margin: 1.8rem 0 .8rem; font-size: clamp(20px, 3.3vw, 27px); }
-        .prose-area h3 { margin: 1.25rem 0 .65rem; font-size: clamp(18px, 2.8vw, 20px); }
+        .prose-area h2, .prose-area h3 { color: var(--text-primary); font-weight: 900; letter-spacing: -0.012em; scroll-margin-top: 112px; text-wrap: balance; }
+        .prose-area h2 { margin: 1.9rem 0 .85rem; font-size: clamp(21px, 3.5vw, 28px); }
+        .prose-area h3 { margin: 1.25rem 0 .7rem; font-size: clamp(18px, 2.8vw, 20px); }
         .prose-area a { color: var(--brand-700); text-underline-offset: 2px; }
         .prose-area a:hover, .prose-area a:focus { text-decoration: underline; }
         .prose-area ul, .prose-area ol { margin: .55rem 0 1.05rem; padding-left: 1.25rem; }
@@ -377,8 +487,9 @@ export default function BlogPost({ params }) {
         .prose-area blockquote, .doc-callout {
           margin: 1rem 0; padding: 16px 18px; border: 1px solid var(--border); border-radius: 14px;
           color: var(--text-primary);
-          background: linear-gradient(180deg, color-mix(in oklab, var(--surface-0) 96%, transparent), color-mix(in oklab, var(--surface-0) 100%, transparent)),
-                      radial-gradient(120% 120% at -10% -30%, color-mix(in oklab, var(--brand-700) 10%, transparent), transparent 60%);
+          background:
+            linear-gradient(180deg, color-mix(in oklab, var(--surface-0) 96%, transparent), color-mix(in oklab, var(--surface-0) 100%, transparent)),
+            radial-gradient(120% 120% at -10% -30%, color-mix(in oklab, var(--brand-700) 10%, transparent), transparent 60%);
           box-shadow: 0 1px 0 rgba(0,0,0,.04);
         }
         .doc-callout[data-variant="tip"]    { border-color: color-mix(in srgb, #22c55e 40%, var(--border)); }
@@ -395,39 +506,34 @@ export default function BlogPost({ params }) {
         .prose-area table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1rem 0; font-size: 14px; }
         .prose-area th, .prose-area td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
         .prose-area thead th { color: var(--text-primary); text-align: left; font-weight: 900; }
-        .prose-area tbody tr:hover { background: color-mix(in srgb, var(--brand-400) 8%, transparent); }
-        .prose-area kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-          font-size: .825em; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: .1em .35em;
-          background: color-mix(in srgb, var(--surface-0) 90%, transparent); }
-        .copy-btn{ position:absolute; right:8px; top:8px; padding:6px 8px; font-size:12px; font-weight:800; border-radius:8px; border:1px solid var(--border);
-          background: color-mix(in srgb, var(--surface-0) 92%, transparent); }
-        .copy-btn[data-ok="1"]{ border-color: color-mix(in srgb, #22c55e 50%, var(--border)); }
       `}</style>
 
-      {/* copy buttons for code (unchanged) */}
+      {/* Copy button for code blocks */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
-        (function(){
-          document.querySelectorAll('.prose-area pre').forEach(function(pre){
-            if (pre.querySelector('.copy-btn')) return;
-            var btn=document.createElement('button'); btn.className='copy-btn'; btn.type='button'; btn.textContent='Copy';
-            btn.addEventListener('click', function(){
-              var code=pre.querySelector('code'); if(!code) return;
-              navigator.clipboard.writeText(code.innerText||'').then(function(){
-                btn.dataset.ok='1'; btn.textContent='Copied'; setTimeout(function(){btn.dataset.ok=''; btn.textContent='Copy';},1200);
+          (function(){
+            document.querySelectorAll('.prose-area pre').forEach(function(pre){
+              if (pre.querySelector('.copy-btn')) return;
+              var btn=document.createElement('button'); btn.className='copy-btn'; btn.type='button'; btn.textContent='Copy';
+              btn.style.cssText='position:absolute;right:8px;top:8px;padding:6px 8px;font-size:12px;font-weight:800;border-radius:8px;border:1px solid var(--border);background:color-mix(in srgb, var(--surface-0) 92%, transparent);';
+              btn.addEventListener('click', function(){
+                var code=pre.querySelector('code'); if(!code) return;
+                navigator.clipboard.writeText(code.innerText||'').then(function(){
+                  btn.style.borderColor='color-mix(in srgb, #22c55e 50%, var(--border))';
+                  btn.textContent='Copied'; setTimeout(function(){btn.style.borderColor='var(--border)'; btn.textContent='Copy';},1200);
+                });
               });
-            }); pre.appendChild(btn);
-          });
-        })();
-      `,
+              pre.appendChild(btn);
+            });
+          })();`,
         }}
       />
     </div>
   );
 }
 
-/* ------------------------------- Article (unchanged API) ------------------------------- */
+/* -------------------------------- article -------------------------------- */
 function Article({ blocks = [] }) {
   let firstPara = true;
   return blocks.map((b, i) => {
@@ -508,7 +614,7 @@ function Article({ blocks = [] }) {
   });
 }
 
-/* ----------------------- Headings with anchor links ---------------------- */
+/* -------------------------------- headings -------------------------------- */
 function H2({ text }) {
   return (
     <h2 id={idFrom(text)}>
@@ -541,7 +647,7 @@ function Anchor({ text }) {
   );
 }
 
-/* ----------------------------- Prev/Next cards --------------------------- */
+/* --------------------------- prev / next cards --------------------------- */
 function PNCard({ dir, post }) {
   const isPrev = dir === "prev";
   return (
@@ -562,7 +668,7 @@ function PNCard({ dir, post }) {
   );
 }
 
-/* --------------------------------- Quote -------------------------------- */
+/* ---------------------------------- quote -------------------------------- */
 function QuoteBox({ text, cite, role, avatar, href, pull = false }) {
   return (
     <figure
@@ -600,7 +706,8 @@ function QuoteBox({ text, cite, role, avatar, href, pull = false }) {
           style={{ color: "var(--text-secondary)" }}
         >
           {avatar && (
-            /* eslint-disable-next-line @next/next/no-img-element */ <img
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               src={avatar}
               alt=""
               width={28}
@@ -633,6 +740,7 @@ function QuoteBox({ text, cite, role, avatar, href, pull = false }) {
   );
 }
 
+/* --------------------------------- utils --------------------------------- */
 function formatDate(input) {
   try {
     const d = new Date(input);
