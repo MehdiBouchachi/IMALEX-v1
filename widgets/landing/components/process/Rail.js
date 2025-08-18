@@ -1,7 +1,7 @@
 export default function Rail({ smoothDisplay, steps, active, progress }) {
   return (
     <div
-      className="rounded-2xl p-6"
+      className="w-full rounded-2xl p-4 sm:p-6"
       style={{
         border: "1px solid transparent",
         background:
@@ -14,7 +14,7 @@ export default function Rail({ smoothDisplay, steps, active, progress }) {
         Chapter
       </div>
       <div
-        className="mt-1 text-5xl font-black tabular-nums tracking-tight"
+        className="mt-1 text-4xl sm:text-5xl font-black tabular-nums tracking-tight"
         style={{ color: "var(--text-primary)" }}
       >
         {smoothDisplay}
@@ -23,11 +23,11 @@ export default function Rail({ smoothDisplay, steps, active, progress }) {
       {/* progress bar */}
       <div className="mt-6 relative">
         <div
-          className="h-2 w-full rounded-full"
+          className="h-1.5 sm:h-2 w-full rounded-full"
           style={{ background: "var(--border-subtle)" }}
         />
         <div
-          className="h-2 -mt-2 rounded-full relative overflow-hidden"
+          className="h-1.5 sm:h-2 -mt-1.5 sm:-mt-2 rounded-full relative overflow-hidden"
           style={{
             width: `${Math.max(0.02, progress) * 100}%`,
             background: "var(--g-accent-bar)",
@@ -42,13 +42,13 @@ export default function Rail({ smoothDisplay, steps, active, progress }) {
         {steps.map((s, i) => (
           <li
             key={s.title}
-            className="flex items-center gap-3 text-sm"
+            className="flex items-center gap-3 text-sm min-w-0"
             style={{
               color: i === active ? "var(--text-primary)" : "var(--text-muted)",
             }}
           >
             <span
-              className="inline-block h-2 w-2 rounded-full"
+              className="inline-block h-2 w-2 rounded-full flex-none"
               style={{
                 background: i <= active ? "var(--brand-700)" : "var(--border)",
               }}

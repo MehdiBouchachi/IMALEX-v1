@@ -1,7 +1,7 @@
 export default function ArticleCard({ title, desc, Icon, active }) {
   return (
     <article
-      className="group relative max-w-2xl anim-pop"
+      className="group relative z-10 w-full max-w-none min-w-0 anim-pop"
       style={{
         opacity: active ? 1 : 0.86,
         transform: active ? "translateY(0)" : "translateY(8px)",
@@ -10,7 +10,7 @@ export default function ArticleCard({ title, desc, Icon, active }) {
       }}
     >
       <div
-        className="rounded-2xl p-7 sm:p-8"
+        className="rounded-2xl overflow-hidden p-5 xs:p-6 sm:p-8"
         style={{
           border: "1px solid transparent",
           background:
@@ -22,7 +22,7 @@ export default function ArticleCard({ title, desc, Icon, active }) {
         {/* top hairline */}
         <span
           aria-hidden
-          className="absolute left-7 right-7 -top-px h-px"
+          className="absolute left-5 right-5 sm:left-7 sm:right-7 -top-px h-px"
           style={{
             background:
               "linear-gradient(to right, transparent, color-mix(in srgb, var(--brand-400) 24%, transparent), transparent)",
@@ -31,9 +31,9 @@ export default function ArticleCard({ title, desc, Icon, active }) {
           }}
         />
 
-        <div className="flex items-start gap-5">
+        <div className="flex items-start gap-4 sm:gap-5">
           <span
-            className="relative grid h-12 w-12 flex-none place-items-center rounded-full"
+            className="relative grid h-10 w-10 sm:h-12 sm:w-12 flex-none place-items-center rounded-full"
             style={{
               background: "var(--tile-icon-bg)",
               border: `1px solid ${
@@ -45,7 +45,7 @@ export default function ArticleCard({ title, desc, Icon, active }) {
               animation: active ? "breath 3.6s ease-in-out infinite" : "none",
             }}
           >
-            <Icon className="text-base" />
+            <Icon className="text-[15px] sm:text-base" />
           </span>
 
           <div className="min-w-0">
@@ -56,13 +56,13 @@ export default function ArticleCard({ title, desc, Icon, active }) {
               STEP
             </div>
             <h3
-              className="text-xl sm:text-2xl font-semibold"
+              className="text-lg xs:text-xl sm:text-2xl font-semibold"
               style={{ color: "var(--text-primary)" }}
             >
               {title}
             </h3>
             <p
-              className="mt-2 text-[15px] leading-relaxed"
+              className="mt-2 text-[14px] sm:text-[15px] leading-relaxed break-words"
               style={{ color: "var(--text-secondary)" }}
             >
               {desc}

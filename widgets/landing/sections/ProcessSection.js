@@ -12,16 +12,16 @@ export default function ProcessSection({ steps = DEFAULT_STEPS }) {
     active,
     journeyProgress,
     smoothDisplay,
-    stickyTop,
+    stickyTop, // px value already accounting for your header height
   } = useProcessController({ stepsLength: steps.length, stickyTop: 96 });
 
   return (
     <section
-      ref={containerRef}
       id="process"
-      className="relative pb-32 md:pb-40"
+      ref={containerRef}
+      className="relative pb-24 sm:pb-32 md:pb-40"
     >
-      {/* ambient overlay */}
+      {/* Ambient gradient that does NOT create overflow or break sticky */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
@@ -37,7 +37,7 @@ export default function ProcessSection({ steps = DEFAULT_STEPS }) {
       />
 
       {/* Intro */}
-      <div className="mx-auto max-w-6xl px-6 pt-20 pb-10">
+      <div className="mx-auto max-w-6xl px-4 xs:px-5 sm:px-6 pt-16 sm:pt-20 pb-8 sm:pb-10">
         <div className="text-center">
           <div
             className="text-[11px] font-semibold tracking-widest uppercase"
@@ -46,7 +46,7 @@ export default function ProcessSection({ steps = DEFAULT_STEPS }) {
             Process
           </div>
           <h2
-            className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight"
+            className="mt-2 text-2xl sm:text-4xl font-extrabold tracking-tight"
             style={{ color: "var(--text-primary)" }}
           >
             A Guided Journey — Quiet, Precise, Inevitable.
@@ -60,12 +60,12 @@ export default function ProcessSection({ steps = DEFAULT_STEPS }) {
         </div>
       </div>
 
-      {/* Layout */}
-      <div className="mx-auto max-w-6xl px-6 grid md:grid-cols-[360px,1fr] gap-10 md:gap-14">
-        {/* Sticky rail */}
+      {/* Layout: note transform-none so sticky works; min-w-0 so nothing widens the page */}
+      <div className="mx-auto max-w-6xl w-full min-w-0 px-4 xs:px-5 sm:px-6 grid gap-6 sm:gap-10 md:gap-14 md:grid-cols-[minmax(260px,320px),1fr] transform-none">
+        {/* Sticky rail — sticky on ALL sizes */}
         <aside
-          className="relative self-start mb-10 md:mb-0"
-          style={{ position: "sticky", top: 96, alignSelf: "start" }}
+          className="sticky self-start z-[1] mb-6 sm:mb-8 md:mb-0"
+          style={{ top: stickyTop }}
         >
           <Rail
             smoothDisplay={smoothDisplay}
@@ -75,8 +75,11 @@ export default function ProcessSection({ steps = DEFAULT_STEPS }) {
           />
         </aside>
 
-        {/* Chapters with snap */}
-        <ol className="relative" style={{ scrollSnapType: "y mandatory" }}>
+        {/* Chapters column with scroll snap */}
+        <ol
+          className="relative min-w-0"
+          style={{ scrollSnapType: "y mandatory" }}
+        >
           {steps.map(({ title, desc, Icon }, i) => {
             const isActive = i === active;
             return (
@@ -84,19 +87,15 @@ export default function ProcessSection({ steps = DEFAULT_STEPS }) {
                 key={title}
                 ref={(el) => (stepRefs.current[i] = el)}
                 data-step={i}
-                className="relative"
-                style={{
-                  minHeight: "92svh",
-                  scrollSnapAlign: "start",
-                  scrollMarginTop: stickyTop,
-                }}
+                className="relative min-h-[78svh] sm:min-h-[84svh] md:min-h-[92svh]"
+                style={{ scrollSnapAlign: "start", scrollMarginTop: stickyTop }}
               >
-                {/* watermark number */}
+                {/* Big chapter watermark number */}
                 <div
                   aria-hidden
                   className="absolute -z-10 right-0 top-1/2 -translate-y-1/2 select-none font-black leading-none tracking-tighter"
                   style={{
-                    fontSize: "clamp(84px, 18vw, 180px)",
+                    fontSize: "clamp(64px, 24vw, 180px)",
                     background: "var(--g-accent-bar)",
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
@@ -123,12 +122,8 @@ export default function ProcessSection({ steps = DEFAULT_STEPS }) {
 
           {/* Finale */}
           <li
-            className="relative"
-            style={{
-              minHeight: "84svh",
-              scrollSnapAlign: "start",
-              scrollMarginTop: stickyTop,
-            }}
+            className="relative  z-20 min-h-[70svh] sm:min-h-[78svh] md:min-h-[84svh]"
+            style={{ scrollSnapAlign: "start", scrollMarginTop: stickyTop }}
           >
             <Finale />
           </li>
