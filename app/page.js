@@ -1,38 +1,63 @@
 import dynamic from "next/dynamic";
-import { fakePosts } from "./_data/fakePosts";
+import { fakePosts } from "../data/fakePosts";
 
-const ContactSection = dynamic(() => import("./_sections/ContactSection"), {
-  ssr: false,
-});
-const HeroSection = dynamic(() => import("./_sections/HeroSection"), {
-  ssr: true,
-});
-const AboutSection = dynamic(() => import("./_sections/AboutSection"), {
-  ssr: true,
-});
-const ServicesSection = dynamic(() => import("./_sections/ServicesSection"), {
-  ssr: true,
-});
-const SectorsSection = dynamic(() => import("./_sections/SectorsSection"), {
-  ssr: true,
-});
+const ContactSection = dynamic(
+  () => import("../widgets/landing/sections/ContactSection"),
+  {
+    ssr: false,
+  }
+);
+const HeroSection = dynamic(
+  () => import("../widgets/landing/sections/HeroSection"),
+  {
+    ssr: true,
+  }
+);
+const AboutSection = dynamic(
+  () => import("../widgets/landing/sections/AboutSection"),
+  {
+    ssr: true,
+  }
+);
+const ServicesSection = dynamic(
+  () => import("../widgets/landing/sections/ServicesSection"),
+  {
+    ssr: true,
+  }
+);
+const SectorsSection = dynamic(
+  () => import("../widgets/landing/sections/SectorsSection"),
+  {
+    ssr: true,
+  }
+);
 
 // heavy animations → client only to avoid hydration jank
-const WhyUsSection = dynamic(() => import("./_sections/WhyUsSection"), {
-  ssr: false,
+const WhyUsSection = dynamic(
+  () => import("../widgets/landing/sections/WhyUsSection"),
+  {
+    ssr: false,
+  }
+);
+const ProcessSection = dynamic(
+  () => import("../widgets/landing/sections/ProcessSection"),
+  {
+    ssr: false,
+  }
+);
+
+const BlogsSection = dynamic(
+  () => import("../widgets/landing/sections/BlogsSection"),
+  {
+    ssr: false,
+  }
+); // adjust path if needed
+
+const CTA = dynamic(() => import("../widgets/landing/components/CTA"), {
+  ssr: true,
 });
-const ProcessSection = dynamic(() => import("./_sections/ProcessSection"), {
-  ssr: false,
-});
 
-const BlogsSection = dynamic(() => import("./_sections/BlogsSection"), {
-  ssr: false,
-}); // adjust path if needed
-
-const CTA = dynamic(() => import("./_components/CTA"), { ssr: true });
-
-
-const Section = dynamic(() => import("./_components/Section"), {
+const Section = dynamic(() => import("../widgets/landing/components/Section"), {
   ssr: false,
 });
 

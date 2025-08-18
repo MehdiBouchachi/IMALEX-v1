@@ -2,12 +2,18 @@ import dynamic from "next/dynamic";
 
 import "./_styles/globals.css";
 import { Josefin_Sans } from "next/font/google";
-const Header = dynamic(() => import("./_components/header/Header"), {
-  ssr: false,
-});
-const Footer = dynamic(() => import("./_components/footer/Footer"), {
-  ssr: true,
-});
+const Header = dynamic(
+  () => import("../widgets/landing/components/header/Header"),
+  {
+    ssr: false,
+  }
+);
+const Footer = dynamic(
+  () => import("../widgets/landing/components/footer/Footer"),
+  {
+    ssr: true,
+  }
+);
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   display: "swap",

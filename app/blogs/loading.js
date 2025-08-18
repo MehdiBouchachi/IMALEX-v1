@@ -1,5 +1,5 @@
-import SkeletonControls from "./_skeletons/SkeletonControls";
-import SkeletonGrid from "./_skeletons/SkeletonGrid";
+import SkeletonControls from "../../widgets/blogs/skeletons/SkeletonControls";
+import SkeletonGrid from "../../widgets/blogs/skeletons/SkeletonGrid";
 
 export default function Loading() {
   return (
