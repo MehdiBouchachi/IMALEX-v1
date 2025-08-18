@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: "class", // we’ll swap palettes via :root / .dark, no dark: classes needed
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,11 +9,30 @@ module.exports = {
   ],
   theme: {
     extend: {
+      // 👇 NEW — phone-focused breakpoints
+      screens: {
+        "2xs": "320px", // very small iPhones
+        xs: "360px", // small Android
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        nav: "1024px", // show desktop header from here
+        xl: "1280px",
+      },
+      // 👇 NEW — consistent side padding on small screens
+      container: {
+        center: true,
+        padding: {
+          DEFAULT: "1rem",
+          sm: "1.25rem",
+          md: "1.5rem",
+        },
+      },
+
       animationDelay: { 500: "500ms" },
 
-      // --- Semantic color tokens (all read from CSS variables) ---
+      // (your token colors unchanged)
       colors: {
-        // Core brand (moss/mint/forest scale)
         brand: {
           50: "var(--brand-50)",
           100: "var(--brand-100)",
@@ -22,14 +41,12 @@ module.exports = {
           400: "var(--brand-400)",
           500: "var(--brand-500)",
           600: "var(--brand-600)",
-          700: "var(--brand-700)", // main
+          700: "var(--brand-700)",
           800: "var(--brand-800)",
           900: "var(--brand-900)",
           950: "var(--brand-950)",
           DEFAULT: "var(--brand-600)",
         },
-
-        // CTA (client asked for green‑700/800 vibe)
         cta: {
           50: "var(--cta-50)",
           100: "var(--cta-100)",
@@ -38,18 +55,16 @@ module.exports = {
           400: "var(--cta-400)",
           500: "var(--cta-500)",
           600: "var(--cta-600)",
-          700: "var(--cta-700)", // primary button bg
-          800: "var(--cta-800)", // hover
+          700: "var(--cta-700)",
+          800: "var(--cta-800)",
           900: "var(--cta-900)",
           DEFAULT: "var(--cta-700)",
         },
-
-        // Neutrals & UI surfaces
         surface: {
-          0: "var(--surface-0)", // app background
-          1: "var(--surface-1)", // cards
-          2: "var(--surface-2)", // elevated
-          3: "var(--surface-3)", // highest
+          0: "var(--surface-0)",
+          1: "var(--surface-1)",
+          2: "var(--surface-2)",
+          3: "var(--surface-3)",
         },
         text: {
           primary: "var(--text-primary)",
@@ -62,12 +77,7 @@ module.exports = {
           subtle: "var(--border-subtle)",
           strong: "var(--border-strong)",
         },
-        ring: {
-          DEFAULT: "var(--ring)",
-          subtle: "var(--ring-subtle)",
-        },
-
-        // Effect colors (glows, halos, wires, dots) — used by hero & flask sections
+        ring: { DEFAULT: "var(--ring)", subtle: "var(--ring-subtle)" },
         effect: {
           glowA: "var(--effect-glow-a)",
           glowB: "var(--effect-glow-b)",
@@ -79,7 +89,6 @@ module.exports = {
         },
       },
 
-      // Keyframes you already had (unchanged)
       keyframes: {
         waveSlide: {
           "0%": { transform: "translateX(0)" },

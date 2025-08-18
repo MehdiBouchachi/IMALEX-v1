@@ -14,9 +14,7 @@ export default function MobileMenu({
     if (!open) return;
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
-    return () => {
-      document.documentElement.style.overflow = prev;
-    };
+    return () => (document.documentElement.style.overflow = prev);
   }, [open]);
 
   useEffect(() => {
@@ -27,9 +25,10 @@ export default function MobileMenu({
 
   return (
     <>
+      {/* was md:hidden -> now lg:hidden so tablets get the burger */}
       <button
         onClick={() => setOpen((s) => !s)}
-        className="md:hidden inline-flex items-center justify-center rounded-lg p-2 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)] border bg-[var(--surface-1)]"
+        className="nav:hidden inline-flex items-center justify-center rounded-lg p-2 transition focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--ring)] border bg-[var(--surface-1)]"
         style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
         aria-expanded={open}
         aria-controls="mobile-overlay"
@@ -38,10 +37,11 @@ export default function MobileMenu({
         {open ? <FiX className="h-5 w-5" /> : <FiMenu className="h-5 w-5" />}
       </button>
 
+      {/* was md:hidden -> now lg:hidden */}
       <div
         id="mobile-overlay"
         className={[
-          "md:hidden fixed inset-0 z-[110] transition-opacity duration-200",
+          "nav:hidden fixed inset-0  z-[110] transition-opacity duration-200",
           open
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none",
@@ -112,7 +112,7 @@ export default function MobileMenu({
                 size="lg"
                 asLink
                 href={contactHref}
-                className="w-full"
+                className="w-full "
                 onClick={() => setOpen(false)}
               >
                 Request a Quote

@@ -1706,3 +1706,37 @@ body {
     }
   }
 }
+@layer utilities {
+  /* notch-safe padding helpers */
+  .safe-px {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  .safe-pt {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  .safe-pb {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+@layer base {
+  h1 {
+    font-size: clamp(22px, 5.6vw, 36px);
+    line-height: 1.15;
+  }
+  h2 {
+    font-size: clamp(18px, 4.8vw, 28px);
+    line-height: 1.2;
+  }
+  p,
+  li {
+    font-size: clamp(13.5px, 3.8vw, 16px);
+    line-height: 1.6;
+  }
+}
+
+/* Prevent accidental horizontal scroll from wide children */
+body {
+  overflow-x: hidden;
+}
