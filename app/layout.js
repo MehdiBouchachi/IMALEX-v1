@@ -37,21 +37,29 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth ">
       <body
         className={[
           josefin.className,
-          // 👇 NEW: svh fixes iOS URL bar; overflow-x-hidden prevents stray scroll
           "antialiased min-h-svh overflow-x-hidden flex flex-col",
           "bg-[var(--surface-0)] text-[var(--text-primary)]",
           "selection:bg-[rgba(127,207,167,0.35)]",
         ].join(" ")}
       >
         {" "}
-        <SmoothScroll />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <div
+          id="app"
+          className="
+            relative isolate
+            max-w-[100dvw] overflow-x-clip
+            min-h-inherit flex flex-col
+          "
+        >
+          <SmoothScroll />
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );
