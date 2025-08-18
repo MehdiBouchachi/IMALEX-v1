@@ -3,41 +3,38 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { fakePosts } from "../../_data/fakePosts";
-import Inline from "../../_components/blogs/articles/Inline";
-import RelatedCards from "../../_components/blogs/articles/RelatedCards";
-import SkeletonTOC from "../../_components/blogs/articles/_skeletons/SkeletonTOC";
-import SkeletonArticle from "../../_components/blogs/articles/_skeletons/SkeletonArticle";
-import PNCard from "../../_components/blogs/articles/PNCard";
-import { buildTOCGroups, formatDate } from "./utils";
+import { fakePosts } from "../../../data/fakePosts";
+import Inline from "../../../widgets/article/Inline";
+import RelatedCards from "../../../widgets/article/RelatedCards";
+import SkeletonTOC from "../../../widgets/article/skeletons/SkeletonTOC";
+import SkeletonArticle from "../../../widgets/article/skeletons/SkeletonArticle";
+import PNCard from "../../../widgets/article/PNCard";
+import { buildTOCGroups, formatDate } from "../../../widgets/blogs/utils";
 import dynamic from "next/dynamic";
 
 /* ⬇️ client enhancers with loading fallbacks */
 const ReadingProgress = dynamic(
-  () => import("../../_components/blogs/articles/ReadingProgress"),
+  () => import("../../../widgets/article/ReadingProgress"),
   {
     ssr: false,
     loading: () => null,
   }
 );
-const TOCSticky = dynamic(
-  () => import("../../_components/blogs/articles/TOCSticky"),
-  {
-    ssr: false,
-    loading: () => <SkeletonTOC />,
-  }
-);
+const TOCSticky = dynamic(() => import("../../../widgets/article/TOCSticky"), {
+  ssr: false,
+  loading: () => <SkeletonTOC />,
+});
 /* ArticleBody is a client component in your repo — keep SSR for SEO,
    but show SkeletonArticle during client-side transitions */
 const ArticleBody = dynamic(
-  () => import("../../_components/blogs/articles/ArticleBody"),
+  () => import("../../../widgets/article/ArticleBody"),
   {
     ssr: true,
     loading: () => <SkeletonArticle />,
   }
 );
 const CopyCodeButtons = dynamic(
-  () => import("../../_components/blogs/articles/CopyCodeButtons"),
+  () => import("../../../widgets/article/CopyCodeButtons"),
   {
     ssr: false,
     loading: () => null,

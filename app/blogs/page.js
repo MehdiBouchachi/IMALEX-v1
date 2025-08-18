@@ -1,7 +1,5 @@
-// app/blogs/page.js
-import BlogIndexClient from "./_ui/BlogIndexClient";
-import { fakePosts } from "../_data/fakePosts";
-
+import { fakePosts } from "../../data/fakePosts";
+import BlogIndexClient from "../../widgets/blogs/components/BlogIndexClient";
 export const metadata = {
   title: "Blog | IMALEX",
   description:
