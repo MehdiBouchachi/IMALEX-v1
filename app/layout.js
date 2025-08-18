@@ -41,11 +41,10 @@ export default function RootLayout({ children }) {
       <body
         className={[
           josefin.className,
-          "antialiased min-h-screen flex flex-col",
-          // token-based colors; flip via :root / html.dark in globals.css
+          // 👇 NEW: svh fixes iOS URL bar; overflow-x-hidden prevents stray scroll
+          "antialiased min-h-svh overflow-x-hidden flex flex-col",
           "bg-[var(--surface-0)] text-[var(--text-primary)]",
-          // selection uses brand token (works in both modes)
-          "selection:bg-[rgba(127,207,167,0.35)] ",
+          "selection:bg-[rgba(127,207,167,0.35)]",
         ].join(" ")}
       >
         {" "}
