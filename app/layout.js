@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-
 import "./_styles/globals.css";
 import { Josefin_Sans } from "next/font/google";
 const Header = dynamic(
@@ -17,6 +16,7 @@ const Footer = dynamic(
 const SmoothScroll = dynamic(() => import("../widgets/ui/SmoothScroll"), {
   ssr: false,
 });
+
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   display: "swap",
