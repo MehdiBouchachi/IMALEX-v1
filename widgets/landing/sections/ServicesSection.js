@@ -1,17 +1,23 @@
 // app/_sections/ServicesSection.js
-"use client";
-
-import Image from "next/image";
-import Button from "../../ui/Button"; // keep your path
 import { SERVICES } from "../components/services/services.config.js";
 import ServiceTile from "../components/services/ServiceTile";
 
 const cx = (...a) => a.filter(Boolean).join(" ");
 
+// one source of truth for the comparison rows
+const rows = [
+  { label: "Compliance", diy: "varies", imalex: "EU/DZ ready" },
+  { label: "Stability", diy: "uncertain", imalex: "validated" },
+  { label: "Tech transfer", diy: "ad-hoc", imalex: "structured" },
+  { label: "Time-to-market", diy: "slower", imalex: "accelerated" },
+  { label: "Cost-in-use", diy: "unoptimized", imalex: "optimized" },
+  { label: "QA / QC", diy: "spot checks", imalex: "QC plan" },
+];
+
 export default function ServicesSection() {
   return (
-    <section id="services" className="relative isolate py-20 sm:py-28">
-      {/* Ambient gradient (tokens) */}
+    <section id="services" className="relative isolate py-14 sm:py-20">
+      {/* ambient */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
@@ -26,25 +32,53 @@ export default function ServicesSection() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid gap-12 lg:grid-cols-[1fr,1.32fr]">
-          {/* LEFT — intro + focused comparison table */}
-          <aside className="lg:sticky lg:top-[92px] self-start">
+      <div className="mx-auto max-w-7xl px-4 xs:px-5 sm:px-6">
+        <div className="grid gap-10 lg:grid-cols-[1fr,1.32fr]">
+          {/* LEFT — intro + comparison */}
+          <aside className="self-start lg:sticky lg:top-[92px]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--eye-brow)]">
               Industrial services
             </p>
-            <h2 className="mt-2 text-[clamp(28px,4vw,42px)] font-extrabold tracking-[-0.02em] text-[var(--text-primary)]">
+            <h2 className="mt-2 text-[clamp(22px,6vw,42px)] leading-[1.15] font-extrabold tracking-[-0.02em] text-[var(--text-primary)]">
               Science, Nature & Industry — under one roof
             </h2>
             <p className="mt-3 text-[15px] leading-7 text-[var(--text-secondary)]">
               From custom formulation to compliant production. We turn{" "}
-              <b>local botanicals</b> into high‑performance products for{" "}
-              <b>cosmetics, food supplements, agri‑food, biopesticides</b> and{" "}
+              <b>local botanicals</b> into high-performance products for{" "}
+              <b>cosmetics, food supplements, agri-food, biopesticides</b> and{" "}
               <b>animal nutrition</b>.
             </p>
 
-            {/* Focused comparison — only valuable rows */}
-            <div className="mt-6 overflow-hidden rounded-xl border border-[var(--tile-border)] bg-[var(--tile-bg)] shadow-[var(--tile-shadow)]">
+            {/* Mobile: stacked list (no overflow, super readable) */}
+            <div className="mt-5 space-y-3 sm:hidden">
+              {rows.map((r) => (
+                <div
+                  key={r.label}
+                  className="rounded-lg border border-[var(--tile-border)] bg-[var(--tile-bg)] p-3 shadow-[var(--tile-shadow)]"
+                >
+                  <div className="text-[12px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                    {r.label}
+                  </div>
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-[14px]">
+                    <div className="rounded-md border border-[var(--tile-border)] px-2 py-1 text-center text-[var(--text-muted)]">
+                      {r.diy}
+                      <div className="mt-1 text-[11px] uppercase tracking-wide text-[var(--text-muted)]">
+                        DIY
+                      </div>
+                    </div>
+                    <div className="rounded-md border border-[var(--tile-border)] bg-[color:color-mix(in_srgb,var(--brand-400)_10%,transparent)] px-2 py-1 text-center font-semibold text-[var(--brand-700)]">
+                      {r.imalex}
+                      <div className="mt-1 text-[11px] uppercase tracking-wide text-[var(--text-muted)]">
+                        IMALEX
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop/tablet: 3-column table */}
+            <div className="mt-6 hidden overflow-hidden rounded-xl border border-[var(--tile-border)] bg-[var(--tile-bg)] shadow-[var(--tile-shadow)] sm:block">
               <div className="grid grid-cols-[1.1fr,0.9fr,0.9fr] text-[15px]">
                 <Cell head className="text-[13.5px]">
                   Outcome
@@ -56,61 +90,17 @@ export default function ServicesSection() {
                   IMALEX
                 </Cell>
 
-                <Cell>Compliance</Cell>
-                <Cell className="text-center text-[var(--text-muted)]">
-                  varies
-                </Cell>
-                <Cell className="text-center font-semibold text-[var(--brand-700)]">
-                  EU/DZ ready
-                </Cell>
-
-                <Cell>Stability</Cell>
-                <Cell className="text-center text-[var(--text-muted)]">
-                  uncertain
-                </Cell>
-                <Cell className="text-center font-semibold text-[var(--brand-700)]">
-                  validated
-                </Cell>
-
-                <Cell>Tech transfer</Cell>
-                <Cell className="text-center text-[var(--text-muted)]">
-                  ad‑hoc
-                </Cell>
-                <Cell className="text-center font-semibold text-[var(--brand-700)]">
-                  structured
-                </Cell>
-
-                <Cell>Time‑to‑market</Cell>
-                <Cell className="text-center text-[var(--text-muted)]">
-                  slower
-                </Cell>
-                <Cell className="text-center font-semibold text-[var(--brand-700)]">
-                  accelerated
-                </Cell>
-
-                <Cell>Cost‑in‑use</Cell>
-                <Cell className="text-center text-[var(--text-muted)]">
-                  unoptimized
-                </Cell>
-                <Cell className="text-center font-semibold text-[var(--brand-700)]">
-                  optimized
-                </Cell>
-
-                <Cell>QA / QC</Cell>
-                <Cell className="text-center text-[var(--text-muted)]">
-                  spot checks
-                </Cell>
-                <Cell className="text-center font-semibold text-[var(--brand-700)]">
-                  QC plan
-                </Cell>
+                {rows.map((r) => (
+                  <Row key={r.label} {...r} />
+                ))}
               </div>
             </div>
           </aside>
 
-          {/* RIGHT — CLEANER CARDS */}
+          {/* RIGHT — cards */}
           <div className="grid grid-cols-1 gap-6">
-            {SERVICES.map((it) => (
-              <ServiceTile key={it.slug} {...it} />
+            {SERVICES.map((it, i) => (
+              <ServiceTile key={it.slug} {...it} index={i} />
             ))}
           </div>
         </div>
@@ -119,7 +109,7 @@ export default function ServicesSection() {
   );
 }
 
-/* ── table cell ── */
+/* ── desktop table bits ── */
 function Cell({ children, head = false, className = "" }) {
   return (
     <div
@@ -135,111 +125,14 @@ function Cell({ children, head = false, className = "" }) {
   );
 }
 
-/* ── service card: cleaner, no overlays, clearer hierarchy ── */
-/* ── service card: focal-point aware (see the right content) ── */
-function ServiceCard({ svc }) {
-  const Icon = svc.icon;
-  const bullets = (svc.bullets || []).slice(0, 2);
-
-  // Focal points from config (percent values like "50% 70%")
-  // mobileFocal = default for all; desktopFocal overrides at md+
-  const mobileFocal = svc.focal || "50% 50%";
-  const desktopFocal = svc.desktopFocal || mobileFocal;
-  const zoom =
-    typeof svc.zoom === "number" ? Math.max(1, Math.min(svc.zoom, 1.4)) : 1; // 1..1.4
-
+function Row({ label, diy, imalex }) {
   return (
-    <article
-      className={[
-        "group rounded-2xl border border-[var(--tile-border)] bg-[var(--tile-bg)]",
-        "[box-shadow:var(--tile-shadow)] hover:[box-shadow:var(--tile-shadow-hover)]",
-        "transition will-change-transform",
-        "sm:grid sm:h-[520px] md:h-[560px] sm:grid-rows-[minmax(0,7fr)_minmax(0,3fr)]",
-        "focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--brand-500)]",
-      ].join(" ")}
-      style={{
-        // CSS vars used by arbitrary props below
-        "--focal": mobileFocal,
-        "--focal-md": desktopFocal,
-        "--zoom": zoom,
-      }}
-    >
-      {/* Media — object-position driven by per-card focal points */}
-      <div className="relative h-[min(62vh,380px)] sm:h-auto sm:row-[1/2] overflow-hidden">
-        <Image
-          src={svc.image}
-          alt={svc.title}
-          fill
-          className={[
-            "object-cover",
-            // Use CSS vars for object-position; switch at md breakpoint
-            "[object-position:var(--focal)]",
-            "md:[object-position:var(--focal-md)]",
-            // gentle hover micro-zoom (plus optional extra zoom from config)
-            "transition-transform duration-500",
-          ].join(" ")}
-          sizes="(min-width:1280px) 960px, (min-width:1024px) 800px, 100vw"
-          loading="lazy"
-          decoding="async"
-          style={{
-            transform: `scale(var(--zoom))`,
-          }}
-        />
-      </div>
-
-      {/* Footer content (~30%) */}
-      <div className="flex min-h-0 flex-col gap-2 p-5 sm:p-6 sm:row-[2/3]">
-        <div className="flex items-center gap-2">
-          {Icon ? (
-            <Icon className="h-5 w-5 shrink-0 opacity-90" aria-hidden />
-          ) : null}
-          <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-[var(--text-primary)]">
-            {svc.title}
-          </h3>
-        </div>
-
-        {svc.line && (
-          <p className="text-[14px] leading-6 text-[var(--text-secondary)] line-clamp-2">
-            {svc.line}
-          </p>
-        )}
-
-        {bullets.length > 0 && (
-          <ul className="mt-1.5 space-y-1.5 text-[13.5px] text-[var(--tile-copy)]">
-            {bullets.map((b, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand-600)]/70" />
-                <span className="leading-6">{b}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {Array.isArray(svc.readMore?.items) &&
-          svc.readMore.items.length > 0 && (
-            <div className="mt-1 flex flex-wrap gap-2">
-              {svc.readMore.items.slice(0, 3).map((it, i) => (
-                <span
-                  key={i}
-                  className="rounded-full border border-[var(--tile-border)] bg-[var(--surface-1)] px-2.5 py-1 text-[11.5px] text-[var(--text-secondary)]"
-                >
-                  {it}
-                </span>
-              ))}
-            </div>
-          )}
-
-        <div className="mt-auto pt-1">
-          <Button
-            variant="primary"
-            size="xs"
-            href="#contact"
-            aria-label={`Contact about ${svc.title}`}
-          >
-            {svc.cta}
-          </Button>
-        </div>
-      </div>
-    </article>
+    <>
+      <Cell>{label}</Cell>
+      <Cell className="text-center text-[var(--text-muted)]">{diy}</Cell>
+      <Cell className="text-center font-semibold text-[var(--brand-700)]">
+        {imalex}
+      </Cell>
+    </>
   );
 }
