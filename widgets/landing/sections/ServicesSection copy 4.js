@@ -2,16 +2,15 @@
 "use client";
 
 import Image from "next/image";
-import Button from "../../ui/Button"; // keep your path
+import Button from "../../ui/Button"; // adjust if your Button path differs
 import { SERVICES } from "../components/services/services.config.js";
-import ServiceTile from "../components/services/ServiceTile";
 
 const cx = (...a) => a.filter(Boolean).join(" ");
 
 export default function ServicesSection() {
   return (
     <section id="services" className="relative isolate py-20 sm:py-28">
-      {/* Ambient gradient (tokens) */}
+      {/* Ambient gradient (your tokens) */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
@@ -38,8 +37,8 @@ export default function ServicesSection() {
             </h2>
             <p className="mt-3 text-[15px] leading-7 text-[var(--text-secondary)]">
               From custom formulation to compliant production. We turn{" "}
-              <b>local botanicals</b> into high‑performance products for{" "}
-              <b>cosmetics, food supplements, agri‑food, biopesticides</b> and{" "}
+              <b>local botanicals</b> into high-performance products for{" "}
+              <b>cosmetics, food supplements, agri-food, biopesticides</b> and{" "}
               <b>animal nutrition</b>.
             </p>
 
@@ -74,13 +73,13 @@ export default function ServicesSection() {
 
                 <Cell>Tech transfer</Cell>
                 <Cell className="text-center text-[var(--text-muted)]">
-                  ad‑hoc
+                  ad-hoc
                 </Cell>
                 <Cell className="text-center font-semibold text-[var(--brand-700)]">
                   structured
                 </Cell>
 
-                <Cell>Time‑to‑market</Cell>
+                <Cell>Time-to-market</Cell>
                 <Cell className="text-center text-[var(--text-muted)]">
                   slower
                 </Cell>
@@ -88,7 +87,7 @@ export default function ServicesSection() {
                   accelerated
                 </Cell>
 
-                <Cell>Cost‑in‑use</Cell>
+                <Cell>Cost-in-use</Cell>
                 <Cell className="text-center text-[var(--text-muted)]">
                   unoptimized
                 </Cell>
@@ -107,10 +106,10 @@ export default function ServicesSection() {
             </div>
           </aside>
 
-          {/* RIGHT — CLEANER CARDS */}
+          {/* RIGHT — ONE CARD PER ROW */}
           <div className="grid grid-cols-1 gap-6">
-            {SERVICES.map((it) => (
-              <ServiceTile key={it.slug} {...it} />
+            {SERVICES.map((s) => (
+              <ServiceCard key={s.slug} svc={s} />
             ))}
           </div>
         </div>
@@ -119,7 +118,7 @@ export default function ServicesSection() {
   );
 }
 
-/* ── table cell ── */
+/* ── table cell (readable sizes) ── */
 function Cell({ children, head = false, className = "" }) {
   return (
     <div
@@ -135,107 +134,84 @@ function Cell({ children, head = false, className = "" }) {
   );
 }
 
-/* ── service card: cleaner, no overlays, clearer hierarchy ── */
-/* ── service card: focal-point aware (see the right content) ── */
+/* ── service card (flex inside, compact) ── */
 function ServiceCard({ svc }) {
   const Icon = svc.icon;
-  const bullets = (svc.bullets || []).slice(0, 2);
-
-  // Focal points from config (percent values like "50% 70%")
-  // mobileFocal = default for all; desktopFocal overrides at md+
-  const mobileFocal = svc.focal || "50% 50%";
-  const desktopFocal = svc.desktopFocal || mobileFocal;
-  const zoom =
-    typeof svc.zoom === "number" ? Math.max(1, Math.min(svc.zoom, 1.4)) : 1; // 1..1.4
+  const bullets = (svc.bullets || []).slice(0, 3);
+  const chips = svc.readMore?.items ? svc.readMore.items.slice(0, 3) : [];
 
   return (
     <article
-      className={[
-        "group rounded-2xl border border-[var(--tile-border)] bg-[var(--tile-bg)]",
-        "[box-shadow:var(--tile-shadow)] hover:[box-shadow:var(--tile-shadow-hover)]",
-        "transition will-change-transform",
-        "sm:grid sm:h-[520px] md:h-[560px] sm:grid-rows-[minmax(0,7fr)_minmax(0,3fr)]",
-        "focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--brand-500)]",
-      ].join(" ")}
-      style={{
-        // CSS vars used by arbitrary props below
-        "--focal": mobileFocal,
-        "--focal-md": desktopFocal,
-        "--zoom": zoom,
-      }}
+      className="
+        flex flex-col overflow-hidden rounded-2xl
+        border border-[var(--tile-border)] bg-[var(--tile-bg)]
+        [box-shadow:var(--tile-shadow)] hover:[box-shadow:var(--tile-shadow-hover)]
+        transition
+      "
     >
-      {/* Media — object-position driven by per-card focal points */}
-      <div className="relative h-[min(62vh,380px)] sm:h-auto sm:row-[1/2] overflow-hidden">
+      {/* Accent band */}
+      <div className="h-1 w-full bg-[image:var(--tile-accent)]" />
+
+      {/* Media: fixed height to keep cards visually consistent */}
+      <div className="relative h-[min(52vw,240px)] w-full overflow-hidden">
         <Image
           src={svc.image}
           alt={svc.title}
           fill
-          className={[
-            "object-cover",
-            // Use CSS vars for object-position; switch at md breakpoint
-            "[object-position:var(--focal)]",
-            "md:[object-position:var(--focal-md)]",
-            // gentle hover micro-zoom (plus optional extra zoom from config)
-            "transition-transform duration-500",
-          ].join(" ")}
-          sizes="(min-width:1280px) 960px, (min-width:1024px) 800px, 100vw"
+          className="object-cover"
+          sizes="(min-width:1024px) 100vw, (min-width:640px) 100vw, 100vw"
           loading="lazy"
           decoding="async"
-          style={{
-            transform: `scale(var(--zoom))`,
-          }}
         />
       </div>
 
-      {/* Footer content (~30%) */}
-      <div className="flex min-h-0 flex-col gap-2 p-5 sm:p-6 sm:row-[2/3]">
-        <div className="flex items-center gap-2">
+      {/* Body */}
+      <div className="flex min-h-0 grow flex-col p-5">
+        {/* Header */}
+        <div className="flex items-center gap-3">
           {Icon ? (
-            <Icon className="h-5 w-5 shrink-0 opacity-90" aria-hidden />
+            <span className="grid h-9 w-9 place-items-center rounded-lg border border-[var(--tile-icon-border)] bg-[var(--tile-icon-bg)] text-[var(--tile-icon-text)]">
+              <Icon />
+            </span>
           ) : null}
-          <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-[var(--text-primary)]">
+          <h3 className="text-base sm:text-lg font-semibold leading-snug text-[var(--text-primary)]">
             {svc.title}
           </h3>
         </div>
 
+        {/* Line */}
         {svc.line && (
-          <p className="text-[14px] leading-6 text-[var(--text-secondary)] line-clamp-2">
+          <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--tile-copy)]">
             {svc.line}
           </p>
         )}
 
+        {/* Bullets */}
         {bullets.length > 0 && (
-          <ul className="mt-1.5 space-y-1.5 text-[13.5px] text-[var(--tile-copy)]">
+          <ul className="mt-2 pl-5 list-disc text-[13px] text-[var(--tile-copy)]">
             {bullets.map((b, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand-600)]/70" />
-                <span className="leading-6">{b}</span>
-              </li>
+              <li key={i}>{b}</li>
             ))}
           </ul>
         )}
 
-        {Array.isArray(svc.readMore?.items) &&
-          svc.readMore.items.length > 0 && (
-            <div className="mt-1 flex flex-wrap gap-2">
-              {svc.readMore.items.slice(0, 3).map((it, i) => (
-                <span
-                  key={i}
-                  className="rounded-full border border-[var(--tile-border)] bg-[var(--surface-1)] px-2.5 py-1 text-[11.5px] text-[var(--text-secondary)]"
-                >
-                  {it}
-                </span>
-              ))}
-            </div>
-          )}
+        {/* Scope chips (first 3 only) */}
+        {chips.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {chips.map((it, i) => (
+              <span
+                key={i}
+                className="rounded-full border border-[var(--tile-border)] bg-[var(--surface-1)] px-2 py-[2px] text-[11px] text-[var(--text-muted)]"
+              >
+                {it}
+              </span>
+            ))}
+          </div>
+        )}
 
-        <div className="mt-auto pt-1">
-          <Button
-            variant="primary"
-            size="xs"
-            href="#contact"
-            aria-label={`Contact about ${svc.title}`}
-          >
+        {/* CTA */}
+        <div className="mt-4">
+          <Button variant="primary" size="xs" href="#contact">
             {svc.cta}
           </Button>
         </div>

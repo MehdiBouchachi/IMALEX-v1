@@ -1,4 +1,17 @@
-export default function ReadMore() {
+export default function ReadMore({ data }) {
+  const panel =
+    data?.panel ?? "Full scope & documentation available on request.";
+  const intro =
+    data?.intro ??
+    "You’ll receive a clear process map, QA/QC checkpoints, artwork guidance and a transfer package for scale-up.";
+  const items = data?.items ?? [
+    "Process flow & roles",
+    "QA/QC checkpoints",
+    "Artwork/label checklist",
+    "Tech transfer package",
+  ];
+  const cta = data?.cta ?? "Ask for full scope";
+
   return (
     <details className="group/details relative w-auto">
       <summary className="list-none cursor-pointer select-none inline-flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)] hover:underline focus:outline-none rounded">
@@ -19,37 +32,42 @@ export default function ReadMore() {
 
       <div className="mt-3 grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out group-open/details:grid-rows-[1fr]">
         <div className="overflow-hidden w-full">
+          {/* soft panel */}
           <div className="max-w-full rounded-lg border px-3 py-2 text-xs border-[var(--tile-softpanel-border)] bg-[var(--tile-softpanel-bg)] text-[var(--brand-700)] dark:text-[var(--brand-800)]">
-            Full scope & documentation available on request.
+            {panel}
           </div>
 
+          {/* intro + bullets */}
           <div className="mt-3 text-sm leading-relaxed text-[var(--tile-copy)]">
-            <p className="mb-2">
-              You’ll receive a clear process map, QA/QC checkpoints, templates
-              for labels & dossiers, and a transfer package to accelerate
-              scale-up.
-            </p>
-            <ul className="grid gap-2 sm:grid-cols-2">
-              {[
-                "Process flow & roles",
-                "QA/QC checkpoints",
-                "Artwork/label checklist",
-                "Tech transfer package",
-              ].map((k) => (
-                <li key={k} className="flex items-start gap-2">
-                  <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-[var(--bullet)]" />
-                  <span>{k}</span>
-                </li>
-              ))}
-            </ul>
+            {Array.isArray(intro) ? (
+              intro.map((p, i) => (
+                <p key={i} className={i ? "mt-2" : "mb-2"}>
+                  {p}
+                </p>
+              ))
+            ) : (
+              <p className="mb-2">{intro}</p>
+            )}
+
+            {items?.length ? (
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {items.map((k, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-[var(--bullet)]" />
+                    <span className="min-w-0">{k}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
 
+          {/* CTA */}
           <div className="mt-4">
             <a
               href="#contact"
               className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-semibold transition border-[color:var(--tile-softpanel-border)] text-[var(--brand-700)] dark:text-[var(--brand-800)] hover:bg-[var(--tile-softpanel-bg)]"
             >
-              Ask for full scope
+              {cta}
               <svg
                 className="h-3.5 w-3.5"
                 viewBox="0 0 24 24"

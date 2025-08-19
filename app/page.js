@@ -49,7 +49,7 @@ const ProcessSection = dynamic(
 const BlogsSection = dynamic(
   () => import("../widgets/landing/sections/BlogsSection"),
   {
-    ssr: false,
+    ssr: true,
   }
 ); // adjust path if needed
 
@@ -72,9 +72,8 @@ export default function Page() {
       <main>
         <HeroSection />
         <AboutSection />
-        <Section id="services" title="Our Services" eyebrow="What we do">
-          <ServicesSection />
-        </Section>
+
+        <ServicesSection />
         <SectorsSection />
         <WhyUsSection />
 

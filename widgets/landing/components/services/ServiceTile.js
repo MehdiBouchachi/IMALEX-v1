@@ -11,6 +11,7 @@ export default function ServiceTile({
   image,
   bullets = [],
   cta,
+  readMore,
 }) {
   return (
     <article className="group relative isolate overflow-hidden rounded-2xl border transition bg-[var(--tile-bg)] border-[var(--tile-border)] [box-shadow:var(--tile-shadow)] hover:[box-shadow:var(--tile-shadow-hover)]">
@@ -28,7 +29,7 @@ export default function ServiceTile({
           <Button variant="primary" size="xs" asLink href="#contact">
             {cta}
           </Button>
-          <ReadMore />
+          <ReadMore data={readMore} />
         </div>
       </div>
     </article>

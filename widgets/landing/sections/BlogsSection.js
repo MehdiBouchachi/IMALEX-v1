@@ -1,7 +1,3 @@
-// app/_sections/BlogsSection.js
-"use client";
-
-import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "../../ui/Button";
@@ -17,17 +13,6 @@ export default function BlogsSection({
   basePath = "/blogs",
   showCTA = true,
 }) {
-  const tags = useMemo(() => {
-    const s = new Set();
-    posts.forEach((p) => (p.tags || []).forEach((t) => s.add(t)));
-    return ["All", ...Array.from(s)];
-  }, [posts]);
-
-  const [selected, setSelected] = useState("All");
-  useEffect(() => {
-    if (!tags.includes(selected)) setSelected("All");
-  }, [tags, selected]);
-
   const items = posts.slice(0, 8);
 
   return (
