@@ -2,116 +2,100 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
-import { usePathname, useSearchParams } from "next/navigation";
 
-/** Global smooth scroll with Lenis — except on /process, where we use native. */
 export default function SmoothScroll() {
-  const pathname = usePathname();
-  const search = useSearchParams();
-
   useEffect(() => {
-    const onProcess =
-      (pathname && pathname.includes("process")) ||
-      (typeof window !== "undefined" && window.location.hash === "#process");
+    const prefersReduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduce) return;
 
-    // helper for header offset
-    const headerH = () =>
-      ((
-        document.querySelector("[data-header]") ||
-        document.querySelector("header")
-      )?.getBoundingClientRect().height || 64) + 8;
+    const isTouch =
+      typeof window !== "undefined" &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
-    // Always provide anchor smoothing with offset (works in both modes)
-    const anchorHandler = () => {
-      const scrollToHash = (hash) => {
-        if (!hash || hash === "#") return;
-        const id = hash.replace(/^#/, "");
-        const el =
-          document.getElementById(id) ||
-          document.querySelector(`[name="${CSS.escape(id)}"]`);
-        if (!el) return;
+    // --- FAST preset ---
+    const DURATION = 0.65; // was 1.1 → lower = snappier
+    const WHEEL_MULT = 1.85; // was 1.05 → higher = faster wheel
+    const TOUCH_MULT = isTouch ? 3.2 : 2.2; // more speed on touch
 
-        const y = el.getBoundingClientRect().top + window.scrollY - headerH();
-        window.scrollTo({ top: y, behavior: "smooth" });
-      };
-
-      // initial hash
-      if (window.location.hash)
-        requestAnimationFrame(() => scrollToHash(window.location.hash));
-
-      // intercept same-page anchor clicks
-      const onClick = (e) => {
-        const a = e.target.closest("a[href*='#']");
-        if (!a) return;
-
-        const url = new URL(a.href, window.location.origin);
-        const samePath =
-          url.origin === window.location.origin &&
-          url.pathname.replace(/\/+$/, "") ===
-            window.location.pathname.replace(/\/+$/, "");
-
-        if (samePath && url.hash) {
-          e.preventDefault();
-          history.pushState(null, "", url.hash);
-          scrollToHash(url.hash);
-        }
-      };
-
-      const onHash = () => scrollToHash(window.location.hash);
-      document.addEventListener("click", onClick, true);
-      window.addEventListener("hashchange", onHash);
-
-      return () => {
-        document.removeEventListener("click", onClick, true);
-        window.removeEventListener("hashchange", onHash);
-      };
-    };
-
-    // --- MODE A: Native (Process page) ---
-    if (onProcess) {
-      const cleanupAnchors = anchorHandler();
-      const prev = document.documentElement.style.scrollBehavior;
-      document.documentElement.style.scrollBehavior = "smooth"; // native smooth
-      return () => {
-        cleanupAnchors?.();
-        document.documentElement.style.scrollBehavior = prev;
-      };
-    }
-
-    // --- MODE B: Lenis (everywhere else) ---
-    const DURATION = 0.45; // your old timing
+    // snappier easing (easeOutCubic)
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+    const setHeaderVar = () => {
+      const headerEl =
+        document.querySelector("[data-header]") ||
+        document.querySelector("header");
+      const h = headerEl?.offsetHeight ?? 72;
+      document.documentElement.style.setProperty("--header-h", `${h}px`);
+    };
+    setHeaderVar();
+    window.addEventListener("resize", setHeaderVar);
 
     const lenis = new Lenis({
       duration: DURATION,
       easing: easeOutCubic,
       smoothWheel: true,
-      smoothTouch: false, // let phones use native physics
-      wheelMultiplier: 1.2,
-      touchMultiplier: 1.0,
-      syncTouch: true,
+      smoothTouch: true,
+      wheelMultiplier: WHEEL_MULT,
+      touchMultiplier: TOUCH_MULT,
     });
 
-    // avoid double-smooth
-    const prev = document.documentElement.style.scrollBehavior;
-    document.documentElement.style.scrollBehavior = "auto";
-
     let rafId;
-    const raf = (t) => {
-      lenis.raf(t);
+    const raf = (time) => {
+      lenis.raf(time);
       rafId = requestAnimationFrame(raf);
     };
     rafId = requestAnimationFrame(raf);
 
-    const cleanupAnchors = anchorHandler();
+    // faster anchor jumps (own duration)
+    const onClick = (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute("href");
+      if (!id || id === "#") return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      const headerOffset =
+        parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--header-h"
+          )
+        ) || 0;
+      lenis.scrollTo(target, {
+        offset: -headerOffset,
+        duration: 0.45, // quicker anchor animation
+        easing: easeOutCubic,
+      });
+    };
+    document.addEventListener("click", onClick);
+
+    const onHashChange = () => {
+      const target = document.querySelector(location.hash);
+      if (!target) return;
+      const headerOffset =
+        parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--header-h"
+          )
+        ) || 0;
+      lenis.scrollTo(target, {
+        offset: -headerOffset,
+        duration: 0.45,
+        easing: easeOutCubic,
+      });
+    };
+    window.addEventListener("hashchange", onHashChange);
 
     return () => {
-      cleanupAnchors?.();
+      window.removeEventListener("resize", setHeaderVar);
+      document.removeEventListener("click", onClick);
+      window.removeEventListener("hashchange", onHashChange);
       cancelAnimationFrame(rafId);
-      document.documentElement.style.scrollBehavior = prev;
       lenis.destroy();
     };
-  }, [pathname, search]);
+  }, []);
 
   return null;
 }
