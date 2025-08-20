@@ -75,8 +75,7 @@ export default memo(function BlogCard({ post, href }) {
         <div className="mt-auto flex items-center justify-between gap-3 text-[12px] text-[var(--text-muted)]">
           <span className="inline-flex min-w-0 items-center gap-2">
             {post.author?.avatar ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={post.author.avatar}
                 alt=""
                 width={18}
