@@ -75,7 +75,7 @@ export default function BlogPost({ params }) {
 
       <div className="mx-auto max-w-7xl px-4  pb-20 pt-20 md:pt-24 lg:grid lg:grid-cols-[minmax(260px,300px)_1px_minmax(0,1fr)] lg:gap-10">
         {/* Sticky TOC column (mirrors Services left column) */}
-        <aside>
+        <aside className="hidden  lg:block">
           <TOCSticky groups={tocGroups} />
         </aside>
 
