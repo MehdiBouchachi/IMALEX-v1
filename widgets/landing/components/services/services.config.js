@@ -1,7 +1,7 @@
 // app/_components/services/services.config.js
 import { IFlask, IBeaker, IShield, IGauge, ILeaf, IFactory } from "./icons";
 
-// Use your alias if configured; otherwise switch to relative paths like "../../public/…"
+// Static imports (Next/Image)
 import imgFormulation from "../../../../public/images/services/formulation.jpg";
 import imgPrototype from "../../../../public/images/services/prototype.jpg";
 import imgRegulatory from "../../../../public/images/services/regulatory.jpg";
@@ -15,7 +15,7 @@ export const SERVICES = [
     title: "Custom Formulation",
     line: "Bespoke, natural-first formulas that hit claims—without trade-offs.",
     icon: IFlask,
-    image: imgFormulation,
+    image: imgFormulation, // default center crop
     bullets: [
       "Brief → functional & sensory targets",
       "Natural ingredient selection (local botanicals prioritized)",
@@ -36,12 +36,14 @@ export const SERVICES = [
       cta: "Request full scope",
     },
   },
+
   {
     slug: "prototype",
     title: "Prototype Development",
     line: "Get lab samples fast to validate feasibility and sensorials.",
     icon: IBeaker,
-    image: imgPrototype,
+    // Reframe so the packaging cluster is dominant (~upper-middle)
+    image: { src: imgPrototype, focal: { x: 0, y: 0.6 } },
     bullets: [
       "Rapid bench samples & iteration",
       "Sensorial tuning (texture, scent, taste)",
@@ -61,12 +63,13 @@ export const SERVICES = [
       cta: "Request samples",
     },
   },
+
   {
     slug: "regulatory",
     title: "Regulatory Dossiers",
     line: "DZ/EU compliance, labels, INCI and technical files—done right.",
     icon: IShield,
-    image: imgRegulatory,
+    image: { src: imgRegulatory, focal: { x: 0, y: 0.7 } }, // keep default framing
     bullets: [
       "INCI & ingredient declarations",
       "Claims & artwork review",
@@ -86,12 +89,14 @@ export const SERVICES = [
       cta: "Check compliance",
     },
   },
+
   {
     slug: "stability",
     title: "Stability & Efficacy",
     line: "Prove shelf-life and performance with the right test plan.",
     icon: IGauge,
-    image: imgStability,
+    // Bias to the **bottom** content of the photo (test setup)
+    image: { src: imgStability, focal: { x: 0.5, y: 0.9 } },
     bullets: [
       "Accelerated & real-time stability",
       "Micro / physico-chemical / packaging",
@@ -110,12 +115,14 @@ export const SERVICES = [
       cta: "Plan tests",
     },
   },
+
   {
     slug: "rnd",
     title: "R&D & Ingredient Sourcing",
     line: "Unlock local botanicals & synergies with scientific rigor.",
     icon: ILeaf,
-    image: imgRnd,
+    // Show the **ingredients at the bottom** of the image (spices/jars)
+    image: { src: imgRnd, focal: { x: 0.52, y: 0.86 } },
     bullets: [
       "Actives scouting & standardization",
       "Synergy design & eco-processes",
@@ -134,12 +141,13 @@ export const SERVICES = [
       cta: "Discuss R&D",
     },
   },
+
   {
     slug: "manufacturing",
     title: "Contract Manufacturing",
     line: "Pilot → small/medium series in compliant facilities.",
     icon: IFactory,
-    image: imgMfg,
+    image: imgMfg, // default framing is fine
     bullets: [
       "Liquids / semi-solids / solids",
       "Primary packaging & QC",
