@@ -39,9 +39,17 @@ export default function PhoneField({
         aria-describedby={error ? `${inputId}-err` : undefined}
         disabled={disabled}
         className={[
+          // container styling (matches Input.jsx)
+          "mt-1 w-full rounded-lg border px-3 py-2",
+          "bg-[var(--contact-input-bg)] border-[var(--contact-input-border)]",
+          "text-[var(--contact-input-text)] focus-within:ring-4 focus-within:ring-[var(--contact-input-focus)]",
+          "outline-none flex items-center gap-2",
+          error
+            ? "border-[var(--contact-danger)] focus-within:ring-[var(--contact-danger)]/30"
+            : "",
+          disabled ? "opacity-60 pointer-events-none" : "",
+          // library root class (kept for inner elements)
           "PhoneInput",
-          error ? "is-error" : "",
-          disabled ? "is-disabled" : "",
         ].join(" ")}
       />
 
