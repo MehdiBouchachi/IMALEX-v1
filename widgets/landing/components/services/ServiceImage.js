@@ -2,7 +2,6 @@
 import Image from "next/image";
 
 export default function ServiceImage({ src, title, position, focal }) {
-  // Backward-compatible: allow src to be a string or an object
   let _src = src;
   let _position = position;
   let _focal = focal;
@@ -14,7 +13,7 @@ export default function ServiceImage({ src, title, position, focal }) {
   }
 
   const objectPosition = _position
-    ? _position // e.g. "center 80%" or "40% 30%"
+    ? _position
     : _focal && typeof _focal === "object"
     ? `${((_focal.x ?? 0.5) * 100).toFixed(2)}% ${(
         (_focal.y ?? 0.5) * 100

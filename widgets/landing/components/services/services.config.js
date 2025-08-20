@@ -95,7 +95,6 @@ export const SERVICES = [
     title: "Stability & Efficacy",
     line: "Prove shelf-life and performance with the right test plan.",
     icon: IGauge,
-    // Bias to the **bottom** content of the photo (test setup)
     image: { src: imgStability, focal: { x: 0.5, y: 0.9 } },
     bullets: [
       "Accelerated & real-time stability",

@@ -13,9 +13,9 @@ const Footer = dynamic(
     ssr: true,
   }
 );
-const SmoothScroll = dynamic(() => import("../widgets/ui/SmoothScroll"), {
+/* const SmoothScroll = dynamic(() => import("../widgets/ui/SmoothScroll"), {
   ssr: false,
-});
+}); */
 
 const josefin = Josefin_Sans({
   subsets: ["latin"],
@@ -55,7 +55,6 @@ export default function RootLayout({ children }) {
             min-h-inherit flex flex-col
           "
         >
-          <SmoothScroll />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
