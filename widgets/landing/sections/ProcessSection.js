@@ -43,7 +43,7 @@ export default function ProcessSection({ steps = DEFAULT_STEPS }) {
             className="text-[11px] font-semibold tracking-widest uppercase"
             style={{ color: "var(--brand-700)" }}
           >
-            Process
+            Our method
           </div>
           <h2
             className="mt-2 text-2xl sm:text-4xl font-extrabold tracking-tight"

@@ -39,7 +39,7 @@ export const INITIAL_FORM = {
 };
 
 export const CONTACT = {
-  eyebrow: "Contact",
+  eyebrow: "Get in touch",
   title: "Let’s talk formulation",
   blurb:
     "Share your goals, target market, regulatory region and any constraints. We’ll reply with a plan, timeline and budget options.",

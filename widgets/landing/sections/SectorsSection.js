@@ -1,5 +1,6 @@
 import Card from "../components/sectors/Card";
 import { SECTORS } from "../components/sectors/sectors.config";
+import SectionHeader from "../../ui/SectionHeader";
 
 export default function SectorsSection() {
   return (

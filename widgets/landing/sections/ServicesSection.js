@@ -36,12 +36,13 @@ export default function ServicesSection() {
         <div className="grid gap-10 lg:grid-cols-[1fr,1.32fr]">
           {/* LEFT — intro + comparison */}
           <aside className="self-start lg:sticky lg:top-[92px]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--eye-brow)]">
-              Industrial services
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--eye-brow)]">
+              What we do
             </p>
-            <h2 className="mt-2 text-[clamp(22px,6vw,42px)] leading-[1.15] font-extrabold tracking-[-0.02em] text-[var(--text-primary)]">
-              Science, Nature & Industry — under one roof
+            <h2 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-[var(--text-primary)]">
+              From brief to shelf, without the friction
             </h2>
+
             <p className="mt-3 text-[15px] leading-7 text-[var(--text-secondary)]">
               From custom formulation to compliant production. We turn{" "}
               <b>local botanicals</b> into high-performance products for{" "}

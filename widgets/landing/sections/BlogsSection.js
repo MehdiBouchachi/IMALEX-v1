@@ -7,7 +7,7 @@ const cx = (...a) => a.filter(Boolean).join(" ");
 
 export default function BlogsSection({
   eyebrow = "Latest insights",
-  title = "From the blog",
+  title = "Field learnings and industry updates",
   description = "Research notes, product science, and field learnings.",
   posts = [],
   basePath = "/blogs",
