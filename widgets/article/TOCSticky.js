@@ -40,7 +40,7 @@ export default function TOCSticky({ groups }) {
   if (!mounted) {
     // SSR-safe static version
     return (
-      <nav className="sticky top-24 text-sm leading-6">
+      <nav className="text-sm leading-6">
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
           On this page
         </h2>
