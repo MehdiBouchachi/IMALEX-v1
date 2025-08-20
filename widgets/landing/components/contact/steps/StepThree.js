@@ -8,6 +8,7 @@ import InlineNote from "../../../../ui/InlineNote";
 
 export function StepThree({ form, setField, errors, disabled }) {
   const showBriefNote = !form.brief?.trim() || !!errors.brief;
+  console.log(form);
   return (
     <>
       <RadioChips
@@ -15,7 +16,7 @@ export function StepThree({ form, setField, errors, disabled }) {
         name="stage"
         value={form.stage}
         onChange={(v) => setField("stage", v)}
-        options={STAGE_OPTIONS} // [ [value, label], ... ]
+        options={STAGE_OPTIONS}
         error={errors.stage}
         cols={3}
         disabled={disabled}
@@ -33,15 +34,15 @@ export function StepThree({ form, setField, errors, disabled }) {
       />
 
       <InlineNote show={showBriefNote} tone="info" title="Heads up:">
-        A short project brief is required to send your request. Tell us the
-        goal, target market, and any constraints (min. ~10 characters).
+        A short project brief is required to send your request. (min. ~10
+        characters).
       </InlineNote>
 
       <div className="rounded-xl px-4 py-3 border border-[var(--contact-panel-border)] bg-[var(--contact-panel-bg)]">
         <div className="text-sm text-[var(--contact-ghost-text)]">
           <strong>Quick review:</strong> {form.name || "—"} •{" "}
-          {form.email || "—"} • {form.phone || "—"} • {form.country || "—"}{" "}
-          {form.city ? `(${form.city})` : ""}
+          {form.email || "—"} • {form.phone || "—"} • {form?.country || "—"}{" "}
+          {form?.city ? `(${form.city})` : ""}
           <br />
           <span className="opacity-80">
             {form.sector || "—"} • {form.needs.join(", ") || "—"} •{" "}

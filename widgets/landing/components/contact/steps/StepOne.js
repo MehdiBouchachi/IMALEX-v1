@@ -1,8 +1,31 @@
 import React from "react";
 import { Input } from "../../../../ui/Input";
 import { CountrySelect } from "../../../../ui/Selects";
-
+import PhoneField from "../../../../ui/PhoneField";
+const NAME_TO_ISO = {
+  Algeria: "DZ",
+  Morocco: "MA",
+  Tunisia: "TN",
+  France: "FR",
+  Spain: "ES",
+  Portugal: "PT",
+  "United States": "US",
+  USA: "US",
+  Canada: "CA",
+  Germany: "DE",
+  Italy: "IT",
+  "United Kingdom": "GB",
+  UK: "GB",
+  "Saudi Arabia": "SA",
+  "United Arab Emirates": "AE",
+  UAE: "AE",
+};
 export function StepOne({ form, setField, errors, disabled }) {
+  const defaultCountry =
+    NAME_TO_ISO[form.country] ||
+    (typeof form.country === "string" && form.country.length === 2
+      ? form.country.toUpperCase()
+      : "DZ");
   return (
     <div className="grid sm:grid-cols-2 gap-4">
       <Input
@@ -22,13 +45,12 @@ export function StepOne({ form, setField, errors, disabled }) {
         error={errors.email}
         disabled={disabled}
       />
-      <Input
+      <PhoneField
         label="Phone number"
         name="phone"
-        type="tel"
-        placeholder="+213…"
         value={form.phone}
-        onChange={(e) => setField("phone", e.target.value)}
+        onChange={(v) => setField("phone", v)}
+        defaultCountry={defaultCountry}
         error={errors.phone}
         disabled={disabled}
       />
