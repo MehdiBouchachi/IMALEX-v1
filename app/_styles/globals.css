@@ -12,8 +12,8 @@
   --brandG-700: #244b3b;
 
   /* ⬅️ main border tint used on hero/cards/chips */
-  --edge: color-mix(in srgb, var(--border) 78%, var(--brand-700) 22%);
-  --edge-strong: color-mix(in srgb, var(--border) 58%, var(--brand-700) 42%);
+  --edge: color-mix(in srgb, var(--border) 78%, var(--surface-3) 22%);
+  --edge-strong: color-mix(in srgb, var(--border) 58%, var(--surface-3) 42%);
 
   /* ——— Brand scale (moss/mint/forest) ——— */
   --brand-50: #f1fbf6;
@@ -213,8 +213,8 @@
 html.dark {
   color-scheme: dark;
 
-  --edge: color-mix(in srgb, var(--border) 70%, var(--brand-800) 30%);
-  --edge-strong: color-mix(in srgb, var(--border) 42%, var(--brand-800) 58%);
+  --edge: color-mix(in srgb, var(--border) 70%, var(--surface-3) 30%);
+  --edge-strong: color-mix(in srgb, var(--border) 42%, var(--surface-3) 58%);
   /* ——— Brand stays the same hues but raised for contrast ——— */
   --brand-50: #0b1713;
   --brand-100: #0f211b;
@@ -574,7 +574,7 @@ body {
     @apply mt-2 max-w-[70ch] text-[clamp(14px,1.5vw,16px)] leading-[1.55] text-white/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.30)];
   }
   .hero-cta {
-    @apply inline-flex gap-2 font-black text-[color:var(--brand-800)];
+    @apply inline-flex gap-2 font-black text-[color:var(--cta-50)];
   }
   .hero-sheen {
     @apply absolute inset-[-40%_-80%] z-10 pointer-events-none
@@ -1136,7 +1136,7 @@ body {
       animation: none;
     }
   }
-
+  .hero-cta
   /* ==== SendStatus v4 — Dark mode refinements ==== */
   @media (prefers-color-scheme: dark) {
     /* Card: deeper glass + cleaner border */
