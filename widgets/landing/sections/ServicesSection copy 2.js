@@ -182,17 +182,29 @@ function ModeSwitch({ value, onChange, className = "" }) {
     { id: "services", label: "Services", Icon: TilesIcon },
     { id: "outcome", label: "Outcome", Icon: TableIcon },
   ];
+  const activeIndex = value === "outcome" ? 1 : 0;
 
   return (
     <div
       role="tablist"
       aria-label="Services view"
       className={[
-        "relative inline-grid grid-cols-2 rounded-xl  border p-1 shadow-sm",
+        "relative inline-grid grid-cols-2 rounded-full border p-1 shadow-sm",
         "border-[var(--tile-border)] bg-[var(--surface-0)]",
         className,
       ].join(" ")}
     >
+      {/* sliding thumb (brand tint) */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-8px)] rounded-full border transition-transform duration-300 will-change-transform"
+        style={{
+          transform: `translateX(${activeIndex * 100}%)`,
+          background: "color-mix(in srgb, var(--brand-600) 14%, transparent)",
+          borderColor: "var(--brand-600)",
+        }}
+      />
+
       {tabs.map(({ id, label, Icon }) => {
         const active = value === id;
         return (
@@ -202,13 +214,22 @@ function ModeSwitch({ value, onChange, className = "" }) {
             role="tab"
             aria-selected={active}
             onClick={() => onChange(id)}
-            className={cx(
-              "px-3 py-1.5 text-sm font-semibold rounded-lg transition",
+            className={[
+              "relative z-10 flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold transition",
+              "focus:outline-none focus:ring-4 focus:ring-[color:var(--brand-600)/0.18]",
               active
-                ? "bg-[color:var(--cta-700)] text-[var(--cta-50)] "
-                : "text-[var(--text-secondary)] hover:bg-[var(--surface-1)]"
-            )}
+                ? "text-[var(--brand-700)] dark:text-[var(--brand-300)]"
+                : "text-[var(--text-secondary)] hover:bg-[var(--surface-1)]",
+            ].join(" ")}
           >
+            <Icon
+              className={[
+                "h-4 w-4",
+                active
+                  ? "text-[var(--brand-700)] dark:text-[var(--brand-300)]"
+                  : "text-[var(--text-secondary)]",
+              ].join(" ")}
+            />
             {label}
           </button>
         );
