@@ -33,9 +33,9 @@ export default function ServicesSection() {
       />
 
       <div className="mx-auto max-w-7xl px-4 xs:px-5 sm:px-6">
-        <div className="grid gap-10 lg:grid-cols-[1fr,1.32fr]">
+        <div className="grid gap-8 lg:grid-cols-[0.38fr,0.62fr]">
           {/* LEFT — intro + comparison */}
-          <aside className="self-start lg:sticky lg:top-[92px]">
+          <aside className="self-start lg:sticky lg:top-[92px] min-w-0">
             <p className="text-xs font-semibold uppercase tracking-wider text-[var(--eye-brow)]">
               What we do
             </p>
@@ -99,7 +99,7 @@ export default function ServicesSection() {
           </aside>
 
           {/* RIGHT — cards */}
-          <div className="grid grid-cols-1 gap-6">
+          <div className="grid lg:grid-cols-2 gap-6 items-stretch [grid-auto-rows:1fr]">
             {SERVICES.map((it, i) => (
               <ServiceTile key={it.slug} {...it} index={i} />
             ))}
