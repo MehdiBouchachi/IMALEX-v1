@@ -6,8 +6,8 @@ import BulletList from "../../ui/BulletList";
 import CTAGroup from "../../ui/CTAGroup";
 import Divider from "../../ui/Divider";
 import EyebrowChip from "../../ui/EyebrowChip";
-
-export default function AboutSection({ imageSrc = ABOUT_COPY.image.src }) {
+import aboutImg from "../../../public/lab-shot.jpg";
+export default function AboutSection({ imageSrc = aboutImg }) {
   const {
     eyebrowIcon: EyebrowIcon,
     eyebrowText,

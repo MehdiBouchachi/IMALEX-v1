@@ -57,10 +57,6 @@ const CTA = dynamic(() => import("../widgets/landing/components/CTA"), {
   ssr: true,
 });
 
-const Section = dynamic(() => import("../widgets/landing/components/Section"), {
-  ssr: false,
-});
-
 // optional: control caching/ISR
 // export const revalidate = 60;         // ISR every 60s
 // export const dynamic = "force-static"; // or fully static build

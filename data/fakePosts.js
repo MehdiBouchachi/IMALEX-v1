@@ -1,5 +1,14 @@
 // Add these near the top of app/_data/fakePosts.js
+import blog1 from "../public/demo/blog-1.jpg";
+import blog2 from "../public/demo/blog-2.jpg";
+import blog3 from "../public/demo/blog-3.jpg";
+import blog4 from "../public/demo/blog-4.jpg";
+import blog5 from "../public/demo/blog-5.jpg";
+import blog6 from "../public/demo/blog-6.jpg";
 
+import avatar1 from "../public/demo/avatar-1.jpg";
+import avatar2 from "../public/demo/avatar-2.jpg";
+import avatar3 from "../public/demo/avatar-3.jpg";
 export const longBodyA = [
   {
     t: "p",
@@ -101,7 +110,7 @@ export const longBodyA = [
   },
   {
     t: "img",
-    src: "/demo/blog-3.jpg",
+    src: blog3,
     alt: "Supply chain snapshot",
     cap: "Dual-region sourcing reduced lead-time variance by ~22% in pilots.",
   },
@@ -240,7 +249,7 @@ export const longBodyB = [
   },
   {
     t: "img",
-    src: "/demo/blog-2.jpg",
+    src: blog2,
     alt: "Packaging under test",
     cap: "Torque + headspace are as important as formula when talking leak rates.",
   },
@@ -353,7 +362,7 @@ export const longBodyC = [
 
   {
     t: "img",
-    src: "/demo/blog-4.jpg",
+    src: blog4,
     alt: "Procurement dashboard",
     cap: "A simple dashboard tracking on-time %, CoA issues, and lanes with >P75 lead-time spread surfaces risk early.",
   },
@@ -457,10 +466,10 @@ export const fakePosts = [
     title: "Natural Formulation Trends to Watch in 2025",
     excerpt:
       "From plant-based emulsifiers to biodegradable actives—what matters for R&D this year.",
-    image: "/demo/blog-1.jpg",
+    image: blog1,
     tags: ["R&D", "Formulation"],
     readTime: 6,
-    author: { name: "IMALEX Lab", avatar: "/demo/avatar-1.jpg" },
+    author: { name: "IMALEX Lab", avatar: avatar1 },
     date: "2025-08-01",
     content: longBodyA, // ⬅️ big body #1
   },
@@ -470,10 +479,10 @@ export const fakePosts = [
     title: "Stability Testing: a 10-Point Checklist for SMEs",
     excerpt:
       "Reduce waste and accelerate launches with a lean, dependable stability workflow.",
-    image: "/demo/blog-2.jpg",
+    image: blog2,
     tags: ["QA", "Process"],
     readTime: 5,
-    author: { name: "Dr. Lina Saada", avatar: "/demo/avatar-2.jpg" },
+    author: { name: "Dr. Lina Saada", avatar: avatar2 },
     date: "2025-07-18",
     content: longBodyB,
   },
@@ -483,7 +492,7 @@ export const fakePosts = [
     title: "Navigating Nutraceutical Supply Chains in 2025",
     excerpt:
       "Sourcing rare botanicals while keeping costs, quality, and compliance under control.",
-    image: "/demo/blog-3.jpg",
+    image: blog3,
     tags: ["Nutraceuticals"],
     readTime: 7,
     author: { name: "Supply Team" },
@@ -496,7 +505,7 @@ export const fakePosts = [
     title: "Biopesticide Field Pilots: Lessons from Semi-Arid Climates",
     excerpt:
       "Key agronomic and regulatory learnings from the 2024–2025 pilot season.",
-    image: "/demo/blog-4.jpg",
+    image: blog4,
     tags: ["Biopesticides", "Agriculture"],
     readTime: 8,
     author: { name: "Field Ops" },
@@ -509,10 +518,10 @@ export const fakePosts = [
     title: "Sourcing Cosmetic Actives Responsibly",
     excerpt:
       "Balance innovation, sustainability, and cost when selecting actives for new lines.",
-    image: "/demo/blog-5.jpg",
+    image: blog5,
     tags: ["Cosmetics", "Sourcing"],
     readTime: 5,
-    author: { name: "Product Dev", avatar: "/demo/avatar-3.jpg" },
+    author: { name: "Product Dev", avatar: avatar3 },
     date: "2025-06-01",
     content: longBodyB, // ⬅️ big body #1
   },
@@ -522,7 +531,7 @@ export const fakePosts = [
     title: "Lab Automation: Small Changes with Big Impact",
     excerpt:
       "Incremental automation in QC labs improves throughput and data reliability.",
-    image: "/demo/blog-6.jpg",
+    image: blog6,
     tags: ["Lab", "Automation"],
     readTime: 4,
     author: { name: "QA Team" },
@@ -536,7 +545,7 @@ export const fakePosts = [
     title: "Biopesticide Field Pilots: Lessons from Semi-Arid Climates",
     excerpt:
       "Key agronomic and regulatory learnings from the 2024–2025 pilot season.",
-    image: "/demo/blog-4.jpg",
+    image: blog4,
     tags: ["Biopesticides", "Agriculture"],
     readTime: 8,
     author: { name: "Field Ops" },
@@ -549,10 +558,10 @@ export const fakePosts = [
     title: "Sourcing Cosmetic Actives Responsibly",
     excerpt:
       "Balance innovation, sustainability, and cost when selecting actives for new lines.",
-    image: "/demo/blog-5.jpg",
+    image: blog5,
     tags: ["Cosmetics", "Sourcing"],
     readTime: 5,
-    author: { name: "Product Dev", avatar: "/demo/avatar-3.jpg" },
+    author: { name: "Product Dev", avatar: avatar3 },
     date: "2025-06-01",
     content: longBodyB, // ⬅️ big body #1
   },
@@ -562,7 +571,7 @@ export const fakePosts = [
     title: "Lab Automation: Small Changes with Big Impact",
     excerpt:
       "Incremental automation in QC labs improves throughput and data reliability.",
-    image: "/demo/blog-6.jpg",
+    image: blog6,
     tags: ["Lab", "Automation"],
     readTime: 4,
     author: { name: "QA Team" },

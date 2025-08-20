@@ -15,6 +15,7 @@ export default function MediaPanel({ src, alt, captionIcon: Icon, caption }) {
           src={src}
           alt={alt}
           fill
+          placeholder="blur"
           quality={60}
           loading="lazy"
           className="object-cover"

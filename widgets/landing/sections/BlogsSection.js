@@ -133,9 +133,10 @@ function HeroWide({ post, href, className = "" }) {
     <article className={cx("hero group", className)}>
       <div className="hero-media" aria-hidden>
         <Image
-          src={post.image || "/placeholder.png"}
+          src={post.image}
           alt={post.title}
           fill
+          placeholder="blur"
           sizes="100vw"
           quality={60}
           className="object-cover"
@@ -187,9 +188,10 @@ function TallSplit({ post, href }) {
       <Link href={href} aria-label={post.title} className="block">
         <div className="media-wrap relative isolate h-[min(48vw,340px)] overflow-hidden rounded-t-[20px]">
           <Image
-            src={post.image || "/placeholder.png"}
+            src={post.image}
             alt={post.title}
             fill
+            placeholder="blur"
             quality={60}
             sizes="(min-width:1024px) 33vw, 100vw"
             className="object-cover"
@@ -247,9 +249,10 @@ function SplitCardV2({ post, href }) {
       >
         <div className="media relative aspect-[16/10] md:h-full md:aspect-auto">
           <Image
-            src={post.image || "/placeholder.png"}
+            src={post.image}
             alt={post.title}
             fill
+            placeholder="blur"
             quality={60}
             sizes="(min-width:1024px) 45vw, 100vw"
             className="object-cover"
@@ -333,9 +336,10 @@ function SquareCard({ post, href }) {
       <Link href={href} aria-label={post.title} className="relative block">
         <div className="media relative aspect-[16/10]">
           <Image
-            src={post.image || "/placeholder.png"}
+            src={post.image}
             alt={post.title}
             fill
+            placeholder="blur"
             quality={60}
             sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
             className="object-cover"
@@ -381,6 +385,7 @@ function AuthorCompact({ name = "", avatar, date }) {
             alt={name + "avatar"}
             quality={60}
             fill
+            placeholder="blur"
             className="object-cover"
           />
         ) : (
