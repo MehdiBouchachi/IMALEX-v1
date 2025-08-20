@@ -5,6 +5,7 @@ import { STAGE_OPTIONS } from "../constants";
 import { TextArea } from "../../../../ui/Input"; // or your Field/TextArea
 import RadioChips from "../../../../ui/RadioChips";
 import InlineNote from "../../../../ui/InlineNote";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 
 export function StepThree({ form, setField, errors, disabled }) {
   const showBriefNote = !form.brief?.trim() || !!errors.brief;
@@ -41,8 +42,9 @@ export function StepThree({ form, setField, errors, disabled }) {
       <div className="rounded-xl px-4 py-3 border border-[var(--contact-panel-border)] bg-[var(--contact-panel-bg)]">
         <div className="text-sm text-[var(--contact-ghost-text)]">
           <strong>Quick review:</strong> {form.name || "—"} •{" "}
-          {form.email || "—"} • {form.phone || "—"} • {form?.country || "—"}{" "}
-          {form?.city ? `(${form.city})` : ""}
+          {form.email || "—"} •{" "}
+          {form?.phone ? formatPhoneNumberIntl(form.phone) : "—"} •{" "}
+          {form?.country || "—"} {form?.city ? `(${form.city})` : ""}
           <br />
           <span className="opacity-80">
             {form.sector || "—"} • {form.needs.join(", ") || "—"} •{" "}

@@ -394,6 +394,79 @@ body {
 
 /* Example component helpers (optional) */
 @layer components {
+  .PhoneInput {
+    @apply mt-1 w-full rounded-lg border px-3 py-2 outline-none
+           flex items-center gap-2
+           bg-[var(--contact-input-bg)] border-[var(--contact-input-border)]
+           text-[var(--contact-input-text)]
+           focus-within:ring-4 focus-within:ring-[var(--contact-input-focus)];
+  }
+  .PhoneInput.is-error {
+    @apply border-[var(--contact-danger)];
+  }
+  .PhoneInput.is-error:focus-within {
+    @apply ring-[var(--contact-danger)];
+  }
+  .PhoneInput.is-disabled {
+    @apply opacity-60 pointer-events-none;
+  }
+
+  /* === Inner input (text) === */
+  .PhoneInputInput {
+    @apply flex-1 min-w-0 bg-transparent border-0 p-0 outline-none
+           text-[var(--contact-input-text)]
+          
+    caret-color: var(--brand-500);
+  }
+  .PhoneInputInput {
+    @apply flex-1 min-w-0 bg-transparent border-0 p-0 outline-none
+           text-[var(--contact-input-text)];
+    caret-color: var(--brand-500);
+  }
+
+  /* ✅ Placeholder color follows your light/dark token */
+  .PhoneInputInput::placeholder {
+    color: var(--contact-ghost-text);
+    opacity: 0.75;
+  }
+
+  /* ✅ No dark “box” behind the flag */
+  .PhoneInputCountryIcon {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .PhoneInputCountryIcon > img,
+  .PhoneInputCountryIcon > svg {
+    @apply h-4 w-6;
+    background: transparent !important;
+  }
+
+  /* If using Twemoji, make sure emoji images are transparent too */
+
+  /* === Country part (make it blend with the shell) === */
+  .PhoneInputCountry {
+    @apply inline-flex items-center gap-2 text-inherit;
+  }
+  .PhoneInputCountrySelect {
+    @apply bg-transparent border-0 p-0 outline-none cursor-pointer text-inherit;
+    appearance: none; /* remove native button look */
+  }
+  /* No extra border/box around the flag so it doesn't look like a separate chip */
+  .PhoneInputCountryIcon {
+    box-shadow: none;
+  }
+  .PhoneInputCountryIcon > img,
+  .PhoneInputCountryIcon > svg {
+    @apply h-4 w-6;
+  } /* subtle, consistent size */
+
+  /* === Chrome autofill: keep same bg/text as other inputs === */
+  .PhoneInputInput:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px var(--contact-input-bg) inset;
+    -webkit-text-fill-color: var(--contact-input-text);
+    caret-color: var(--brand-500);
+  }
+
   /* ==================== shared text tokens ==================== */
   .text-primary {
     @apply text-[color:var(--text-primary)];
