@@ -5,7 +5,9 @@ import MobileGrid from "../components/whyUs/MobileGrid";
 import DesktopScene from "../components/whyUs/DesktopScene";
 import ConnectorsSVG, { Junction } from "../components/whyUs/Connectors";
 import Badge from "../components/whyUs/Badge";
-import items from "../components/whyUs/items";
+import { items, WHYUS } from "../../../app/_config/sections.config";
+import AmbientRays from "../../ui/AmbientRays";
+import SectionHeader from "../../ui/SectionHeader";
 
 export default function WhyUsSection() {
   const [isLite, setIsLite] = useState(true);
@@ -29,36 +31,15 @@ export default function WhyUsSection() {
       data-lite={isLite ? "1" : "0"}
     >
       {/* ambient rays / glow */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 [contain:paint]"
-      >
-        <div className="absolute inset-0 opacity-60 dark:opacity-40 mask-why-top">
-          <div
-            className={[
-              "absolute -top-16 left-1/2 -translate-x-1/2 h-[520px] w-[900px] rotate-[8deg]",
-              "bg-why-conic",
-              !isLite ? "anim-tilt" : "",
-            ].join(" ")}
-          />
-        </div>
-        <div className="absolute inset-0 bg-why-spots" />
-      </div>
+      <AmbientRays isLite={isLite} />
 
       <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-3xl mx-auto">
-          <div className="text-xs font-semibold uppercase tracking-wider text-[var(--brand-700)] dark:text-[var(--brand-800)]">
-            Why IMALEX
-          </div>
-          <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--text-primary)]">
-            Science, Nature &amp; Accountability
-          </h2>
-          <p className="mt-4 text-[var(--text-secondary)]">
-            We fuse green chemistry with rigorous validation to create products
-            that are effective, compliant and scalable — without compromising
-            sustainability.
-          </p>
-        </div>
+        <SectionHeader
+          eyebrow={WHYUS.eyebrow}
+          title={WHYUS.title}
+          blurb={WHYUS.blurb}
+          center={true}
+        />
 
         <div className="mt-12 relative">
           <MobileGrid items={items} />

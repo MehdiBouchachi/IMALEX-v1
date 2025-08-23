@@ -1,4 +1,29 @@
-export default function ReadMore({ data }) {
+import { HiXMark } from "react-icons/hi2";
+import Modal from "../../../ui/Modal";
+
+export default function ReadMore({ data, label = "Read more" }) {
+  return (
+    <Modal>
+      {/* trigger */}
+      <Modal.Open opens="readmore">
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded px-2 py-1.5 text-xs font-semibold text-[var(--text-primary)] hover:underline focus:outline-none"
+        >
+          {label}
+        </button>
+      </Modal.Open>
+
+      {/* dialog */}
+      <Modal.Window name="readmore">
+        <ReadMoreDialog data={data} />
+      </Modal.Window>
+    </Modal>
+  );
+}
+
+/* ------------------ Dialog content ------------------ */
+function ReadMoreDialog({ data, onCloseModal }) {
   const panel =
     data?.panel ?? "Full scope & documentation available on request.";
   const intro =
@@ -10,78 +35,105 @@ export default function ReadMore({ data }) {
     "Artwork/label checklist",
     "Tech transfer package",
   ];
-  const cta = data?.cta ?? "Ask for full scope";
+  const cta = data?.cta ?? "Request full scope";
 
   return (
-    <details className="group/details relative w-auto">
-      <summary className="list-none cursor-pointer select-none inline-flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)] hover:underline focus:outline-none rounded">
-        <span>Read more</span>
-        <svg
-          className="h-3.5 w-3.5 text-[var(--text-muted)] transition-transform group-open/details:rotate-180"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          aria-hidden="true"
-        >
-          <path d="M6 9l6 6 6-6" />
-        </svg>
-      </summary>
+    <div className="flex max-h-[78vh] w-full flex-col">
+      {/* header */}
+      <div className="sticky top-0 z-10 -mx-6 -mt-6 mb-4 rounded-t-2xl border-b border-[var(--tile-border)] bg-[var(--tile-bg)]/85 px-6 py-3 backdrop-blur sm:-mx-8 sm:-mt-8 sm:px-8 sm:py-4">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)]">
+            Full scope & details
+          </h3>
 
-      <div className="mt-3 h-px bg-gradient-to-r from-transparent via-[var(--effect-wire-start)]/30 to-transparent" />
-
-      <div className="mt-3 grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out group-open/details:grid-rows-[1fr]">
-        <div className="overflow-hidden w-full">
-          {/* soft panel */}
-          <div className="max-w-full rounded-lg border px-3 py-2 text-xs border-[var(--tile-softpanel-border)] bg-[var(--tile-softpanel-bg)] text-[var(--brand-700)] dark:text-[var(--brand-800)]">
-            {panel}
-          </div>
-
-          {/* intro + bullets */}
-          <div className="mt-3 text-sm leading-relaxed text-[var(--tile-copy)]">
-            {Array.isArray(intro) ? (
-              intro.map((p, i) => (
-                <p key={i} className={i ? "mt-2" : "mb-2"}>
-                  {p}
-                </p>
-              ))
-            ) : (
-              <p className="mb-2">{intro}</p>
-            )}
-
-            {items?.length ? (
-              <ul className="grid gap-2 sm:grid-cols-2">
-                {items.map((k, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-[var(--bullet)]" />
-                    <span className="min-w-0">{k}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
-
-          {/* CTA */}
-          <div className="mt-4">
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-semibold transition border-[color:var(--tile-softpanel-border)] text-[var(--brand-700)] dark:text-[var(--brand-800)] hover:bg-[var(--tile-softpanel-bg)]"
-            >
-              {cta}
-              <svg
-                className="h-3.5 w-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
-            </a>
-          </div>
+          {/* BIG close (no changes here) */}
+          <button
+            onClick={onCloseModal}
+            aria-label="Close"
+            className="group -mr-1 inline-flex h-12 w-12 items-center justify-center rounded-xl
+                       text-[var(--text-secondary)] hover:bg-[color:var(--surface-1)]
+                       focus:outline-none focus:ring-2 focus:ring-[var(--brand-700)]/40 transition"
+          >
+            <HiXMark className="h-7 w-7 sm:h-8 sm:w-8" />
+          </button>
         </div>
       </div>
-    </details>
+
+      {/* body */}
+      <div className="overflow-auto pr-1">
+        {/* soft note */}
+        {panel && (
+          <div className="mb-5 max-w-full rounded-lg border border-[var(--tile-softpanel-border)] bg-[var(--tile-softpanel-bg)] px-3 py-2 text-[13.5px] sm:text-sm text-[var(--brand-700)] dark:text-[var(--brand-800)]">
+            {panel}
+          </div>
+        )}
+
+        {/* intro */}
+        {Array.isArray(intro) ? (
+          intro.map((p, i) => (
+            <p
+              key={i}
+              className={
+                "text-[15.5px] sm:text-base leading-7 sm:leading-8 text-[var(--tile-copy)] " +
+                (i ? "mt-3" : "mb-3")
+              }
+            >
+              {p}
+            </p>
+          ))
+        ) : (
+          <p className="mb-3 text-[15.5px] sm:text-base leading-7 sm:leading-8 text-[var(--tile-copy)]">
+            {intro}
+          </p>
+        )}
+
+        {/* bullets */}
+        {items?.length > 0 && (
+          <ul className="mt-1 grid gap-2 sm:grid-cols-2">
+            {items.map((k, i) => (
+              <li
+                key={i}
+                className="flex items-start gap-3 text-[15.5px] sm:text-base leading-7 sm:leading-8 text-[var(--tile-copy)]"
+              >
+                <span className="mt-2 h-2 w-2 rounded-full bg-[var(--bullet)]" />
+                <span className="min-w-0">{k}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {/* Actions */}
+        <div className="mt-5 flex flex-wrap gap-2">
+          <a
+            href="#contact"
+            className="inline-flex items-center gap-2 rounded-md border border-[color:var(--tile-softpanel-border)]
+                       px-3 py-2 text-sm font-semibold
+                       text-[var(--brand-700)] hover:bg-[var(--tile-softpanel-bg)] dark:text-[var(--brand-800)]"
+          >
+            {cta}
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          </a>
+
+          <button
+            onClick={onCloseModal}
+            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold
+                       text-[var(--text-secondary)] hover:bg-[color:var(--surface-1)]"
+          >
+            Close
+          </button>
+        </div>
+
+        {/* bottom fade */}
+        <div className="pointer-events-none mt-6 h-3 bg-gradient-to-t from-[var(--tile-bg)]/70 to-transparent" />
+      </div>
+    </div>
   );
 }

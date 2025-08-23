@@ -1,3 +1,4 @@
+// app/_components/SmoothScroll.jsx
 "use client";
 
 import { useEffect } from "react";
@@ -10,18 +11,30 @@ export default function SmoothScroll() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduce) return;
 
-    const isTouch =
-      typeof window !== "undefined" &&
-      ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+    // --- input detection ----------------------------------------------------
+    const mqlCoarse = window.matchMedia?.("(pointer: coarse)") || {
+      matches: false,
+    };
+    const pointerCoarse = mqlCoarse.matches; // phones/tablets
+    const touchPoints = navigator.maxTouchPoints || 0;
+    // iPadOS can report as Mac; treat as touch if it has touch points
+    const isIOSlike =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (/Mac/.test(navigator.platform) && touchPoints > 0);
+    const isTouchDevice = pointerCoarse || isIOSlike || touchPoints > 0;
 
-    // --- FAST preset ---
-    const DURATION = 0.65; // was 1.1 → lower = snappier
-    const WHEEL_MULT = 1.85; // was 1.05 → higher = faster wheel
-    const TOUCH_MULT = isTouch ? 3.2 : 2.2; // more speed on touch
+    // --- tuned preset -------------------------------------------------------
+    // Shorter easing window feels snappier on pointer devices
+    const DURATION = isTouchDevice ? 0.45 : 0.6;
+    // Faster wheel (good for Magic Mouse / trackpads)
+    const WHEEL_MULT = 2.6;
+    // Keep touch fast, but rely on native physics when possible
+    const TOUCH_MULT = 3.2;
 
-    // snappier easing (easeOutCubic)
+    // easeOutCubic
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
+    // keep header height as CSS var for anchor offsets
     const setHeaderVar = () => {
       const headerEl =
         document.querySelector("[data-header]") ||
@@ -30,17 +43,40 @@ export default function SmoothScroll() {
       document.documentElement.style.setProperty("--header-h", `${h}px`);
     };
     setHeaderVar();
-    window.addEventListener("resize", setHeaderVar);
+    window.addEventListener("resize", setHeaderVar, { passive: true });
+
+    // IMPORTANT: ensure browser smooth scrolling is off (avoid double-smoothing)
+    document.documentElement.style.scrollBehavior = "auto";
 
     const lenis = new Lenis({
       duration: DURATION,
       easing: easeOutCubic,
+      // Let wheel be smooth everywhere
       smoothWheel: true,
-      smoothTouch: true,
+      // On true touch devices, use native physics (no extra smoothing)
+      smoothTouch: !isTouchDevice ? true : false,
+      // But keep finger tracking in sync when we do handle touch
+      syncTouch: true,
       wheelMultiplier: WHEEL_MULT,
       touchMultiplier: TOUCH_MULT,
+      gestureOrientation: "vertical",
+      normalizeWheel: true, // harmless if not supported
     });
 
+    // Auto-boost for very tiny wheel deltas (some drivers)
+    let boosted = false;
+    const onFirstWheel = (e) => {
+      if (boosted) return;
+      // If deltas are tiny, bump up multiplier once
+      if (Math.abs(e.deltaY) < 2.5) {
+        lenis.options.wheelMultiplier = 3.2;
+      }
+      boosted = true;
+      window.removeEventListener("wheel", onFirstWheel);
+    };
+    window.addEventListener("wheel", onFirstWheel, { passive: true });
+
+    // RAF loop
     let rafId;
     const raf = (time) => {
       lenis.raf(time);
@@ -48,7 +84,7 @@ export default function SmoothScroll() {
     };
     rafId = requestAnimationFrame(raf);
 
-    // faster anchor jumps (own duration)
+    // Smooth anchors (respect header offset)
     const onClick = (e) => {
       const a = e.target.closest('a[href^="#"]');
       if (!a) return;
@@ -56,6 +92,7 @@ export default function SmoothScroll() {
       if (!id || id === "#") return;
       const target = document.querySelector(id);
       if (!target) return;
+
       e.preventDefault();
       const headerOffset =
         parseFloat(
@@ -63,13 +100,14 @@ export default function SmoothScroll() {
             "--header-h"
           )
         ) || 0;
+
       lenis.scrollTo(target, {
         offset: -headerOffset,
-        duration: 0.45, // quicker anchor animation
+        duration: 0.42,
         easing: easeOutCubic,
       });
     };
-    document.addEventListener("click", onClick);
+    document.addEventListener("click", onClick, { passive: false });
 
     const onHashChange = () => {
       const target = document.querySelector(location.hash);
@@ -82,7 +120,7 @@ export default function SmoothScroll() {
         ) || 0;
       lenis.scrollTo(target, {
         offset: -headerOffset,
-        duration: 0.45,
+        duration: 0.42,
         easing: easeOutCubic,
       });
     };
@@ -90,6 +128,7 @@ export default function SmoothScroll() {
 
     return () => {
       window.removeEventListener("resize", setHeaderVar);
+      window.removeEventListener("wheel", onFirstWheel);
       document.removeEventListener("click", onClick);
       window.removeEventListener("hashchange", onHashChange);
       cancelAnimationFrame(rafId);

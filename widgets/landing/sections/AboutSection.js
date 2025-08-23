@@ -1,4 +1,3 @@
-import { ABOUT_COPY } from "../components/about/about.config";
 import BadgeGrid from "../components/about/BadgeGrid";
 import MediaPanel from "../components/about/MediaPanel";
 import AccentBlob from "../../ui/AccentBlob";
@@ -6,8 +5,9 @@ import BulletList from "../../ui/BulletList";
 import CTAGroup from "../../ui/CTAGroup";
 import Divider from "../../ui/Divider";
 import EyebrowChip from "../../ui/EyebrowChip";
-import aboutImg from "../../../public/lab-shot.jpg";
-export default function AboutSection({ imageSrc = aboutImg }) {
+
+import { ABOUT } from "../../../app/_config/sections.config";
+export default function AboutSection() {
   const {
     eyebrowIcon: EyebrowIcon,
     eyebrowText,
@@ -16,8 +16,8 @@ export default function AboutSection({ imageSrc = aboutImg }) {
     bullets,
     badges,
     ctas,
-    image: { alt, captionIcon, caption },
-  } = ABOUT_COPY;
+    image: { src, alt, captionIcon, caption },
+  } = ABOUT;
 
   return (
     <section
@@ -54,7 +54,7 @@ export default function AboutSection({ imageSrc = aboutImg }) {
 
           {/* Visual */}
           <MediaPanel
-            src={imageSrc}
+            src={src}
             alt={alt}
             captionIcon={captionIcon}
             caption={caption}

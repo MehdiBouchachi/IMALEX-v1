@@ -904,6 +904,7 @@ body {
       opacity: 1;
     }
   }
+
   /* card surface: modern “paper glass” + lighter border + roomier width */
   .ss4-card {
     width: min(96vw, var(--ss4-card-w));

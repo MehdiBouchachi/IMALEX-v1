@@ -1,4 +1,3 @@
-// app/components/sections.js
 
 // Order matches the homepage sections
 const ITEMS = [

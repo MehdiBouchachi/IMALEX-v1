@@ -14,7 +14,7 @@ export default function BlogsSection({
   showCTA = true,
 }) {
   const items = posts.slice(0, 8);
-
+  if (items.length === 0) return <EmptyState />;
   return (
     <section id="blog" className="relative py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -62,44 +62,38 @@ export default function BlogsSection({
           )}
         </div>
 
-        {/* Empty */}
-        {items.length === 0 && <EmptyState />}
+        <div className="magazine-grid mt-8 mb-0">
+          {items[0] && (
+            <HeroWide
+              post={items[0]}
+              href={`${basePath}/${items[0].slug || items[0].id}`}
+            />
+          )}
+          {items[1] && (
+            <TallSplit
+              post={items[1]}
+              href={`${basePath}/${items[1].slug || items[1].id}`}
+            />
+          )}
 
-        {/* Editorial grid */}
-        {items.length > 0 && (
-          <div className="magazine-grid mt-8 mb-0">
-            {items[0] && (
-              <HeroWide
-                post={items[0]}
-                href={`${basePath}/${items[0].slug || items[0].id}`}
-              />
+          {items
+            .slice(2)
+            .map((p, i) =>
+              i % 3 === 0 ? (
+                <SplitCard
+                  key={p.slug || p.id}
+                  post={p}
+                  href={`${basePath}/${p.slug || p.id}`}
+                />
+              ) : (
+                <SquareCard
+                  key={p.slug || p.id}
+                  post={p}
+                  href={`${basePath}/${p.slug || p.id}`}
+                />
+              )
             )}
-            {items[1] && (
-              <TallSplit
-                post={items[1]}
-                href={`${basePath}/${items[1].slug || items[1].id}`}
-              />
-            )}
-
-            {items
-              .slice(2)
-              .map((p, i) =>
-                i % 3 === 0 ? (
-                  <SplitCardV2
-                    key={p.slug || p.id}
-                    post={p}
-                    href={`${basePath}/${p.slug || p.id}`}
-                  />
-                ) : (
-                  <SquareCard
-                    key={p.slug || p.id}
-                    post={p}
-                    href={`${basePath}/${p.slug || p.id}`}
-                  />
-                )
-              )}
-          </div>
-        )}
+        </div>
       </div>
     </section>
   );
@@ -126,7 +120,6 @@ function EmptyState() {
   );
 }
 
-/* 1) HERO WIDE — fills two rows (group for sheen hover) */
 function HeroWide({ post, href, className = "" }) {
   const tags = (post.tags || []).slice(0, 3);
   return (
@@ -235,8 +228,8 @@ function TallSplit({ post, href }) {
   );
 }
 
-/* 3) SPLIT CARD V2 — editorial inner panel + diagonal seam */
-function SplitCardV2({ post, href }) {
+/* 3) SPLIT CARD — editorial inner panel + diagonal seam */
+function SplitCard({ post, href }) {
   const tags = (post.tags || []).slice(0, 3);
 
   return (

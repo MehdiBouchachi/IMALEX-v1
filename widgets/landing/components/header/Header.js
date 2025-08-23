@@ -27,9 +27,8 @@ export default function Header() {
         // Glass when solid, fully transparent at the top
         solid
           ? [
-              "border-b shadow-[0_10px_28px_rgba(0,0,0,.10)]",
               // fallback tint (when no backdrop-filter)
-              "bg-[color:color-mix(in_srgb,var(--surface-1)_46%,transparent)]",
+              "bg-[color:color-mix(in_srgb,var(--surface-1)_46%,transparent)] ",
               "border-[color:color-mix(in_srgb,var(--border)_55%,transparent)]",
               // true glass on capable browsers
               "supports-[backdrop-filter]:backdrop-blur-md",

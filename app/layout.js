@@ -13,9 +13,6 @@ const Footer = dynamic(
     ssr: true,
   }
 );
-/* const SmoothScroll = dynamic(() => import("../widgets/ui/SmoothScroll"), {
-  ssr: false,
-}); */
 
 const josefin = Josefin_Sans({
   subsets: ["latin"],

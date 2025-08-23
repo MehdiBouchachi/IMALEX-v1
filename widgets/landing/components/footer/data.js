@@ -37,4 +37,3 @@ export const DEFAULT_SOCIALS = [
   },
 ];
 
-// Optional: shows under the © line if present

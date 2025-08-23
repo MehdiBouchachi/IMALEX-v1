@@ -1,6 +1,15 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": { "@/*": ["./*"] }
-  }
+    "paths": {
+      "@app/*": ["app/*"],
+      "@public/*": ["public/*"],
+      "@widgets/*": ["widgets/*"],
+      "@landing/*": ["widgets/landing/*"],
+      "@ui/*": ["widgets/ui/*"],
+      "@blogs/*": ["widgets/blogs/*"],
+      "@articles/*": ["widgets/articles/*"]
+    }
+  },
+  "include": ["app", "widgets", "public"]
 }

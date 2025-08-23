@@ -3,7 +3,8 @@ import ArticleCard from "../components/process/ArticleCard";
 import Rail from "../components/process/Rail";
 import Finale from "../components/process/Finale";
 import { useProcessController } from "../components/process/useProcessController";
-import { DEFAULT_STEPS } from "../components/process/steps";
+import SectionHeader from "../../ui/SectionHeader";
+import { PROCESS, DEFAULT_STEPS } from "../../../app/_config/sections.config";
 
 export default function ProcessSection({ steps = DEFAULT_STEPS }) {
   const {
@@ -38,26 +39,12 @@ export default function ProcessSection({ steps = DEFAULT_STEPS }) {
 
       {/* Intro */}
       <div className="mx-auto max-w-6xl px-4 xs:px-5 sm:px-6 pt-16 sm:pt-20 pb-8 sm:pb-10">
-        <div className="text-center">
-          <div
-            className="text-[11px] font-semibold tracking-widest uppercase"
-            style={{ color: "var(--brand-700)" }}
-          >
-            Our method
-          </div>
-          <h2
-            className="mt-2 text-2xl sm:text-4xl font-extrabold tracking-tight"
-            style={{ color: "var(--text-primary)" }}
-          >
-            A Guided Journey — Quiet, Precise, Inevitable.
-          </h2>
-          <p
-            className="mt-3 max-w-2xl mx-auto"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Scroll to move through each chapter — from hypothesis to scale.
-          </p>
-        </div>
+        <SectionHeader
+          eyebrow={PROCESS.eyebrow}
+          title={PROCESS.title}
+          blurb={PROCESS.blurb}
+          center={true}
+        />
       </div>
 
       {/* Layout: note transform-none so sticky works; min-w-0 so nothing widens the page */}
