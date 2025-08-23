@@ -1,6 +1,7 @@
 import { HiXMark } from "react-icons/hi2";
 import Modal from "../../../ui/Modal";
-
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 export default function ReadMore({ data, label = "Read more" }) {
   return (
     <Modal>
@@ -24,6 +25,11 @@ export default function ReadMore({ data, label = "Read more" }) {
 
 /* ------------------ Dialog content ------------------ */
 function ReadMoreDialog({ data, onCloseModal }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const isHome = pathname === "/" || pathname?.startsWith("/#");
+  const contactHref = isHome ? "#contact" : "/#contact";
+
   const panel =
     data?.panel ?? "Full scope & documentation available on request.";
   const intro =
@@ -37,6 +43,23 @@ function ReadMoreDialog({ data, onCloseModal }) {
   ];
   const cta = data?.cta ?? "Request full scope";
 
+  function goContact(e) {
+    e.preventDefault();
+    onCloseModal?.();
+
+    if (isHome) {
+      // same page: smooth scroll + update hash
+      const el = document.getElementById("contact");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      // keep URL in sync without reflow
+      try {
+        history.replaceState(null, "", "#contact");
+      } catch {}
+    } else {
+      // other page: navigate after modal unmounts
+      requestAnimationFrame(() => router.push("/#contact"));
+    }
+  }
   return (
     <div className="flex max-h-[78vh] w-full flex-col">
       {/* header */}
@@ -104,12 +127,13 @@ function ReadMoreDialog({ data, onCloseModal }) {
         {/* Actions */}
         <div className="mt-5 flex flex-wrap gap-2">
           <a
-            href="#contact"
             className="inline-flex items-center gap-2 rounded-md border border-[color:var(--tile-softpanel-border)]
                        px-3 py-2 text-sm font-semibold
                        text-[var(--brand-700)] hover:bg-[var(--tile-softpanel-bg)] dark:text-[var(--brand-800)]"
           >
-            {cta}
+            <Link href={contactHref} onClick={goContact}>
+              {cta}
+            </Link>{" "}
             <svg
               className="h-4 w-4"
               viewBox="0 0 24 24"
